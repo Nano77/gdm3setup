@@ -1,8 +1,5 @@
 #! /usr/bin/env python2
 
-#import pygtk
-#pygtk.require('2.0')
-#import gtk
 import os
 import stat
 import subprocess
@@ -10,10 +7,10 @@ from gi.repository import Gtk
 
 import gettext
 
-#gettext.install("gtk30")
+
 gettext.install("gdm3setup")
 
-GTK3_THEME = "Zukitwo"  #"Adwaita"
+GTK3_THEME = "Zukitwo" 
 ICON_THEME = "Faenza-Dark"
 WALLPAPER = "/usr/share/backgrounds/gnome/Terraform-blue.jpg" 
 LOGO_ICON = "distributor-logo"
@@ -65,49 +62,57 @@ gconftool-2 --type bool --set /apps/gdm/simple-greeter/disable_restart_buttons "
 
 	os.remove(os.getcwd()+"/call_set_gdm.sh")
 	os.remove(os.getcwd()+"/set_gdm.sh")
+def status_update():
+	if(ComboBox2.get_active_text()!=None and ComboBox1.get_active_text()!=None \
+	and Entry4.get_text()!="" and FCB3.get_filename()!=None):
+		BTN9.set_sensitive(True)
+	else:
+		BTN9.set_sensitive(False)
 
 def gtk3_theme_changed(e):
 	global GTK3_THEME
 	GTK3_THEME = ComboBox2.get_active_text()
 	print "GTK3 Theme Changed : " + GTK3_THEME
+	status_update()
 
 def wallpaper_changed(e):
 	global WALLPAPER
 	WALLPAPER = FCB3.get_filename()
 	print "Wallpaper Changed : " + WALLPAPER
+	status_update()
 
 def icon_theme_changed(e):
 	global ICON_THEME
 	ICON_THEME = ComboBox1.get_active_text()
 	print "Icon Theme Changed : " + ICON_THEME
+	status_update()
 
 def logo_icon_changed(e):
 	global LOGO_ICON
 	LOGO_ICON = Entry4.get_text()
 	print "Logo Icon Changed : " + LOGO_ICON
+	status_update()
 
 def user_list_toggled(e):
 	global USER_LIST
 	USER_LIST = CheckButton5.get_active() 
 	print "User List Changed : " + str(USER_LIST)
 
+
 def menu_btn_toggled(e):
 	global MENU_BTN
 	MENU_BTN = CheckButton6.get_active() 
 	print "Menu Btn Changed : " + str(MENU_BTN)
+
 
 #-----------------------------------------------
 mainwin = Gtk.Window()
 mainwin.connect("destroy",mainwin_close)
 mainwin.set_border_width(10)
 mainwin.set_position(Gtk.WindowPosition.CENTER)
-#mainwin.set_size_request(400,120)
 mainwin.set_resizable(False)
 mainwin.set_title(_("GDM3 Setup"))
-it = Gtk.IconTheme()
-it.set_custom_theme('Faenza')
-mainwin.set_icon(it.load_icon('preferences-desktop-theme',128,Gtk.IconLookupFlags.FORCE_SVG))
-#mainwin.modal(False)
+mainwin.set_icon_name("preferences-desktop-theme")
 
 VBox_Main = Gtk.VBox.new(False, 0)
 mainwin.add(VBox_Main)
@@ -130,8 +135,8 @@ Label3_1 = Gtk.Label(_("Wallpaper"))
 Label3_1.set_alignment(0,0.5)
 HBox3.pack_start(Label3_1, False, True, 0)
 
+gettext.install("gtk30")
 FCB3 = Gtk.FileChooserButton.new(_('Select a File'),Gtk.FileChooserAction.OPEN)
-#FCB3.set_filename(WALLPAPER)
 FCB3.set_current_folder('/usr/share/backgrounds/gnome/') 
 filter3 = Gtk.FileFilter()
 filter3.add_pixbuf_formats()
@@ -139,6 +144,7 @@ filter3.set_name('All images')
 FCB3.add_filter(filter3)
 FCB3.connect("file-set",wallpaper_changed)
 HBox3.pack_end(FCB3, False, True, 0)
+gettext.install("gdm3setup")
 
 HBox1 = Gtk.HBox.new(True, 0)
 VBox_Main.pack_start(HBox1, False, True, 0)
@@ -160,7 +166,6 @@ HBox4.pack_start(Label4, False, True, 0)
 
 Entry4 =  Gtk.Entry()
 Entry4.connect("changed",logo_icon_changed)
-Entry4.set_text('distributor-logo')
 HBox4.pack_start(Entry4, False, True, 0)
 
 
@@ -181,11 +186,11 @@ HBox6.pack_start(CheckButton6, False, True, 0)
 HBox9 = Gtk.HBox.new(True, 0)
 VBox_Main.pack_end(HBox9, False, True, 0)
 
-BTN9 = Gtk.Button('Ok')
+BTN9 = Gtk.Button('Apply')
 BTN9.connect("clicked",set_gdm)
 HBox9.pack_start(BTN9, False, False, 0)
 
-
+Entry4.set_text('distributor-logo')
 mainwin.show_all()
 
 load_gtk3_list()
