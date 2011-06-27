@@ -1,0 +1,15 @@
+#!/usr/bin/env xdg-open
+
+[Desktop Entry]
+Version=1.0
+Type=Application
+Terminal=false
+Exec=/usr/bin/gdm3setup.py
+Name=GDM3 Settings
+Name[fr_FR]=Paramètres de GDM3
+Name[de_DE]=Einstellungen der GDM3
+Name[it_IT]=impostazioni di GDM3
+Name[es_ES]=Configuratión de GDM3
+Icon=preferences-desktop-theme
+Categories=Settings;
+

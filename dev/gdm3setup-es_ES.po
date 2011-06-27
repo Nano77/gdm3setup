@@ -1,0 +1,41 @@
+# XXXXX
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: gnome-shell-extensions tweaktool-usermenu\n"
+"Report-Msgid-Bugs-To: http://NULL"
+"shell&keywords=I18N+L10N&component=extensions\n"
+"POT-Creation-Date: 2011-04-16 16:32+0000\n"
+"PO-Revision-Date: 2011-04-21 16:51+0200\n"
+"Last-Translator: XXXXX"
+"Language-Team: XXX\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+#"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+
+
+
+msgid "GDM3 Setup"
+msgstr "Configuratión de GDM3"
+
+msgid "GTK3 theme"
+msgstr "Tema GTK3"
+
+msgid "Wallpaper"
+msgstr "Papel pintado"
+
+msgid "Icon theme"
+msgstr "Tema de Icono"
+
+msgid "Logo Icon"
+msgstr "Icono del logotipo"
+
+msgid "Disable User List"
+msgstr "Desactivar la lista de los usuarios   "
+
+msgid "Disable Restart Buttons"
+msgstr "Desactivar 'Restart' botóns"
+
+
+
