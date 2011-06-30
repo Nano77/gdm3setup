@@ -2,6 +2,7 @@
 
 import os
 import stat
+import time
 import subprocess
 from gi.repository import Gtk
 
@@ -36,6 +37,35 @@ def load_icon_list():
 		if os.path.isdir('/usr/share/icons/'+lst_icons[i]+'/') :
 			ComboBox1.append_text(lst_icons[i])
 
+def get_setting(name,data):
+	value = None
+	for line in data:
+		if line[0:len(name)+1]==name+"=":
+			value = line[len(name)+1:len(line)-1]
+
+	return value	
+
+def str_to_bool(state) :
+	if state.capitalize()=="True" :
+		b_state = True
+	else :
+		b_state = False		  
+
+	return b_state
+
+def get_iter(model,target):
+	target_iter = None
+	iter_test = model.get_iter_first()
+	while iter_test!=None:
+		name = model.get_value(iter_test,0)
+		#print name
+		if "'"+name+"'" == target:
+			#print "found"
+			target_iter = iter_test
+			break 
+		iter_test = model.iter_next(iter_test)
+	return target_iter
+
 def set_gdm(e):
 	file1 = open(os.getcwd()+"/set_gdm.sh",'w')
 	file1.write("su - gdm -s /bin/bash \n\
@@ -62,12 +92,70 @@ gconftool-2 --type bool --set /apps/gdm/simple-greeter/disable_restart_buttons "
 
 	os.remove(os.getcwd()+"/call_set_gdm.sh")
 	os.remove(os.getcwd()+"/set_gdm.sh")
+
+def get_gdm(e):
+	file1 = open(os.getcwd()+"/get_gdm.sh",'w')
+	file1.write('su - gdm -s /bin/bash \n\
+dbus-launch 2> /dev/null | grep DBUS_SESSION_BUS_ADDRESS > DBUS_SESSION_BUS_ADDRESS.FILE \n\
+dbus-launch 2> /dev/null | grep DBUS_SESSION_BUS_PID > DBUS_SESSION_BUS_PID.FILE \n\
+read DBUS_SESSION_BUS_ADDRESS_0 < DBUS_SESSION_BUS_ADDRESS.FILE \n\
+read DBUS_SESSION_BUS_PID_0 < DBUS_SESSION_BUS_PID.FILE \n\
+export $DBUS_SESSION_BUS_ADDRESS_0 \n\
+export $DBUS_SESSION_BUS_PID_0 \n\
+echo -n "GTK=" \n\
+gsettings get org.gnome.desktop.interface gtk-theme \n\
+echo -n "ICON=" \n\
+gsettings get org.gnome.desktop.interface icon-theme \n\
+echo -n "BKG=" \n\
+gsettings get org.gnome.desktop.background picture-uri \n\
+echo -n "LOGO="  \n\
+gconftool-2 --get /apps/gdm/simple-greeter/logo_icon_name  \n\
+echo -n "USER_LIST="  \n\
+gconftool-2 --get /apps/gdm/simple-greeter/disable_user_list  \n\
+echo -n "BTN="  \n\
+gconftool-2 --get /apps/gdm/simple-greeter/disable_restart_buttons \n\
+')
+	file1.close()
+
+	subprocess.call("chmod a+x "+os.getcwd()+"/get_gdm.sh",shell=True) 
+
+	file2 = open(os.getcwd()+"/call_get_gdm.sh",'w')
+	file2.write("/bin/bash < "+os.getcwd()+"/get_gdm.sh > /tmp/GDM_SETTINGS\n\
+chown "+os.getlogin()+" /tmp/GDM_SETTINGS")
+	file2.close()
+	
+	subprocess.call("chmod a+x "+os.getcwd()+"/call_get_gdm.sh",shell=True)
+
+	subprocess.call("gksu "+os.getcwd()+"/call_get_gdm.sh",shell=True)
+	time.sleep(1)	
+	file3 = open("/tmp/GDM_SETTINGS",'r')
+	settings = file3.readlines()
+	file3.close()
+
+
+	os.remove(os.getcwd()+"/get_gdm.sh")
+	os.remove(os.getcwd()+"/call_get_gdm.sh")
+	os.remove("/tmp/GDM_SETTINGS")
+
+	#---------------
+	global WALLPAPER
+
+	ComboBox2.set_active_iter(get_iter(ComboBox2.get_model(),get_setting("GTK",settings)))
+	BKG = get_setting("BKG",settings)
+	WALLPAPER = BKG[8:len(BKG)-1]
+	FCB3.set_filename(WALLPAPER)	
+	ComboBox1.set_active_iter(get_iter(ComboBox1.get_model(),get_setting("ICON",settings)))
+	Entry4.set_text(get_setting("LOGO",settings))
+	CheckButton5.set_active(str_to_bool(get_setting("USER_LIST",settings)))
+ 	CheckButton6.set_active(str_to_bool(get_setting("BTN",settings)))
+
+
 def status_update():
 	if(ComboBox2.get_active_text()!=None and ComboBox1.get_active_text()!=None \
 	and Entry4.get_text()!="" and FCB3.get_filename()!=None):
-		BTN9.set_sensitive(True)
+		BTN9_2.set_sensitive(True)
 	else:
-		BTN9.set_sensitive(False)
+		BTN9_2.set_sensitive(False)
 
 def gtk3_theme_changed(e):
 	global GTK3_THEME
@@ -104,7 +192,6 @@ def menu_btn_toggled(e):
 	MENU_BTN = CheckButton6.get_active() 
 	print "Menu Btn Changed : " + str(MENU_BTN)
 
-
 #-----------------------------------------------
 mainwin = Gtk.Window()
 mainwin.connect("destroy",mainwin_close)
@@ -137,7 +224,7 @@ HBox3.pack_start(Label3_1, False, True, 0)
 
 gettext.install("gtk30")
 FCB3 = Gtk.FileChooserButton.new(_('Select a File'),Gtk.FileChooserAction.OPEN)
-FCB3.set_current_folder('/usr/share/backgrounds/gnome/') 
+FCB3.set_current_folder('/usr/share/backgrounds/gnome/')
 filter3 = Gtk.FileFilter()
 filter3.add_pixbuf_formats()
 filter3.set_name('All images')
@@ -168,7 +255,6 @@ Entry4 =  Gtk.Entry()
 Entry4.connect("changed",logo_icon_changed)
 HBox4.pack_start(Entry4, False, True, 0)
 
-
 HBox5 = Gtk.HBox.new(True, 0)
 VBox_Main.pack_start(HBox5, False, True, 0)
 
@@ -186,11 +272,15 @@ HBox6.pack_start(CheckButton6, False, True, 0)
 HBox9 = Gtk.HBox.new(True, 0)
 VBox_Main.pack_end(HBox9, False, True, 0)
 
-BTN9 = Gtk.Button('Apply')
-BTN9.connect("clicked",set_gdm)
-HBox9.pack_start(BTN9, False, False, 0)
+BTN9_1 = Gtk.Button('Load')
+BTN9_1.connect("clicked",get_gdm)
+HBox9.pack_start(BTN9_1, False, False, 0)
 
-Entry4.set_text('distributor-logo')
+BTN9_2 = Gtk.Button('Apply')
+BTN9_2.connect("clicked",set_gdm)
+HBox9.pack_start(BTN9_2, False, False, 0)
+
+
 mainwin.show_all()
 
 load_gtk3_list()
