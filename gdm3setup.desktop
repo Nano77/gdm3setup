@@ -3,7 +3,7 @@
 [Desktop Entry]
 Version=1.0
 Type=Application
-Terminal=true
+Terminal=false
 Exec=/usr/bin/gdm3setup.py
 Name=GDM3 Settings
 Name[fr_FR]=Paramètres de GDM3
