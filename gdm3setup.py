@@ -59,9 +59,7 @@ def get_iter(model,target):
 	iter_test = model.get_iter_first()
 	while iter_test!=None:
 		name = model.get_value(iter_test,0)
-		#print name
 		if "'"+name+"'" == target:
-			#print "found"
 			target_iter = iter_test
 			break 
 		iter_test = model.iter_next(iter_test)
@@ -281,6 +279,7 @@ HBox9.pack_start(BTN9_1, False, False, 0)
 
 BTN9_2 = Gtk.Button('Apply')
 BTN9_2.connect("clicked",set_gdm)
+BTN9_2.set_sensitive(False)
 HBox9.pack_start(BTN9_2, False, False, 0)
 
 
