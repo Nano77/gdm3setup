@@ -14,6 +14,7 @@ gettext.install("gdm3setup")
 
 GTK3_THEME = "Zukitwo" 
 ICON_THEME = "Faenza-Dark"
+CURSOR_THEME = "Adwaita"
 WALLPAPER = "/usr/share/backgrounds/gnome/Terraform-blue.jpg" 
 LOGO_ICON = "distributor-logo"
 USER_LIST = False
@@ -29,15 +30,18 @@ def load_gtk3_list():
 
 	for i in range(len(lst_themes)):
 		if os.path.isdir('/usr/share/themes/'+lst_themes[i]+'/gtk-3.0') :
-			ComboBox2.append_text(lst_themes[i])
+			ComboBox_gtk.append_text(lst_themes[i])
 
 def load_icon_list():
 	lst_icons = os.listdir('/usr/share/icons')
 
 	for i in range(len(lst_icons)):
 		if os.path.isdir('/usr/share/icons/'+lst_icons[i]+'/') :
-			ComboBox1.append_text(lst_icons[i])
-
+			if 	os.path.isdir('/usr/share/icons/'+lst_icons[i]+'/cursors/') :
+				ComboBox_cursor.append_text(lst_icons[i])
+			else :
+				ComboBox_icon.append_text(lst_icons[i])
+		
 def get_setting(name,data):
 	value = None
 	for line in data:
@@ -76,8 +80,9 @@ export $DBUS_SESSION_BUS_ADDRESS_0 \n\
 export $DBUS_SESSION_BUS_PID_0 \n\
 echo 'dbus adr : '$DBUS_SESSION_BUS_ADDRESS > test1\n\
 echo 'dbus pid :'$DBUS_SESSION_BUS_PID\n\
-gsettings set org.gnome.desktop.interface gtk-theme "+GTK3_THEME+" #Adwaita \n\
-gsettings set org.gnome.desktop.interface icon-theme "+ICON_THEME+" #Adwaita \n\
+gsettings set org.gnome.desktop.interface gtk-theme "+GTK3_THEME+" \n\
+gsettings set org.gnome.desktop.interface icon-theme "+ICON_THEME+" \n\
+gsettings set org.gnome.desktop.interface cursor-theme "+CURSOR_THEME+" \n\
 gsettings set org.gnome.desktop.background picture-uri 'file://"+WALLPAPER+"' \n\
 gconftool-2 --type string --set /apps/gdm/simple-greeter/logo_icon_name '"+LOGO_ICON+"'\n\
 gconftool-2 --type bool --set /apps/gdm/simple-greeter/disable_user_list "+str(USER_LIST)+"\n\
@@ -108,6 +113,8 @@ echo -n "GTK="\n\
 gsettings get org.gnome.desktop.interface gtk-theme \n\
 echo -n "ICON="\n\
 gsettings get org.gnome.desktop.interface icon-theme \n\
+echo -n "CURSOR="\n\
+gsettings get org.gnome.desktop.interface cursor-theme \n\
 echo -n "BKG="\n\
 gsettings get org.gnome.desktop.background picture-uri \n\
 echo -n "LOGO="\n\
@@ -121,7 +128,7 @@ gconftool-2 --get /apps/gdm/simple-greeter/disable_restart_buttons\n\
 
 	subprocess.call("chmod a+x "+os.getcwd()+"/get_gdm.sh",shell=True) 
 
-	file2 = open(os.getcwd()+"/call_get_gdm.sh",'w') #echo 'call_get_gdm.sh' > TEST\n\ # \n\
+	file2 = open(os.getcwd()+"/call_get_gdm.sh",'w') 
 	file2.write("/bin/bash < "+os.getcwd()+"/get_gdm.sh > /tmp/GDM_SETTINGS\n\
 chown "+getpass.getuser()+" /tmp/GDM_SETTINGS\n")
 	file2.close()
@@ -133,7 +140,6 @@ chown "+getpass.getuser()+" /tmp/GDM_SETTINGS\n")
 	settings = file3.readlines()
 	file3.close()
 
-
 	os.remove(os.getcwd()+"/get_gdm.sh")
 	os.remove(os.getcwd()+"/call_get_gdm.sh")
 	os.remove("/tmp/GDM_SETTINGS")
@@ -141,56 +147,63 @@ chown "+getpass.getuser()+" /tmp/GDM_SETTINGS\n")
 	#---------------
 	global WALLPAPER
 
-	ComboBox2.set_active_iter(get_iter(ComboBox2.get_model(),get_setting("GTK",settings)))
+	ComboBox_gtk.set_active_iter(get_iter(ComboBox_gtk.get_model(),get_setting("GTK",settings)))
 	BKG = get_setting("BKG",settings)
 	WALLPAPER = BKG[8:len(BKG)-1]
-	FCB3.set_filename(WALLPAPER)	
-	ComboBox1.set_active_iter(get_iter(ComboBox1.get_model(),get_setting("ICON",settings)))
-	Entry4.set_text(get_setting("LOGO",settings))
-	CheckButton5.set_active(str_to_bool(get_setting("USER_LIST",settings)))
- 	CheckButton6.set_active(str_to_bool(get_setting("BTN",settings)))
+	FCB_bkg.set_filename(WALLPAPER)	
+	ComboBox_icon.set_active_iter(get_iter(ComboBox_icon.get_model(),get_setting("ICON",settings)))
+	ComboBox_cursor.set_active_iter(get_iter(ComboBox_cursor.get_model(),get_setting("CURSOR",settings)))
+	Entry_logo.set_text(get_setting("LOGO",settings))
+	CheckButton_user.set_active(str_to_bool(get_setting("USER_LIST",settings)))
+ 	CheckButton_restart.set_active(str_to_bool(get_setting("BTN",settings)))
 
 
 def status_update():
-	if(ComboBox2.get_active_text()!=None and ComboBox1.get_active_text()!=None \
-	and Entry4.get_text()!="" and FCB3.get_filename()!=None):
-		BTN9_2.set_sensitive(True)
+	if(ComboBox_gtk.get_active_text()!=None and ComboBox_icon.get_active_text()!=None \
+	and ComboBox_cursor.get_active_text()!=None and Entry_logo.get_text()!="" and FCB_bkg.get_filename()!=None):
+		BTN_apply.set_sensitive(True)
 	else:
-		BTN9_2.set_sensitive(False)
+		BTN_apply.set_sensitive(False)
 
 def gtk3_theme_changed(e):
 	global GTK3_THEME
-	GTK3_THEME = ComboBox2.get_active_text()
+	GTK3_THEME = ComboBox_gtk.get_active_text()
 	print "GTK3 Theme Changed : " + GTK3_THEME
 	status_update()
 
 def wallpaper_changed(e):
 	global WALLPAPER
-	WALLPAPER = FCB3.get_filename()
+	WALLPAPER = FCB_bkg.get_filename()
 	print "Wallpaper Changed : " + WALLPAPER
 	status_update()
 
 def icon_theme_changed(e):
 	global ICON_THEME
-	ICON_THEME = ComboBox1.get_active_text()
+	ICON_THEME = ComboBox_icon.get_active_text()
 	print "Icon Theme Changed : " + ICON_THEME
+	status_update()
+
+def cursor_theme_changed(e):
+	global CURSOR_THEME
+	CURSOR_THEME = ComboBox_cursor.get_active_text()
+	print "Cursor Theme Changed : " + CURSOR_THEME
 	status_update()
 
 def logo_icon_changed(e):
 	global LOGO_ICON
-	LOGO_ICON = Entry4.get_text()
+	LOGO_ICON = Entry_logo.get_text()
 	print "Logo Icon Changed : " + LOGO_ICON
 	status_update()
 
 def user_list_toggled(e):
 	global USER_LIST
-	USER_LIST = CheckButton5.get_active() 
+	USER_LIST = CheckButton_user.get_active() 
 	print "User List Changed : " + str(USER_LIST)
 
 
 def menu_btn_toggled(e):
 	global MENU_BTN
-	MENU_BTN = CheckButton6.get_active() 
+	MENU_BTN = CheckButton_restart.get_active() 
 	print "Menu Btn Changed : " + str(MENU_BTN)
 
 #-----------------------------------------------
@@ -205,82 +218,93 @@ mainwin.set_icon_name("preferences-desktop-theme")
 VBox_Main = Gtk.VBox.new(False, 0)
 mainwin.add(VBox_Main)
 
-HBox2 = Gtk.HBox.new(True, 0)
-VBox_Main.pack_start(HBox2, False, True, 0)
+HBox_gtk = Gtk.HBox.new(True, 0)
+VBox_Main.pack_start(HBox_gtk, False, True, 0)
 
-Label2 = Gtk.Label(_("GTK3 theme"))
-Label2.set_alignment(0,0.5)
-HBox2.pack_start(Label2, False, True, 0)
+Label_gtk = Gtk.Label(_("GTK3 theme"))
+Label_gtk.set_alignment(0,0.5)
+HBox_gtk.pack_start(Label_gtk, False, True, 0)
 
-ComboBox2 =  Gtk.ComboBoxText.new()
-ComboBox2.connect("changed",gtk3_theme_changed)
-HBox2.pack_start(ComboBox2, False, True, 0)
+ComboBox_gtk =  Gtk.ComboBoxText.new()
+ComboBox_gtk.connect("changed",gtk3_theme_changed)
+HBox_gtk.pack_start(ComboBox_gtk, False, True, 0)
 
-HBox3 = Gtk.HBox.new(True, 0)
-VBox_Main.pack_start(HBox3, False, True, 0)
+HBox_bkg = Gtk.HBox.new(True, 0)
+VBox_Main.pack_start(HBox_bkg, False, True, 0)
 
-Label3_1 = Gtk.Label(_("Wallpaper"))
-Label3_1.set_alignment(0,0.5)
-HBox3.pack_start(Label3_1, False, True, 0)
+Label_bkg = Gtk.Label(_("Wallpaper"))
+Label_bkg.set_alignment(0,0.5)
+HBox_bkg.pack_start(Label_bkg, False, True, 0)
 
 gettext.install("gtk30")
-FCB3 = Gtk.FileChooserButton.new(_('Select a File'),Gtk.FileChooserAction.OPEN)
-FCB3.set_current_folder('/usr/share/backgrounds/gnome/')
-filter3 = Gtk.FileFilter()
-filter3.add_pixbuf_formats()
-filter3.set_name('All images')
-FCB3.add_filter(filter3)
-FCB3.connect("file-set",wallpaper_changed)
-HBox3.pack_end(FCB3, False, True, 0)
+FCB_bkg = Gtk.FileChooserButton.new(_('Select a File'),Gtk.FileChooserAction.OPEN)
+FCB_bkg.set_current_folder('/usr/share/backgrounds/gnome/')
+filter_bkg = Gtk.FileFilter()
+filter_bkg.add_pixbuf_formats()
+filter_bkg.set_name('All images')
+FCB_bkg.add_filter(filter_bkg)
+FCB_bkg.connect("file-set",wallpaper_changed)
+HBox_bkg.pack_end(FCB_bkg, False, True, 0)
 gettext.install("gdm3setup")
 
-HBox1 = Gtk.HBox.new(True, 0)
-VBox_Main.pack_start(HBox1, False, True, 0)
+HBox_icon = Gtk.HBox.new(True, 0)
+VBox_Main.pack_start(HBox_icon, False, True, 0)
 
-Label1 = Gtk.Label(_("Icon theme"))
-Label1.set_alignment(0,0.5)
-HBox1.pack_start(Label1, False, True, 0)
+Label_icon = Gtk.Label(_("Icon theme"))
+Label_icon.set_alignment(0,0.5)
+HBox_icon.pack_start(Label_icon, False, True, 0)
 
-ComboBox1 =  Gtk.ComboBoxText.new()
-ComboBox1.connect("changed",icon_theme_changed)
-HBox1.pack_start(ComboBox1, False, True, 0)
+ComboBox_icon =  Gtk.ComboBoxText.new()
+ComboBox_icon.connect("changed",icon_theme_changed)
+HBox_icon.pack_start(ComboBox_icon, False, True, 0)
 
-HBox4 = Gtk.HBox.new(True, 0)
-VBox_Main.pack_start(HBox4, False, True, 0)
+HBox_cursor = Gtk.HBox.new(True, 0)
+VBox_Main.pack_start(HBox_cursor, False, True, 0)
 
-Label4 = Gtk.Label(_("Logo Icon"))
-Label4.set_alignment(0,0.5)
-HBox4.pack_start(Label4, False, True, 0)
+Label_cursor = Gtk.Label(_("Cursor theme"))
+Label_cursor.set_alignment(0,0.5)
+HBox_cursor.pack_start(Label_cursor, False, True, 0)
 
-Entry4 =  Gtk.Entry()
-Entry4.connect("changed",logo_icon_changed)
-HBox4.pack_start(Entry4, False, True, 0)
+ComboBox_cursor =  Gtk.ComboBoxText.new()
+ComboBox_cursor.connect("changed",cursor_theme_changed)
+HBox_cursor.pack_start(ComboBox_cursor, False, True, 0)
 
-HBox5 = Gtk.HBox.new(True, 0)
-VBox_Main.pack_start(HBox5, False, True, 0)
+HBox_logo = Gtk.HBox.new(True, 0)
+VBox_Main.pack_start(HBox_logo, False, True, 0)
 
-CheckButton5 = Gtk.CheckButton(label=_("Disable User List"),use_underline=True)
-CheckButton5.connect("toggled",user_list_toggled)
-HBox5.pack_start(CheckButton5, False, True, 0)
+Label_logo = Gtk.Label(_("Logo Icon"))
+Label_logo.set_alignment(0,0.5)
+HBox_logo.pack_start(Label_logo, False, True, 0)
 
-HBox6 = Gtk.HBox.new(True, 0)
-VBox_Main.pack_start(HBox6, False, True, 0)
+Entry_logo =  Gtk.Entry()
+Entry_logo.connect("changed",logo_icon_changed)
+HBox_logo.pack_start(Entry_logo, False, True, 0)
 
-CheckButton6 = Gtk.CheckButton(label=_("Disable Restart Buttons"),use_underline=True)
-CheckButton6.connect("toggled",menu_btn_toggled)
-HBox6.pack_start(CheckButton6, False, True, 0)
+HBox_user = Gtk.HBox.new(True, 0)
+VBox_Main.pack_start(HBox_user, False, True, 0)
+
+CheckButton_user = Gtk.CheckButton(label=_("Disable User List"),use_underline=True)
+CheckButton_user.connect("toggled",user_list_toggled)
+HBox_user.pack_start(CheckButton_user, False, True, 0)
+
+HBox_restart = Gtk.HBox.new(True, 0)
+VBox_Main.pack_start(HBox_restart, False, True, 0)
+
+CheckButton_restart = Gtk.CheckButton(label=_("Disable Restart Buttons"),use_underline=True)
+CheckButton_restart.connect("toggled",menu_btn_toggled)
+HBox_restart.pack_start(CheckButton_restart, False, True, 0)
 
 HBox9 = Gtk.HBox.new(True, 0)
 VBox_Main.pack_end(HBox9, False, True, 0)
 
-BTN9_1 = Gtk.Button('Load')
-BTN9_1.connect("clicked",get_gdm)
-HBox9.pack_start(BTN9_1, False, False, 0)
+BTN_Load = Gtk.Button(_('Load'))
+BTN_Load.connect("clicked",get_gdm)
+HBox9.pack_start(BTN_Load, False, False, 0)
 
-BTN9_2 = Gtk.Button('Apply')
-BTN9_2.connect("clicked",set_gdm)
-BTN9_2.set_sensitive(False)
-HBox9.pack_start(BTN9_2, False, False, 0)
+BTN_apply = Gtk.Button(_('Apply'))
+BTN_apply.connect("clicked",set_gdm)
+BTN_apply.set_sensitive(False)
+HBox9.pack_start(BTN_apply, False, False, 0)
 
 
 mainwin.show_all()
