@@ -2,6 +2,7 @@ GDM3setup
 =========
 
 A GUI to setting GDM3
+
 nano77 <Nanoarch77@gmail.com>
 
 
@@ -9,12 +10,14 @@ nano77 <Nanoarch77@gmail.com>
 Archlinux
 ---------
 
-GDM3setup is in AUR,you can install : 
+GDM3setup is in AUR, you can install : 
 
 - With an AUR helper like yaourt : `yaourt -S gdm3setup`
 
 - Or without an AUR Helper :
+
 	Get the PKGBUILD from AUR : `wget http://aur.archlinux.org/packages/gdm3setup/PKGBUILD`
+
 	and run `makepkg -i` in its parent directory
 
 
@@ -31,6 +34,7 @@ You can use the "gnomesu" RPM package from : [https://github.com/Nano77/various/
 Ubuntu (Oneiric Ocelot)
 -----------------------
 You need to run `sudo chown gdm:gdm /var/lib/gdm/`
+
 And use the DEB package from : [https://github.com/Nano77/various/tree/master/deb]()
 
 
