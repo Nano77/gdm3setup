@@ -33,7 +33,7 @@ You can use the "gnomesu" RPM package from : [https://github.com/Nano77/various/
 
 Ubuntu (Oneiric Ocelot)
 -----------------------
-You need to run `sudo chown gdm:gdm /var/lib/gdm/`
+You need to run `sudo chown -R gdm:gdm /var/lib/gdm/`
 
 And use the DEB package from : [https://github.com/Nano77/various/tree/master/deb]()
 
