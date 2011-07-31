@@ -19,6 +19,8 @@ WALLPAPER = "/usr/share/backgrounds/gnome/Terraform-blue.jpg"
 LOGO_ICON = "distributor-logo"
 USER_LIST = False
 MENU_BTN = False
+BANNER = False
+BANNER_TEXT = "Wellcome"
 
 #-----------------------------------------------
 def mainwin_close(event):
@@ -72,21 +74,18 @@ def get_iter(model,target):
 def set_gdm(e):
 	file1 = open(os.getcwd()+"/set_gdm.sh",'w')
 	file1.write("su - gdm -s /bin/bash \n\
-dbus-launch 2> /dev/null | grep DBUS_SESSION_BUS_ADDRESS > DBUS_SESSION_BUS_ADDRESS.FILE \n\
-dbus-launch 2> /dev/null | grep DBUS_SESSION_BUS_PID > DBUS_SESSION_BUS_PID.FILE \n\
-read DBUS_SESSION_BUS_ADDRESS_0 < DBUS_SESSION_BUS_ADDRESS.FILE \n\
-read DBUS_SESSION_BUS_PID_0 < DBUS_SESSION_BUS_PID.FILE \n\
-export $DBUS_SESSION_BUS_ADDRESS_0 \n\
-export $DBUS_SESSION_BUS_PID_0 \n\
-echo 'dbus adr : '$DBUS_SESSION_BUS_ADDRESS > test1\n\
-echo 'dbus pid :'$DBUS_SESSION_BUS_PID\n\
+`dbus-launch | sed 's/^/export /'`\n\
 gsettings set org.gnome.desktop.interface gtk-theme "+GTK3_THEME+" \n\
 gsettings set org.gnome.desktop.interface icon-theme "+ICON_THEME+" \n\
 gsettings set org.gnome.desktop.interface cursor-theme "+CURSOR_THEME+" \n\
 gsettings set org.gnome.desktop.background picture-uri 'file://"+WALLPAPER+"' \n\
+gconftool-2 --type string --set /desktop/gnome/peripherals/mouse/cursor_theme '"+CURSOR_THEME+"'\n\
 gconftool-2 --type string --set /apps/gdm/simple-greeter/logo_icon_name '"+LOGO_ICON+"'\n\
 gconftool-2 --type bool --set /apps/gdm/simple-greeter/disable_user_list "+str(USER_LIST)+"\n\
-gconftool-2 --type bool --set /apps/gdm/simple-greeter/disable_restart_buttons "+str(MENU_BTN))
+gconftool-2 --type bool --set /apps/gdm/simple-greeter/disable_restart_buttons "+str(MENU_BTN)+"\n\
+gconftool-2 --type bool --set /apps/gdm/simple-greeter/banner_message_enable "+str(BANNER)+"\n\
+gconftool-2 --type string --set /apps/gdm/simple-greeter/banner_message_text "+BANNER_TEXT+"\n\
+gconftool-2 --type string --set /apps/gdm/simple-greeter/banner_message_text_nochooser "+BANNER_TEXT)
 	file1.close()
 
 	file2 = open(os.getcwd()+"/call_set_gdm.sh",'w')
@@ -103,12 +102,7 @@ echo 'call-set_gdm.sh'")
 def get_gdm(e):
 	file1 = open(os.getcwd()+"/get_gdm.sh",'w')
 	file1.write('su - gdm -s /bin/bash \n\
-dbus-launch 2> /dev/null | grep DBUS_SESSION_BUS_ADDRESS > DBUS_SESSION_BUS_ADDRESS.FILE \n\
-dbus-launch 2> /dev/null | grep DBUS_SESSION_BUS_PID > DBUS_SESSION_BUS_PID.FILE \n\
-read DBUS_SESSION_BUS_ADDRESS_0 < DBUS_SESSION_BUS_ADDRESS.FILE \n\
-read DBUS_SESSION_BUS_PID_0 < DBUS_SESSION_BUS_PID.FILE \n\
-export $DBUS_SESSION_BUS_ADDRESS_0 \n\
-export $DBUS_SESSION_BUS_PID_0 \n\
+`dbus-launch | sed "s/^/export /"`\n\
 echo -n "GTK="\n\
 gsettings get org.gnome.desktop.interface gtk-theme \n\
 echo -n "ICON="\n\
@@ -123,7 +117,13 @@ echo -n "USER_LIST="\n\
 gconftool-2 --get /apps/gdm/simple-greeter/disable_user_list\n\
 echo -n "BTN="\n\
 gconftool-2 --get /apps/gdm/simple-greeter/disable_restart_buttons\n\
+echo -n "BANNER="\n\
+gconftool-2 --get /apps/gdm/simple-greeter/banner_message_enable\n\
+echo -n "BANNER_TEXT="\n\
+gconftool-2 --get /apps/gdm/simple-greeter/banner_message_text\n\
 ')
+#https://wiki.archlinux.org/index.php/GNOME#Login_screen
+
 	file1.close()
 
 	subprocess.call("chmod a+x "+os.getcwd()+"/get_gdm.sh",shell=True) 
@@ -154,6 +154,8 @@ chown "+getpass.getuser()+" /tmp/GDM_SETTINGS\n")
 	ComboBox_icon.set_active_iter(get_iter(ComboBox_icon.get_model(),get_setting("ICON",settings)))
 	ComboBox_cursor.set_active_iter(get_iter(ComboBox_cursor.get_model(),get_setting("CURSOR",settings)))
 	Entry_logo.set_text(get_setting("LOGO",settings))
+	CheckButton_banner.set_active(str_to_bool(get_setting("BANNER",settings)))
+	Entry_banner_text.set_text(get_setting("BANNER_TEXT",settings))
 	CheckButton_user.set_active(str_to_bool(get_setting("USER_LIST",settings)))
  	CheckButton_restart.set_active(str_to_bool(get_setting("BTN",settings)))
 
@@ -195,6 +197,21 @@ def logo_icon_changed(e):
 	print "Logo Icon Changed : " + LOGO_ICON
 	status_update()
 
+def banner_toggled(e):
+	global BANNER
+	BANNER = CheckButton_banner.get_active()
+	print "Banner Changed : " + str(BANNER)
+	if BANNER :
+		Entry_banner_text.set_sensitive(True)
+	else:
+		Entry_banner_text.set_sensitive(False)
+
+def banner_text_changed(e):
+	global BANNER_TEXT
+	BANNER_TEXT = Entry_banner_text.get_text()
+	print "Banner Text Changed : " + BANNER_TEXT
+	status_update()
+
 def user_list_toggled(e):
 	global USER_LIST
 	USER_LIST = CheckButton_user.get_active() 
@@ -206,6 +223,56 @@ def menu_btn_toggled(e):
 	MENU_BTN = CheckButton_restart.get_active() 
 	print "Menu Btn Changed : " + str(MENU_BTN)
 
+def autologin_clicked(e):
+	win_autologin.show_all()
+
+def Close_AutoLogin(e,data):
+	win_autologin.hide()
+	return True
+
+
+
+def AutoLogin_toggled(e):
+	if CheckButton_AutoLogin.get_active():
+		HBox_username.set_sensitive(True)
+		HBox_Delay.set_sensitive(True)
+	else:
+		HBox_username.set_sensitive(False)
+		HBox_Delay.set_sensitive(False)
+
+	if Entry_username.get_text()!="" or not CheckButton_AutoLogin.get_active():
+		HBox_AutoLogin_Apply.set_sensitive(True)
+	else:
+		HBox_AutoLogin_Apply.set_sensitive(False)	
+
+def username_changed(e):
+	if Entry_username.get_text()!="":
+		HBox_AutoLogin_Apply.set_sensitive(True)
+	else:
+		HBox_AutoLogin_Apply.set_sensitive(False)	
+
+def Delay_toggled(e):
+	if CheckButton_Delay.get_active():
+		SpinButton_Delay.set_sensitive(True)
+	else:
+		SpinButton_Delay.set_sensitive(False)
+
+def AutoLogin_Apply_clicked(e):
+	AUTOLOGIN = CheckButton_AutoLogin.get_active()
+	TIMED = CheckButton_Delay.get_active()
+	TIMED_TIME = SpinButton_Delay.get_value()
+	USERNAME = Entry_username.get_text()
+
+	if AUTOLOGIN :
+		if TIMED :
+			subprocess.call("gksu 'gdmlogin.py -a -u "+USERNAME+" -d "+str(int(TIMED_TIME))+"'",shell=True)
+		else:
+			subprocess.call("gksu 'gdmlogin.py -a -u "+USERNAME+"'",shell=True)
+	else:
+		subprocess.call("gksu 'gdmlogin.py -m'",shell=True)
+
+	win_autologin.hide()
+
 #-----------------------------------------------
 mainwin = Gtk.Window()
 mainwin.connect("destroy",mainwin_close)
@@ -215,26 +282,29 @@ mainwin.set_resizable(False)
 mainwin.set_title(_("GDM3 Setup"))
 mainwin.set_icon_name("preferences-desktop-theme")
 
-VBox_Main = Gtk.VBox.new(False, 0)
+VBox_Main = Gtk.VBox.new(False, 4)
 mainwin.add(VBox_Main)
 
-HBox_gtk = Gtk.HBox.new(True, 0)
-VBox_Main.pack_start(HBox_gtk, False, True, 0)
+HBox_Main = Gtk.HBox.new(False, 16)
+VBox_Main.pack_start(HBox_Main, False, False, 0)
+
+VBox_Left = Gtk.VBox.new(True, 0)
+HBox_Main.pack_start(VBox_Left, False, False, 0)
+
+VBox_Right = Gtk.VBox.new(False, 0)
+HBox_Main.pack_start(VBox_Right, False, False, 0)
 
 Label_gtk = Gtk.Label(_("GTK3 theme"))
 Label_gtk.set_alignment(0,0.5)
-HBox_gtk.pack_start(Label_gtk, False, True, 0)
+VBox_Left.pack_start(Label_gtk, False, True, 0)
 
 ComboBox_gtk =  Gtk.ComboBoxText.new()
 ComboBox_gtk.connect("changed",gtk3_theme_changed)
-HBox_gtk.pack_start(ComboBox_gtk, False, True, 0)
-
-HBox_bkg = Gtk.HBox.new(True, 0)
-VBox_Main.pack_start(HBox_bkg, False, True, 0)
+VBox_Right.pack_start(ComboBox_gtk, False, True, 0)
 
 Label_bkg = Gtk.Label(_("Wallpaper"))
 Label_bkg.set_alignment(0,0.5)
-HBox_bkg.pack_start(Label_bkg, False, True, 0)
+VBox_Left.pack_start(Label_bkg, False, True, 0)
 
 gettext.install("gtk30")
 FCB_bkg = Gtk.FileChooserButton.new(_('Select a File'),Gtk.FileChooserAction.OPEN)
@@ -244,41 +314,42 @@ filter_bkg.add_pixbuf_formats()
 filter_bkg.set_name('All images')
 FCB_bkg.add_filter(filter_bkg)
 FCB_bkg.connect("file-set",wallpaper_changed)
-HBox_bkg.pack_end(FCB_bkg, False, True, 0)
+VBox_Right.pack_start(FCB_bkg, False, True, 0)
 gettext.install("gdm3setup")
-
-HBox_icon = Gtk.HBox.new(True, 0)
-VBox_Main.pack_start(HBox_icon, False, True, 0)
 
 Label_icon = Gtk.Label(_("Icon theme"))
 Label_icon.set_alignment(0,0.5)
-HBox_icon.pack_start(Label_icon, False, True, 0)
+VBox_Left.pack_start(Label_icon, False, True, 0)
 
 ComboBox_icon =  Gtk.ComboBoxText.new()
 ComboBox_icon.connect("changed",icon_theme_changed)
-HBox_icon.pack_start(ComboBox_icon, False, True, 0)
-
-HBox_cursor = Gtk.HBox.new(True, 0)
-VBox_Main.pack_start(HBox_cursor, False, True, 0)
+VBox_Right.pack_start(ComboBox_icon, False, True, 0)
 
 Label_cursor = Gtk.Label(_("Cursor theme"))
 Label_cursor.set_alignment(0,0.5)
-HBox_cursor.pack_start(Label_cursor, False, True, 0)
+VBox_Left.pack_start(Label_cursor, False, True, 0)
 
 ComboBox_cursor =  Gtk.ComboBoxText.new()
 ComboBox_cursor.connect("changed",cursor_theme_changed)
-HBox_cursor.pack_start(ComboBox_cursor, False, True, 0)
-
-HBox_logo = Gtk.HBox.new(True, 0)
-VBox_Main.pack_start(HBox_logo, False, True, 0)
+VBox_Right.pack_start(ComboBox_cursor, False, True, 0)
 
 Label_logo = Gtk.Label(_("Logo Icon"))
 Label_logo.set_alignment(0,0.5)
-HBox_logo.pack_start(Label_logo, False, True, 0)
+VBox_Left.pack_start(Label_logo, False, True, 0)
 
 Entry_logo =  Gtk.Entry()
 Entry_logo.connect("changed",logo_icon_changed)
-HBox_logo.pack_start(Entry_logo, False, True, 0)
+VBox_Right.pack_start(Entry_logo, False, True, 0)
+
+CheckButton_banner = Gtk.CheckButton(label=_("Enable Banner"),use_underline=True)
+CheckButton_banner.connect("toggled",banner_toggled)
+VBox_Left.pack_start(CheckButton_banner, False, True, 0)
+
+Entry_banner_text =  Gtk.Entry()
+Entry_banner_text.set_sensitive(False)
+Entry_banner_text.set_text("Wellcome")
+Entry_banner_text.connect("changed",banner_text_changed)
+VBox_Right.pack_start(Entry_banner_text, False, True, 0)
 
 HBox_user = Gtk.HBox.new(True, 0)
 VBox_Main.pack_start(HBox_user, False, True, 0)
@@ -294,17 +365,71 @@ CheckButton_restart = Gtk.CheckButton(label=_("Disable Restart Buttons"),use_und
 CheckButton_restart.connect("toggled",menu_btn_toggled)
 HBox_restart.pack_start(CheckButton_restart, False, True, 0)
 
-HBox9 = Gtk.HBox.new(True, 0)
-VBox_Main.pack_end(HBox9, False, True, 0)
+HBox9 = Gtk.HBox.new(False, 8)
+VBox_Main.pack_end(HBox9, False, False, 0)
 
-BTN_Load = Gtk.Button(_('Load'))
-BTN_Load.connect("clicked",get_gdm)
-HBox9.pack_start(BTN_Load, False, False, 0)
+BTN_autologin = Gtk.Button(_('AutoLogin'))
+BTN_autologin.connect("clicked",autologin_clicked)
+HBox9.pack_start(BTN_autologin, False, False, 0)
 
 BTN_apply = Gtk.Button(_('Apply'))
 BTN_apply.connect("clicked",set_gdm)
 BTN_apply.set_sensitive(False)
-HBox9.pack_start(BTN_apply, False, False, 0)
+HBox9.pack_end(BTN_apply, False, False, 0)
+
+BTN_Load = Gtk.Button(_('Load'))
+BTN_Load.connect("clicked",get_gdm)
+HBox9.pack_end(BTN_Load, False, False, 0)
+
+#-------
+win_autologin = Gtk.Window()
+win_autologin.connect("delete-event",Close_AutoLogin)
+win_autologin.set_border_width(10)
+win_autologin.set_position(Gtk.WindowPosition.CENTER_ON_PARENT)
+win_autologin.set_modal(True)
+win_autologin.set_transient_for(mainwin)
+win_autologin.set_resizable(False)
+win_autologin.set_title(_("GDM AutoLogin Setup"))
+
+VBoxMain_Autologin = Gtk.VBox.new(False, 8)
+win_autologin.add(VBoxMain_Autologin)
+
+CheckButton_AutoLogin = Gtk.CheckButton(label=_("Enable Automatic Login"),use_underline=True)
+CheckButton_AutoLogin.connect("toggled",AutoLogin_toggled)
+VBoxMain_Autologin.pack_start(CheckButton_AutoLogin, False, False, 0)
+
+HBox_username = Gtk.HBox.new(False, 0)
+HBox_username.set_sensitive(False)
+VBoxMain_Autologin.pack_start(HBox_username, False, False, 0)
+
+Label_username = Gtk.Label(_("User Name"))
+Label_username.set_alignment(0,0.5)
+HBox_username.pack_start(Label_username, False, False, 0)
+
+Entry_username =  Gtk.Entry()
+Entry_username.connect("changed",username_changed)
+HBox_username.pack_end(Entry_username, False, False, 0)
+
+HBox_Delay = Gtk.HBox.new(False, 8)
+HBox_Delay.set_sensitive(False)
+VBoxMain_Autologin.pack_start(HBox_Delay, False, False, 0)
+
+CheckButton_Delay = Gtk.CheckButton(label=_("Enable Delay before autologin"),use_underline=True)
+CheckButton_Delay.connect("toggled",Delay_toggled)
+HBox_Delay.pack_start(CheckButton_Delay, False, False, 0)
+
+SpinButton_Delay = Gtk.SpinButton.new_with_range(1,60,1)
+SpinButton_Delay.set_value(10)
+SpinButton_Delay.set_sensitive(False)
+HBox_Delay.pack_end(SpinButton_Delay, False, False, 0)
+
+HBox_AutoLogin_Apply = Gtk.HBox.new(False, 0)
+VBoxMain_Autologin.pack_end(HBox_AutoLogin_Apply, False, False, 0)
+
+BTN_AutoLogin_Apply = Gtk.Button(_('Apply'))
+BTN_AutoLogin_Apply.connect("clicked",AutoLogin_Apply_clicked)
+HBox_AutoLogin_Apply.pack_start(BTN_AutoLogin_Apply, True, False, 0)
+
 
 
 mainwin.show_all()
