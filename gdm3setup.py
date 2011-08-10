@@ -72,77 +72,27 @@ def get_iter(model,target):
 	return target_iter
 
 def set_gdm(e):
-	file1 = open(os.getcwd()+"/set_gdm.sh",'w')
-	file1.write("su - gdm -s /bin/bash \n\
-`dbus-launch | sed 's/^/export /'`\n\
-gsettings set org.gnome.desktop.interface gtk-theme "+GTK3_THEME+" \n\
-gsettings set org.gnome.desktop.interface icon-theme "+ICON_THEME+" \n\
-gsettings set org.gnome.desktop.interface cursor-theme "+CURSOR_THEME+" \n\
-gsettings set org.gnome.desktop.background picture-uri 'file://"+WALLPAPER+"' \n\
-gconftool-2 --type string --set /desktop/gnome/peripherals/mouse/cursor_theme '"+CURSOR_THEME+"'\n\
-gconftool-2 --type string --set /apps/gdm/simple-greeter/logo_icon_name '"+LOGO_ICON+"'\n\
-gconftool-2 --type bool --set /apps/gdm/simple-greeter/disable_user_list "+str(USER_LIST)+"\n\
-gconftool-2 --type bool --set /apps/gdm/simple-greeter/disable_restart_buttons "+str(MENU_BTN)+"\n\
-gconftool-2 --type bool --set /apps/gdm/simple-greeter/banner_message_enable "+str(BANNER)+"\n\
-gconftool-2 --type string --set /apps/gdm/simple-greeter/banner_message_text "+BANNER_TEXT+"\n\
-gconftool-2 --type string --set /apps/gdm/simple-greeter/banner_message_text_nochooser "+BANNER_TEXT)
-	file1.close()
-
-	file2 = open(os.getcwd()+"/call_set_gdm.sh",'w')
-	file2.write("/bin/bash < "+os.getcwd()+"/set_gdm.sh\n\
-echo 'call-set_gdm.sh'")
-	file2.close()
-
-	subprocess.call("chmod u+x "+os.getcwd()+"/call_set_gdm.sh",shell=True)
-	subprocess.call("gksu "+os.getcwd()+"/call_set_gdm.sh",shell=True)
-
-	os.remove(os.getcwd()+"/call_set_gdm.sh")
-	os.remove(os.getcwd()+"/set_gdm.sh")
+	subprocess.call( \
+	'gksu -D "GDM3Setup" "su - gdm -s /bin/sh -c '+"'"+'set_gdm.sh'+ \
+	' --GTK3_THEME='+GTK3_THEME+ \
+	' --ICON_THEME='+ICON_THEME+ \
+	' --CURSOR_THEME='+CURSOR_THEME+ \
+	' --WALLPAPER='+WALLPAPER+ \
+	' --LOGO_ICON='+LOGO_ICON+ \
+	' --USER_LIST='+str(USER_LIST)+ \
+	' --MENU_BTN='+str(MENU_BTN)+ \
+	' --BANNER='+str(BANNER)+ \
+	' --BANNER_TEXT='+BANNER_TEXT \
+	+"'"+'"' 
+	,shell=True)
 
 def get_gdm(e):
-	file1 = open(os.getcwd()+"/get_gdm.sh",'w')
-	file1.write('su - gdm -s /bin/bash \n\
-`dbus-launch | sed "s/^/export /"`\n\
-echo -n "GTK="\n\
-gsettings get org.gnome.desktop.interface gtk-theme \n\
-echo -n "ICON="\n\
-gsettings get org.gnome.desktop.interface icon-theme \n\
-echo -n "CURSOR="\n\
-gsettings get org.gnome.desktop.interface cursor-theme \n\
-echo -n "BKG="\n\
-gsettings get org.gnome.desktop.background picture-uri \n\
-echo -n "LOGO="\n\
-gconftool-2 --get /apps/gdm/simple-greeter/logo_icon_name\n\
-echo -n "USER_LIST="\n\
-gconftool-2 --get /apps/gdm/simple-greeter/disable_user_list\n\
-echo -n "BTN="\n\
-gconftool-2 --get /apps/gdm/simple-greeter/disable_restart_buttons\n\
-echo -n "BANNER="\n\
-gconftool-2 --get /apps/gdm/simple-greeter/banner_message_enable\n\
-echo -n "BANNER_TEXT="\n\
-gconftool-2 --get /apps/gdm/simple-greeter/banner_message_text\n\
-')
-#https://wiki.archlinux.org/index.php/GNOME#Login_screen
+	p = subprocess.call('gksu -D "GDM3Setup" "su - gdm -s /bin/sh -c '+'get_gdm.sh'+' && chown '+getpass.getuser()+' /tmp/GET_GDM"',shell=True)
 
-	file1.close()
-
-	subprocess.call("chmod a+x "+os.getcwd()+"/get_gdm.sh",shell=True) 
-
-	file2 = open(os.getcwd()+"/call_get_gdm.sh",'w') 
-	file2.write("/bin/bash < "+os.getcwd()+"/get_gdm.sh > /tmp/GDM_SETTINGS\n\
-chown "+getpass.getuser()+" /tmp/GDM_SETTINGS\n")
-	file2.close()
-	
-	subprocess.call("chmod u+x "+os.getcwd()+"/call_get_gdm.sh",shell=True)
-	subprocess.call("gksu "+os.getcwd()+"/call_get_gdm.sh",shell=True)
-	time.sleep(1)	
-	file3 = open("/tmp/GDM_SETTINGS",'r')
+	file3 = open("/tmp/GET_GDM",'r')
 	settings = file3.readlines()
 	file3.close()
-
-	os.remove(os.getcwd()+"/get_gdm.sh")
-	os.remove(os.getcwd()+"/call_get_gdm.sh")
-	os.remove("/tmp/GDM_SETTINGS")
+	os.remove("/tmp/GET_GDM")
 
 	#---------------
 	global WALLPAPER
@@ -230,8 +180,6 @@ def Close_AutoLogin(e,data):
 	win_autologin.hide()
 	return True
 
-
-
 def AutoLogin_toggled(e):
 	if CheckButton_AutoLogin.get_active():
 		HBox_username.set_sensitive(True)
@@ -265,11 +213,11 @@ def AutoLogin_Apply_clicked(e):
 
 	if AUTOLOGIN :
 		if TIMED :
-			subprocess.call("gksu 'gdmlogin.py -a -u "+USERNAME+" -d "+str(int(TIMED_TIME))+"'",shell=True)
+			subprocess.call("gksu -D 'GDM3Setup' 'gdmlogin.py -a -u "+USERNAME+" -d "+str(int(TIMED_TIME))+"'",shell=True)
 		else:
-			subprocess.call("gksu 'gdmlogin.py -a -u "+USERNAME+"'",shell=True)
+			subprocess.call("gksu -D 'GDM3Setup' 'gdmlogin.py -a -u "+USERNAME+"'",shell=True)
 	else:
-		subprocess.call("gksu 'gdmlogin.py -m'",shell=True)
+		subprocess.call("gksu -D 'GDM3Setup' 'gdmlogin.py -m'",shell=True)
 
 	win_autologin.hide()
 
