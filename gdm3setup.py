@@ -87,7 +87,7 @@ def set_gdm(e):
 	,shell=True)
 
 def get_gdm(e):
-	p = subprocess.call('gksu -D "GDM3Setup" "su - gdm -s /bin/sh -c '+'get_gdm.sh'+' && chown '+getpass.getuser()+' /tmp/GET_GDM"',shell=True)
+	p = subprocess.call('gksu -D "GDM3Setup" get_gdm_helper.sh '+getpass.getuser(),shell=True)
 
 	file3 = open("/tmp/GET_GDM",'r')
 	settings = file3.readlines()
