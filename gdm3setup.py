@@ -20,7 +20,7 @@ LOGO_ICON = "distributor-logo"
 USER_LIST = False
 MENU_BTN = False
 BANNER = False
-BANNER_TEXT = "Wellcome"
+BANNER_TEXT = "Welcome"
 
 #-----------------------------------------------
 def mainwin_close(event):
@@ -295,7 +295,7 @@ VBox_Left.pack_start(CheckButton_banner, False, True, 0)
 
 Entry_banner_text =  Gtk.Entry()
 Entry_banner_text.set_sensitive(False)
-Entry_banner_text.set_text("Wellcome")
+Entry_banner_text.set_text(BANNER_TEXT)
 Entry_banner_text.connect("changed",banner_text_changed)
 VBox_Right.pack_start(Entry_banner_text, False, True, 0)
 
