@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE policyconfig PUBLIC
+ "-//freedesktop//DTD PolicyKit Policy Configuration 1.0//EN"
+ "http://www.freedesktop.org/standards/PolicyKit/1.0/policyconfig.dtd">
+<policyconfig>
+  <vendor>Nano77</vendor>
+  <vendor_url>http://github.com/Nano77</vendor_url>
+  <icon_name>stock_person</icon_name>
+
+
+  <action id="apps.nano77.gdm3setup.set">
+    <description>GDM3 Setup</description>
+    <message>Authentication is required to change GDM3 parameters</message>
+    <message xml:lang="fr">L'authentification est nécéssaire pour changer les paramétres de GDM3</message>
+    <message xml:lang="de_DE">Authentifizierung erforderlichzur änderung von einstellungen der GDM3</message>
+    <message xml:lang="it_IT">L'autenticazione è necessaria.per modificare impostazioni di GDM3</message>
+    <message xml:lang="es_ES">La autenticación es necesaria para cambiar la Configuratión de GDM3</message>
+    <defaults>
+      <allow_any>no</allow_any>
+      <allow_inactive>no</allow_inactive>
+      <allow_active>auth_admin_keep</allow_active>
+    </defaults>
+  </action>
+
+</policyconfig>

@@ -4,7 +4,6 @@ import os
 import sys
 import getopt
 
-	
 CONF_PATH = "/etc/gdm/custom.conf"
 
 #---
@@ -85,7 +84,7 @@ if os.getuid()==0 :
 
 
 	if not os.path.isfile(CONF_PATH) :
-		
+
 		ofile = open(CONF_PATH,'w')
 		ofile.write("# GDM configuration storage\n\n\
 [daemon]\n\n\
@@ -96,7 +95,6 @@ if os.getuid()==0 :
 [debug]\n\n\
 ")
 		ofile.close()
-	
 
 	if (MANUALLOGIN and AUTOLOGIN) or (AUTOLOGIN and not USER) or (not AUTOLOGIN and not MANUALLOGIN):
 		if MANUALLOGIN and AUTOLOGIN :
@@ -111,7 +109,7 @@ if os.getuid()==0 :
  -d :\tDelay before autologin in second"
 
 	else:
-		if AUTOLOGIN :	
+		if AUTOLOGIN :
 			if AUTOLOGIN and not TIMED :
 				print "AutomaticLoginEnable=1"
 				print "AutomaticLogin="+USER_NAME
@@ -127,11 +125,11 @@ if os.getuid()==0 :
 				SetValue(CONF_PATH,"daemon","AutomaticLoginEnable","0")
 				SetValue(CONF_PATH,"daemon","TimedLoginEnable","1")
 				SetValue(CONF_PATH,"daemon","TimedLogin",USER_NAME)
-				SetValue(CONF_PATH,"daemon","TimedLoginDelay",TIMED_TIME)	
+				SetValue(CONF_PATH,"daemon","TimedLoginDelay",TIMED_TIME)
 		else:
 			print "AutomaticLoginEnable=0"
 			print "TimedLoginEnable=0"
-			SetValue(CONF_PATH,"daemon","AutomaticLoginEnable","0")	
+			SetValue(CONF_PATH,"daemon","AutomaticLoginEnable","0")
 			SetValue(CONF_PATH,"daemon","TimedLoginEnable","0")
 else:
 	print >> sys.stderr, "Must Be Run as root"

@@ -1,0 +1,14 @@
+#! /bin/bash
+#
+#
+. /etc/rc.conf 2>/dev/null
+
+if [ "$LOCALE" != "" ] 
+then
+	export LANG="$LOCALE"
+else
+	export LANG="en_US.utf8"
+fi
+
+gdm3setup-daemon.py &
+

@@ -1,8 +1,7 @@
-#! /bin/sh
+#! /bin/bash
 #
 #
 
-`dbus-launch | sed "s/^/export /"`
 echo -n "GTK=" > /tmp/GET_GDM
 gsettings get org.gnome.desktop.interface gtk-theme >> /tmp/GET_GDM
 echo -n "ICON=" >> /tmp/GET_GDM

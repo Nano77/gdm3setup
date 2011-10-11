@@ -37,5 +37,8 @@ You need to run `sudo chown -R gdm:gdm /var/lib/gdm/`
 
 And use the DEB package from : [https://github.com/Nano77/various/tree/master/deb]()
 
+Debian (experimental)
+------
+You can use the "debian" DEB package from : [https://github.com/Nano77/various/tree/master/deb]()
 
 
