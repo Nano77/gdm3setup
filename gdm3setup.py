@@ -6,7 +6,10 @@ import stat
 import time
 import subprocess
 from gi.repository import Gtk
+from gi.repository import GdkPixbuf
+from gi.repository import GnomeDesktop
 from gi.repository import GObject
+from gi.repository import Gio
 import gettext
 import getpass
 
@@ -34,21 +37,16 @@ class WallpaperChooserClass(Gtk.Bin):
 		gettext.install("gtk30")
 		self.Button = Gtk.Button(_('(None)'))
 		gettext.install("gdm3setup")
+		self.Label = self.Button.get_children()[0]
 		self.Image = Gtk.Image()
 		self.Image.set_from_icon_name("fileopen",Gtk.IconSize.SMALL_TOOLBAR)
-		self.Button.set_image(self.Image)
-		self.Button.set_image_position(Gtk.PositionType.RIGHT)
-		self.Align = self.Button.get_children()[0]
-		self.Button.remove(self.Align)
-		self.Box = self.Align.get_children()[0]
-		self.Align.remove(self.Box)
-		self.Label = self.Box.get_children()[0]
-		self.Image = self.Box.get_children()[1]
-		self.Button.add(self.Box)
-		self.Box.set_child_packing(self.Label,False,False,0,Gtk.PackType.START)
-		self.Box.set_child_packing(self.Image,False,False,0,Gtk.PackType.END)
 		self.Sepparator = Gtk.Separator.new(Gtk.Orientation.VERTICAL)
-		self.Box.pack_end(self.Sepparator, False, False, 8)
+		self.Box = Gtk.HBox.new(False,0)
+		self.Button.remove(self.Label)
+		self.Button.add(self.Box)
+		self.Box.pack_start(self.Label,False,False,2)
+		self.Box.pack_end(self.Image,False,False,2)
+		self.Box.pack_end(self.Sepparator,False,False,2)
 		GObject.signal_new("file-changed", WallpaperChooserClass, GObject.SIGNAL_RUN_FIRST,GObject.TYPE_NONE, ())
 		self.Filename = ""
 		self.Button.connect("clicked",self._Clicked)
@@ -68,7 +66,17 @@ class WallpaperChooserClass(Gtk.Bin):
 		filter = Gtk.FileFilter()
 		filter.add_pixbuf_formats()
 		filter.set_name('Image')
+		self.PreviewImage = Gtk.Image()
+		self.PreviewBox = Gtk.VBox.new(False, 16)
+		self.PreviewBox.set_size_request(200,-1);
+		self.PreviewBox.pack_start(self.PreviewImage, False, False, 0)
+		self.PreviewImage.show()
 		self.FileChooserDialog.add_filter(filter)
+		self.FileChooserDialog.set_filename(self.Filename)
+		self.FileChooserDialog.add_shortcut_folder('/usr/share/backgrounds')
+		self.FileChooserDialog.set_preview_widget(self.PreviewBox)
+		self.FileChooserDialog.set_preview_widget_active(False)
+		self.FileChooserDialog.connect("update-preview",self._UpdatePreview)
 		result = self.FileChooserDialog.run()
 		if result==Gtk.ResponseType.ACCEPT :
 			self.Filename = self.FileChooserDialog.get_filename()
@@ -77,6 +85,21 @@ class WallpaperChooserClass(Gtk.Bin):
 			self.emit("file-changed")
 		else:
 			self.FileChooserDialog.destroy()
+
+	def _UpdatePreview(self,e) :
+		uri = self.FileChooserDialog.get_preview_uri()
+		try:
+			file = Gio.File.new_for_uri(uri)
+			file_info = file.query_info("*",Gio.FileQueryInfoFlags.NONE,None)
+			mtime = file_info.get_attribute_uint64(Gio.FILE_ATTRIBUTE_TIME_MODIFIED)
+			ThumbnailFactory = GnomeDesktop.DesktopThumbnailFactory.new(GnomeDesktop.DesktopThumbnailSize.NORMAL)
+			thumbpath = ThumbnailFactory.lookup(uri,mtime)
+			pixbuf = GdkPixbuf.Pixbuf.new_from_file(thumbpath)
+			self.PreviewImage.set_from_pixbuf(pixbuf)
+			self.FileChooserDialog.set_preview_widget_active(True)
+		except Exception, e:
+			self.FileChooserDialog.set_preview_widget_active(False)
+			print e
 
 #-----------------------------------------------
 def mainwin_close(event):
@@ -176,7 +199,7 @@ def gtk3_theme_changed(e):
 
 def wallpaper_filechanged(e):
 	global WALLPAPER
-	wallpaper = unicode(WallpaperChooser.Get_Filename(),'UTF_8')
+	wallpaper = WallpaperChooser.Get_Filename()
 	if WALLPAPER != wallpaper :
 		if set_gdm('WALLPAPER',wallpaper) :
 			WALLPAPER = wallpaper 

@@ -23,12 +23,12 @@ GDM3setup is in AUR, you can install :
 
 Fedora
 ------
-You can use the "beesu" RPM package from : [https://github.com/Nano77/various/tree/master/rpm]()
+You can use the RPM package from : [https://github.com/Nano77/various/tree/master/rpm]()
 
 
 OpenSUSE
 --------
-You can use the "gnomesu" RPM package from : [https://github.com/Nano77/various/tree/master/rpm]()
+You can use the RPM package from : [https://github.com/Nano77/various/tree/master/rpm]()
 
 
 Ubuntu (Oneiric Ocelot)

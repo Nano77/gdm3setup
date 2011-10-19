@@ -16,18 +16,20 @@ loop = GObject.MainLoop()
 
 def GetValue(target,default):
 	targetfile = "/etc/gdm/custom.conf"
-	ofile = open(targetfile,'r')
-	lines = ofile.readlines()
-	ofile.close()
-
-	value = ""
-	for i in range(len(lines)) :
-		line = lines[i].strip()
-		if line[0:len(target)+1]==target+"=" :
-			value = line[len(target)+1:len(line)]
-			break
-		else:
-			value=default
+	try:
+		ofile = open(targetfile,'r')
+		lines = ofile.readlines()
+		ofile.close()
+		value = ""
+		for i in range(len(lines)) :
+			line = lines[i].strip()
+			if line[0:len(target)+1]==target+"=" :
+				value = line[len(target)+1:len(line)]
+				break
+			else:
+				value=default
+	except IOError as (errno, strerror):
+		value=default
 	return value
 
 def str_to_bool(state) :
@@ -61,7 +63,7 @@ class GDM3SetupDBusService(dbus.service.Object):
 					sender_keyword='sender', connection_keyword='connexion')
 	def SetUI(self,name,value,sender=None, connexion=None):
 		if self.policykit_test(sender,connexion,'apps.nano77.gdm3setup.set') :
-			subprocess.call(unicode("su - gdm -s /bin/bash -c 'LANG="+LANG+" set_gdm.sh -n "+name+" -v "+'"'+value+'"'+"'"),shell=True)
+			subprocess.call('su - gdm -s /bin/bash -c "LANG='+LANG+' set_gdm.sh -n '+name+' -v '+"'"+value+"'"+'"',shell=True)
 			return "OK"
 		else :
 			return "ERROR : YOU ARE NOT ALLOWED !"

@@ -4,7 +4,6 @@
 
 `dbus-launch | sed "s/^/export /"`
 
-echo "|$LANG|"
 
 parameter_name=""
 parameter_value=""
