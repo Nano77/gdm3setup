@@ -45,6 +45,10 @@ else
 			echo "$parameter_name = $parameter_value"
 			gsettings set org.gnome.desktop.interface gtk-theme "$parameter_value"
 			;;
+		FONT)
+			echo "$parameter_name = $parameter_value"
+			gsettings set org.gnome.desktop.interface font-name "$parameter_value"
+			;;
 		ICON_THEME)
 			echo "$parameter_name = $parameter_value"
 			gsettings set org.gnome.desktop.interface icon-theme "$parameter_value"
@@ -63,7 +67,9 @@ else
 			gconftool-2 --type string --set /apps/gdm/simple-greeter/logo_icon_name "$parameter_value"
 			;;
 		USER_LIST)
+			echo "$parameter_name = $parameter_value"
 			gconftool-2 --type bool --set /apps/gdm/simple-greeter/disable_user_list $parameter_value
+			gsettings set org.gnome.login-screen disable-user-list $parameter_value
 			;;
 		MENU_BTN)
 			echo "$parameter_name = $parameter_value"

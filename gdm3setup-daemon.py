@@ -8,7 +8,6 @@ import subprocess
 import os
 from gi.repository import GObject
 
-
 subprocess.call("echo $LANG",shell=True)
 LANG = os.environ['LANG']
 
@@ -40,6 +39,38 @@ def str_to_bool(state) :
 
 	return b_state
 
+def HackShellTheme(b):
+	if b :
+		os.rename('/usr/share/gnome-shell/theme','/usr/share/gnome-shell/theme.original')
+		os.symlink('/usr/share/gnome-shell/theme.original','/usr/share/gnome-shell/theme')
+		os.symlink('/usr/share/gnome-shell/theme.original','/usr/share/themes/Adwaita/gnome-shell')
+	else :
+		os.remove('/usr/share/themes/Adwaita/gnome-shell')
+		os.remove('/usr/share/gnome-shell/theme')
+		os.rename('/usr/share/gnome-shell/theme.original','/usr/share/gnome-shell/theme')
+
+def Get_Shell_theme():
+	if os.path.islink('/usr/share/gnome-shell/theme'):
+		theme_path = os.readlink('/usr/share/gnome-shell/theme')
+		if theme_path == '/usr/share/gnome-shell/theme.original':
+			shell_theme='Adwaita'
+		else :
+			tb_path =  theme_path.split('/')
+			shell_theme = tb_path[len(tb_path)-2]
+	else :
+		shell_theme='Adwaita'
+
+	return shell_theme
+
+def Set_Shell_theme(value):
+	if value=='Adwaita':
+		HackShellTheme(False)
+	else:
+		if not os.path.islink('/usr/share/gnome-shell/theme'):
+			HackShellTheme(True)
+		os.remove('/usr/share/gnome-shell/theme')
+		os.symlink('/usr/share/themes/'+value+'/gnome-shell','/usr/share/gnome-shell/theme')
+
 class GDM3SetupDBusService(dbus.service.Object):
 	def __init__(self):
 		bus=dbus.SystemBus()
@@ -63,7 +94,11 @@ class GDM3SetupDBusService(dbus.service.Object):
 					sender_keyword='sender', connection_keyword='connexion')
 	def SetUI(self,name,value,sender=None, connexion=None):
 		if self.policykit_test(sender,connexion,'apps.nano77.gdm3setup.set') :
-			subprocess.call('su - gdm -s /bin/bash -c "LANG='+LANG+' set_gdm.sh -n '+name+' -v '+"'"+value+"'"+'"',shell=True)
+			if name!='SHELL_THEME':
+				subprocess.call('su - gdm -s /bin/bash -c "LANG='+LANG+' set_gdm.sh -n '+name+' -v '+"'"+value+"'"+'"',shell=True)
+			else :
+				Set_Shell_theme(value)
+
 			return "OK"
 		else :
 			return "ERROR : YOU ARE NOT ALLOWED !"
@@ -75,6 +110,7 @@ class GDM3SetupDBusService(dbus.service.Object):
 		settings = ifile.readlines()
 		ifile.close()
 		os.remove("/tmp/GET_GDM")
+		settings.append("SHELL='"+Get_Shell_theme()+"'\n")
 		return settings
 
 	@dbus.service.method('apps.nano77.gdm3setup.set','bsbi','s',sender_keyword='sender', connection_keyword='connexion')

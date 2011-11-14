@@ -20,7 +20,9 @@ gettext.install("gdm3setup")
 print os.environ['LANG']
 
 GTK3_THEME = u"Zukitwo"
+SHELL_THEME = u"Adwaita"
 ICON_THEME = u"Faenza-Dark"
+FONT_NAME = u"Cantarell 11"
 CURSOR_THEME = u"Adwaita"
 WALLPAPER = u"/usr/share/backgrounds/gnome/Terraform-blue.jpg"
 LOGO_ICON = u"distributor-logo"
@@ -108,11 +110,22 @@ def mainwin_close(event):
 
 def load_gtk3_list():
 
-	lst_themes = os.listdir('/usr/share/themes')
+	lst_gtk_themes = os.listdir('/usr/share/themes')
 
-	for i in range(len(lst_themes)):
-		if os.path.isdir('/usr/share/themes/'+lst_themes[i]+'/gtk-3.0') :
-			ComboBox_gtk.append_text(lst_themes[i])
+	for i in range(len(lst_gtk_themes)):
+		if os.path.isdir('/usr/share/themes/'+lst_gtk_themes[i]+'/gtk-3.0') :
+			ComboBox_gtk.append_text(lst_gtk_themes[i])
+
+def load_shell_list():
+
+	lst_shell_themes = os.listdir('/usr/share/themes')
+	if not os.path.islink('/usr/share/gnome-shell/theme'):
+		ComboBox_shell.append_text("Adwaita")
+
+	for i in range(len(lst_shell_themes)):
+		if os.path.isdir('/usr/share/themes/'+lst_shell_themes[i]+'/gnome-shell') :
+			if os.path.isfile('/usr/share/themes/'+lst_shell_themes[i]+'/gnome-shell/gdm.css') :
+				ComboBox_shell.append_text(lst_shell_themes[i])
 
 def load_icon_list():
 	lst_icons = os.listdir('/usr/share/icons')
@@ -164,8 +177,9 @@ def set_gdm(name,value):
 
 def get_gdm():
 	settings = list(GetUI())
-	global GTK3_THEME,ICON_THEME,CURSOR_THEME,WALLPAPER,LOGO_ICON,USER_LIST,MENU_BTN,BANNER,BANNER_TEXT
+	global GTK3_THEME,SHELL_THEME,ICON_THEME,CURSOR_THEME,WALLPAPER,LOGO_ICON,USER_LIST,MENU_BTN,BANNER,BANNER_TEXT,FONT_NAME
 	GTK3_THEME = get_setting("GTK",settings)
+	SHELL_THEME = get_setting("SHELL",settings)
 	ICON_THEME = get_setting("ICON",settings)
 	CURSOR_THEME = get_setting("CURSOR",settings)
 	BKG = get_setting("BKG",settings)
@@ -175,8 +189,10 @@ def get_gdm():
 	MENU_BTN = str_to_bool( get_setting("BTN" ,settings))
 	BANNER = str_to_bool(get_setting("BANNER",settings))
 	BANNER_TEXT = get_setting("BANNER_TEXT",settings)
+	FONT_NAME = unquote(get_setting("FONT",settings))
 
 	ComboBox_gtk.set_active_iter(get_iter(ComboBox_gtk.get_model(),GTK3_THEME))
+	ComboBox_shell.set_active_iter(get_iter(ComboBox_shell.get_model(),SHELL_THEME))
 	WallpaperChooser.Set_Filename(WALLPAPER) 
 	ComboBox_icon.set_active_iter(get_iter(ComboBox_icon.get_model(),ICON_THEME))
 	ComboBox_cursor.set_active_iter(get_iter(ComboBox_cursor.get_model(),CURSOR_THEME))
@@ -186,6 +202,7 @@ def get_gdm():
 	CheckButton_user.set_active(USER_LIST)
 	CheckButton_restart.set_active(MENU_BTN)
 	Entry_banner_text.set_sensitive(BANNER)
+	FontButton.set_font_name(FONT_NAME)
 
 def gtk3_theme_changed(e):
 	global GTK3_THEME
@@ -196,6 +213,26 @@ def gtk3_theme_changed(e):
 			print("GTK3 Theme Changed : " + GTK3_THEME)
 		else :
 			ComboBox_gtk.set_active_iter(get_iter(ComboBox_gtk.get_model(),GTK3_THEME))
+
+def shell_theme_changed(e):
+	global SHELL_THEME
+	shell_theme = unicode(ComboBox_shell.get_active_text(),'UTF_8')
+	if shell_theme!=unquote(SHELL_THEME) :
+		if set_gdm('SHELL_THEME',shell_theme) :
+			SHELL_THEME = shell_theme
+			print("SHELL Theme Changed : " + SHELL_THEME)
+		else :
+			ComboBox_shell.set_active_iter(get_iter(ComboBox_shell.get_model(),SHELL_THEME))
+
+def font_set(e):
+	global FONT_NAME
+	font_name = FontButton.get_font_name()
+	if FONT_NAME != font_name : 
+		if set_gdm('FONT',font_name) :
+			FONT_NAME = font_name
+			print "Font Changed:" + font_name
+		else :
+			FontButton.set_use_font(FONT_NAME)
 
 def wallpaper_filechanged(e):
 	global WALLPAPER
@@ -362,12 +399,26 @@ VBox_Left.pack_start(Label_gtk, False, True, 0)
 ComboBox_gtk =  Gtk.ComboBoxText.new()
 VBox_Right.pack_start(ComboBox_gtk, False, True, 0)
 
+Label_shell = Gtk.Label(_("Shell theme"))
+Label_shell.set_alignment(0,0.5)
+VBox_Left.pack_start(Label_shell, False, True, 0)
+
+ComboBox_shell =  Gtk.ComboBoxText.new()
+VBox_Right.pack_start(ComboBox_shell, False, True, 0)
+
 Label_bkg = Gtk.Label(_("Wallpaper"))
 Label_bkg.set_alignment(0,0.5)
 VBox_Left.pack_start(Label_bkg, False, True, 0)
 
 WallpaperChooser = WallpaperChooserClass()
 VBox_Right.pack_start(WallpaperChooser.Button, False, True, 0)
+
+Label_font = Gtk.Label(_("Font"))
+Label_font.set_alignment(0,0.5)
+VBox_Left.pack_start(Label_font, False, True, 0)
+
+FontButton = Gtk.FontButton.new()
+VBox_Right.pack_start(FontButton, False, True, 0)
 
 Label_icon = Gtk.Label(_("Icon theme"))
 Label_icon.set_alignment(0,0.5)
@@ -476,11 +527,14 @@ GetAutoLogin = gdm3setup.get_dbus_method('GetAutoLogin','apps.nano77.gdm3setup.g
 StopDaemon = gdm3setup.get_dbus_method('stop', 'apps.nano77.gdm3setup')
 
 load_gtk3_list()
+load_shell_list()
 load_icon_list()
 get_gdm()
 get_autologin()
 
+FontButton.connect("font-set",font_set)
 WallpaperChooser.connect("file-changed",wallpaper_filechanged)
+ComboBox_shell.connect("changed",shell_theme_changed)
 ComboBox_icon.connect("changed",icon_theme_changed)
 ComboBox_cursor.connect("changed",cursor_theme_changed)
 Entry_logo.connect("changed",logo_icon_changed)

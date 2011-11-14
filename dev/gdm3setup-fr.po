@@ -17,67 +17,71 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 
 
-#: gdm3setup.py:282
+#: gdm3setup.py:380
 msgid "GDM3 Setup"
 msgstr "Paramètre de GDM3"
 
-#: gdm3setup.py:297
+#: gdm3setup.py:395
 msgid "GTK3 theme"
 msgstr "Thème GTK3"
 
-#: gdm3setup.py:305
+#: gdm3setup.py:402
+msgid "Shell theme"
+msgstr "Thème du Shell"
+
+#: gdm3setup.py:409
 msgid "Wallpaper"
 msgstr "Arrière-plan"
 
-#: gdm3setup.py:320
+#: gdm3setup.py:416
+msgid "Font"
+msgstr "Police"
+
+#: gdm3setup.py:423
 msgid "Icon theme"
 msgstr "Thème d'Icône"
 
-#: gdm3setup.py:328
+#: gdm3setup.py:430
 msgid "Cursor theme"
-msgstr "Thème de curseur"
+msgstr "Thème de Curseur"
 
-#: gdm3setup.py:336
+#: gdm3setup.py:437
 msgid "Logo Icon"
 msgstr "Icône du Logo"
 
-#: gdm3setup.py:344
+#: gdm3setup.py:444
 msgid "Enable Banner"
 msgstr "Activer la Bannière"
 
-#: gdm3setup.py:357
+#: gdm3setup.py:454
 msgid "Disable User List"
 msgstr "Désactiver la liste des utilisateurs"
 
-#: gdm3setup.py:364
+#: gdm3setup.py:460
 msgid "Disable Restart Buttons"
 msgstr "Désactiver 'Restart' boutons"
 
-#: gdm3setup.py:371
+#: gdm3setup.py:466
 msgid "AutoLogin"
 msgstr "Connexion Automatique"
 
-#: gdm3setup.py:375
-#: gdm3setup.py:429
-msgid "Apply"
-msgstr "Appliquer"
-
-#: gdm3setup.py:380
-msgid "Load"
-msgstr "Charger"
-
-#: gdm3setup.py:392
+#: gdm3setup.py:478
 msgid "GDM AutoLogin Setup"
 msgstr "GDM Connexion Automatique"
 
-#: gdm3setup.py:397
+#: gdm3setup.py:483
 msgid "Enable Automatic Login"
 msgstr "Activer la Connexion Automatique"
 
-#: gdm3setup.py:405
+#: gdm3setup.py:491
 msgid "User Name"
 msgstr "Nom de l'utilisateur"
 
-#: gdm3setup.py:417
+#: gdm3setup.py:503
 msgid "Enable Delay before autologin"
 msgstr "Activer le délai avant connexion automatique"
+
+#: gdm3setup.py:515
+msgid "Apply"
+msgstr "Appliquer"
+

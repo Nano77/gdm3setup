@@ -6,6 +6,8 @@ echo -n "GTK=" > /tmp/GET_GDM
 gsettings get org.gnome.desktop.interface gtk-theme >> /tmp/GET_GDM
 echo -n "ICON=" >> /tmp/GET_GDM
 gsettings get org.gnome.desktop.interface icon-theme >> /tmp/GET_GDM
+echo -n "FONT=" >> /tmp/GET_GDM
+gsettings get org.gnome.desktop.interface font-name >> /tmp/GET_GDM
 echo -n "CURSOR=" >> /tmp/GET_GDM
 gsettings get org.gnome.desktop.interface cursor-theme >> /tmp/GET_GDM
 echo -n "BKG=" >> /tmp/GET_GDM

@@ -25,9 +25,17 @@ msgstr "Configuratión de GDM3"
 msgid "GTK3 theme"
 msgstr "Tema GTK3"
 
+#: gdm3setup.py:402
+msgid "Shell theme"
+msgstr "Tema de Shell"
+
 #: gdm3setup.py:305
 msgid "Wallpaper"
 msgstr "Papel pintado"
+
+#: gdm3setup.py:416
+msgid "Font"
+msgstr "Tipo de Letra"
 
 #: gdm3setup.py:320
 msgid "Icon theme"
@@ -35,11 +43,11 @@ msgstr "Tema de Icono"
 
 #: gdm3setup.py:328
 msgid "Cursor theme"
-msgstr "Tema de cursor"
+msgstr "Tema de Cursor"
 
 #: gdm3setup.py:336
 msgid "Logo Icon"
-msgstr "Icono del logotipo"
+msgstr "Icono del Logotipo"
 
 #: gdm3setup.py:344
 msgid "Enable Banner"
@@ -57,15 +65,6 @@ msgstr "Desactivar 'Restart' botóns"
 msgid "AutoLogin"
 msgstr "Inicio de sesión automático"
 
-#: gdm3setup.py:375
-#: gdm3setup.py:429
-msgid "Apply"
-msgstr "Aplicar"
-
-#: gdm3setup.py:380
-msgid "Load"
-msgstr "Carga"
-
 #: gdm3setup.py:392
 msgid "GDM AutoLogin Setup"
 msgstr "GDM Inicio de sesión automático"
@@ -81,4 +80,8 @@ msgstr "Nombre de usuario"
 #: gdm3setup.py:417
 msgid "Enable Delay before autologin"
 msgstr "Activar el demora antes  inicio de sesión automático"
+
+#: gdm3setup.py:429
+msgid "Apply"
+msgstr "Aplicar"
 
