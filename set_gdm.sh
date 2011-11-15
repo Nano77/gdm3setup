@@ -2,8 +2,14 @@
 #
 #
 
-`dbus-launch | sed "s/^/export /"`
 
+if [ "$DBUS_SESSION_BUS_ADDRESS" != "" ]
+then
+NEW_BUS=false
+else
+`dbus-launch | sed "s/^/export /"`
+NEW_BUS=true
+fi
 
 parameter_name=""
 parameter_value=""
@@ -55,7 +61,7 @@ else
 			;;
 		CURSOR_THEME)
 			echo "$parameter_name = $parameter_value"
-			gsettings set org.gnome.desktop.interface cursor-theme 
+			gsettings set org.gnome.desktop.interface cursor-theme "$parameter_value"
 			gconftool-2 --type string --set /desktop/gnome/peripherals/mouse/cursor_theme "$parameter_value"
 			;;
 		WALLPAPER)
@@ -91,5 +97,7 @@ else
 
 fi
 
-
+if $NEW_BUS 
+then
 kill -SIGTERM $DBUS_SESSION_BUS_PID
+fi

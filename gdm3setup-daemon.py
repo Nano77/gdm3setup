@@ -39,6 +39,39 @@ def str_to_bool(state) :
 
 	return b_state
 
+def Get_Bus():
+	ps_name=""
+	address=""
+	user_name=""
+	dbus_pid=""
+	dbus_address=""
+	proclst = os.listdir('/proc')
+	for ps in proclst:
+		try:
+			i = int(ps)
+			ps_name = open('/proc/'+ps+'/comm').read().strip()
+
+			if ps_name=="dbus-daemon":
+
+				ofile = open('/proc/'+ps+'/environ','r')
+				lines = ofile.read().split('\00')
+				ofile.close()
+
+				for ev in lines :
+					if ev[0:len('DBUS_SESSION_BUS_ADDRESS')]=='DBUS_SESSION_BUS_ADDRESS':
+						address = ev
+					if ev[0:len('USERNAME')]=='USERNAME':
+						user_name = ev
+
+				if user_name=="USERNAME=gdm" and address!="":
+					dbus_address = address[len('DBUS_SESSION_BUS_ADDRESS')+1:len(address)]
+					dbus_pid = ps
+
+		except:
+			i = 0
+
+	return dbus_address,dbus_pid
+
 def HackShellTheme(b):
 	if b :
 		os.rename('/usr/share/gnome-shell/theme','/usr/share/gnome-shell/theme.original')
@@ -95,7 +128,8 @@ class GDM3SetupDBusService(dbus.service.Object):
 	def SetUI(self,name,value,sender=None, connexion=None):
 		if self.policykit_test(sender,connexion,'apps.nano77.gdm3setup.set') :
 			if name!='SHELL_THEME':
-				subprocess.call('su - gdm -s /bin/bash -c "LANG='+LANG+' set_gdm.sh -n '+name+' -v '+"'"+value+"'"+'"',shell=True)
+				bus_adrress , bus_pid = Get_Bus()
+				subprocess.call('su - gdm -s /bin/bash -c "LANG='+LANG+' DBUS_SESSION_BUS_ADDRESS='+bus_adrress+' DBUS_SESSION_BUS_PID='+bus_pid+' set_gdm.sh -n '+name+' -v '+"'"+value+"'"+'"',shell=True)
 			else :
 				Set_Shell_theme(value)
 
