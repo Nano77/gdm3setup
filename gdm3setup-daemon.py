@@ -123,7 +123,7 @@ class GDM3SetupDBusService(dbus.service.Object):
 		(is_authorized,is_challenge,details) = policykit_authority.CheckAuthorization(Subject, action, {'': ''}, dbus.UInt32(1), '') #, timeout=5000
 		return is_authorized
 
-	@dbus.service.method('apps.nano77.gdm3setup.set',in_signature='ss', out_signature='s',
+	@dbus.service.method('apps.nano77.gdm3setup',in_signature='ss', out_signature='s',
 					sender_keyword='sender', connection_keyword='connexion')
 	def SetUI(self,name,value,sender=None, connexion=None):
 		if self.policykit_test(sender,connexion,'apps.nano77.gdm3setup.set') :
@@ -137,7 +137,7 @@ class GDM3SetupDBusService(dbus.service.Object):
 		else :
 			return "ERROR : YOU ARE NOT ALLOWED !"
 
-	@dbus.service.method('apps.nano77.gdm3setup.get','','as',sender_keyword='sender', connection_keyword='connexion')
+	@dbus.service.method('apps.nano77.gdm3setup','','as',sender_keyword='sender', connection_keyword='connexion')
 	def GetUI(self,sender=None, connexion=None):
 		subprocess.call("su - gdm -s /bin/sh -c 'LANG="+LANG+" get_gdm.sh'",shell=True)
 		ifile = open("/tmp/GET_GDM",'r')
@@ -147,7 +147,7 @@ class GDM3SetupDBusService(dbus.service.Object):
 		settings.append("SHELL='"+Get_Shell_theme()+"'\n")
 		return settings
 
-	@dbus.service.method('apps.nano77.gdm3setup.set','bsbi','s',sender_keyword='sender', connection_keyword='connexion')
+	@dbus.service.method('apps.nano77.gdm3setup','bsbi','s',sender_keyword='sender', connection_keyword='connexion')
 	def SetAutoLogin(self,AUTOLOGIN,USERNAME,TIMED,TIMED_TIME,sender=None, connexion=None):
 		if self.policykit_test(sender,connexion,'apps.nano77.gdm3setup.set') :
 			if AUTOLOGIN :
@@ -162,7 +162,7 @@ class GDM3SetupDBusService(dbus.service.Object):
 			return "ERROR : YOU ARE NOT ALLOWED !"
 
 
-	@dbus.service.method('apps.nano77.gdm3setup.get','','bsbi',sender_keyword='sender', connection_keyword='connexion')
+	@dbus.service.method('apps.nano77.gdm3setup','','bsbi',sender_keyword='sender', connection_keyword='connexion')
 	def GetAutoLogin(self,sender=None, connexion=None):
 
 		AutomaticLoginEnable = str_to_bool(GetValue("AutomaticLoginEnable","False"))
@@ -188,7 +188,7 @@ class GDM3SetupDBusService(dbus.service.Object):
 		return AUTOLOGIN,USERNAME,TIMED,TIMED_TIME
 
 	@dbus.service.method('apps.nano77.gdm3setup',sender_keyword='sender', connection_keyword='connexion')
-	def stop(self,sender=None, connexion=None):
+	def StopDaemon(self,sender=None, connexion=None):
 		loop.quit()
 
 

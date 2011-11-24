@@ -2,22 +2,16 @@
 # -*- coding: utf-8 -*-
 
 import os
-import stat
-import time
-import subprocess
+import gettext
+import dbus
+
 from gi.repository import Gtk
 from gi.repository import GdkPixbuf
 from gi.repository import GnomeDesktop
 from gi.repository import GObject
 from gi.repository import Gio
-import gettext
-import getpass
-
-import dbus
-
 
 gettext.install("gdm3setup")
-print os.environ['LANG']
 
 GTK3_THEME = u"Zukitwo"
 SHELL_THEME = u"Adwaita"
@@ -32,12 +26,13 @@ BANNER = False
 BANNER_TEXT = u"Welcome"
 
 #-----------------------------------------------
-class WallpaperChooserClass(Gtk.Bin):
+class WallpaperChooserClass(Gtk.HBox):
 
 	def __init__(self):
-		Gtk.Bin.__init__(self)
+		Gtk.HBox.__init__(self)
 		gettext.install("gtk30")
 		self.Button = Gtk.Button(_('(None)'))
+		self.add(self.Button)
 		gettext.install("gdm3setup")
 		self.Label = self.Button.get_children()[0]
 		self.Image = Gtk.Image()
@@ -411,7 +406,7 @@ Label_bkg.set_alignment(0,0.5)
 VBox_Left.pack_start(Label_bkg, False, True, 0)
 
 WallpaperChooser = WallpaperChooserClass()
-VBox_Right.pack_start(WallpaperChooser.Button, False, True, 0)
+VBox_Right.pack_start(WallpaperChooser, False, True, 0)
 
 Label_font = Gtk.Label(_("Font"))
 Label_font.set_alignment(0,0.5)
@@ -520,11 +515,11 @@ mainwin.show_all()
 
 bus = dbus.SystemBus()
 gdm3setup = bus.get_object('apps.nano77.gdm3setup','/apps/nano77/gdm3setup')
-SetUI = gdm3setup.get_dbus_method('SetUI','apps.nano77.gdm3setup.set')
-GetUI = gdm3setup.get_dbus_method('GetUI','apps.nano77.gdm3setup.get')
-SetAutoLogin = gdm3setup.get_dbus_method('SetAutoLogin','apps.nano77.gdm3setup.set')
-GetAutoLogin = gdm3setup.get_dbus_method('GetAutoLogin','apps.nano77.gdm3setup.get')
-StopDaemon = gdm3setup.get_dbus_method('stop', 'apps.nano77.gdm3setup')
+SetUI = gdm3setup.get_dbus_method('SetUI','apps.nano77.gdm3setup')
+GetUI = gdm3setup.get_dbus_method('GetUI','apps.nano77.gdm3setup')
+SetAutoLogin = gdm3setup.get_dbus_method('SetAutoLogin','apps.nano77.gdm3setup')
+GetAutoLogin = gdm3setup.get_dbus_method('GetAutoLogin','apps.nano77.gdm3setup')
+StopDaemon = gdm3setup.get_dbus_method('StopDaemon', 'apps.nano77.gdm3setup')
 
 load_gtk3_list()
 load_shell_list()
