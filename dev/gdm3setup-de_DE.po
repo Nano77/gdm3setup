@@ -1,29 +1,32 @@
 # A GUI to setting GDM3.
-# Copyright (C) 2011
-# This file is distributed under the same license as the package.
+# Copyright (C) 2011 Nano77 <nanoarch77@gmail.com>
+# This file is distributed under the same license as the gdm3setup package.
 # Nano77 <nanoarch77@gmail.com>, 2011.
-#
+# Mario Blättermann <mario.blaettermann@gmail.com>, 2011.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: gdm3setup \n"
+"Project-Id-Version: gdm3setup\n"
 "Report-Msgid-Bugs-To: https://github.com/Nano77/gdm3setup/issues\n"
 "POT-Creation-Date: 2011-06-27 11:32+0200\n"
-"PO-Revision-Date: 2011-07-30 16:19+0200\n"
-"Last-Translator: Nano77 <nanoarch77@gmail.com>\n"
+"PO-Revision-Date: 2011-12-02 23:53+0100\n"
+"Last-Translator: Mario Blättermann <mario.blaettermann@gmail.com>\n"
 "Language: de_DE\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-
+"Language-Team: German <gnome-de@gnome.org>\n"
+"X-Poedit-Language: German\n"
+"X-Poedit-Country: GERMANY\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 #: gdm3setup.py:282
 msgid "GDM3 Setup"
-msgstr "Einstellungen der GDM3"
+msgstr "Einstellungen für GDM3"
 
 #: gdm3setup.py:297
 msgid "GTK3 theme"
-msgstr "Thema GTK3"
+msgstr "GTK3-Thema"
 
 #: gdm3setup.py:402
 msgid "Shell theme"
@@ -39,7 +42,7 @@ msgstr "Schriftart"
 
 #: gdm3setup.py:320
 msgid "Icon theme"
-msgstr "Icon-Thema"
+msgstr "Symbolthema"
 
 #: gdm3setup.py:328
 msgid "Cursor theme"
@@ -47,19 +50,19 @@ msgstr "Cursor-Thema"
 
 #: gdm3setup.py:336
 msgid "Logo Icon"
-msgstr "Logo Icon"
+msgstr "Logo-Symbol"
 
 #: gdm3setup.py:344
 msgid "Enable Banner"
-msgstr "Aktivieren Banner"
+msgstr "Banner aktivieren"
 
 #: gdm3setup.py:357
 msgid "Disable User List"
-msgstr "Deaktivieren Benutzers-liste"
+msgstr "Benutzerliste deaktivieren"
 
 #: gdm3setup.py:364
 msgid "Disable Restart Buttons"
-msgstr "Deaktivieren 'Restart' Taste"
+msgstr "Neustart-Knopf eaktivieren"
 
 #: gdm3setup.py:371
 msgid "AutoLogin"
@@ -67,11 +70,11 @@ msgstr "Automatische Anmeldung"
 
 #: gdm3setup.py:392
 msgid "GDM AutoLogin Setup"
-msgstr "GDM Automatische Anmeldung"
+msgstr "Automatische Anmeldung für GDM"
 
 #: gdm3setup.py:397
 msgid "Enable Automatic Login"
-msgstr "Aktivieren Automatische Anmeldung"
+msgstr "Automatische Anmeldung aktivieren"
 
 #: gdm3setup.py:405
 msgid "User Name"
@@ -79,7 +82,7 @@ msgstr "Benutzername"
 
 #: gdm3setup.py:417
 msgid "Enable Delay before autologin"
-msgstr "Aktivieren verzögerung vor automatische anmeldung"
+msgstr "Verzögerung vor automatischer Anmeldung"
 
 #: gdm3setup.py:429
 msgid "Apply"
