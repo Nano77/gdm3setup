@@ -96,11 +96,14 @@ class WallpaperChooserClass(Gtk.HBox):
 			self.FileChooserDialog.set_preview_widget_active(True)
 		except Exception, e:
 			self.FileChooserDialog.set_preview_widget_active(False)
-			print e
+			print(e)
 
 #-----------------------------------------------
 def mainwin_close(event):
-	StopDaemon()
+	try :
+		StopDaemon()
+	except dbus.exceptions.DBusException :
+		print ""
 	Gtk.main_quit()
 
 def load_gtk3_list():
@@ -136,7 +139,7 @@ def get_setting(name,data):
 	for line in data:
 		line = unicode(line)
 		if line[0:len(name)+1]==name+"=":
-			value = line[len(name)+1:len(line)-1]
+			value = line[len(name)+1:len(line)].strip()
 			break
 	return value
 
@@ -225,9 +228,9 @@ def font_set(e):
 	if FONT_NAME != font_name : 
 		if set_gdm('FONT',font_name) :
 			FONT_NAME = font_name
-			print "Font Changed:" + font_name
+			print("Font Changed : " + font_name)
 		else :
-			FontButton.set_use_font(FONT_NAME)
+			FontButton.set_font_name(FONT_NAME)
 
 def wallpaper_filechanged(e):
 	global WALLPAPER
@@ -361,9 +364,9 @@ def AutoLogin_Apply_clicked(e):
 
 def get_autologin():
 	AUTOLOGIN,USERNAME,TIMED,TIMED_TIME = GetAutoLogin()
-	CheckButton_AutoLogin.set_active(AUTOLOGIN)
-	CheckButton_Delay.set_active(TIMED)
-	SpinButton_Delay.set_value(TIMED_TIME)
+	CheckButton_AutoLogin.set_active(str_to_bool(AUTOLOGIN))
+	CheckButton_Delay.set_active(str_to_bool(TIMED))
+	SpinButton_Delay.set_value(int(TIMED_TIME))
 	Entry_username.set_text(USERNAME)
 
 #-----------------------------------------------
@@ -455,12 +458,12 @@ VBox_Main.pack_start(HBox_restart, False, True, 0)
 CheckButton_restart = Gtk.CheckButton(label=_("Disable Restart Buttons"),use_underline=True)
 HBox_restart.pack_start(CheckButton_restart, False, True, 0)
 
-HBox9 = Gtk.HBox.new(False, 8)
-VBox_Main.pack_end(HBox9, False, False, 0)
+HBox_autologin = Gtk.HBox.new(False, 8)
+VBox_Main.pack_end(HBox_autologin, False, False, 0)
 
 BTN_autologin = Gtk.Button(_('AutoLogin'))
 BTN_autologin.connect("clicked",autologin_clicked)
-HBox9.pack_start(BTN_autologin, False, False, 0)
+HBox_autologin.pack_start(BTN_autologin, False, False, 0)
 
 #-------
 win_autologin = Gtk.Window()

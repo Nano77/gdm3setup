@@ -162,7 +162,7 @@ class GDM3SetupDBusService(dbus.service.Object):
 			return "ERROR : YOU ARE NOT ALLOWED !"
 
 
-	@dbus.service.method('apps.nano77.gdm3setup','','bsbi',sender_keyword='sender', connection_keyword='connexion')
+	@dbus.service.method('apps.nano77.gdm3setup','','as',sender_keyword='sender', connection_keyword='connexion')
 	def GetAutoLogin(self,sender=None, connexion=None):
 
 		AutomaticLoginEnable = str_to_bool(GetValue("AutomaticLoginEnable","False"))
@@ -171,9 +171,9 @@ class GDM3SetupDBusService(dbus.service.Object):
 		TimedLogin = GetValue("TimedLogin","")
 		TimedLoginDelay = GetValue("TimedLoginDelay","30")
 
-		AUTOLOGIN = AutomaticLoginEnable or TimedLoginEnable
-		TIMED = TimedLoginEnable
-		TIMED_TIME = int(TimedLoginDelay)
+		AUTOLOGIN = str(AutomaticLoginEnable or TimedLoginEnable)
+		TIMED = str(TimedLoginEnable)
+		TIMED_TIME = TimedLoginDelay
 
 		if AutomaticLoginEnable:
 			USERNAME = AutomaticLogin
