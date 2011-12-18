@@ -13,40 +13,27 @@ from gi.repository import Gio
 
 gettext.install("gdm3setup")
 
-GTK3_THEME = u"Zukitwo"
-SHELL_THEME = u"Adwaita"
-ICON_THEME = u"Faenza-Dark"
-FONT_NAME = u"Cantarell 11"
-CURSOR_THEME = u"Adwaita"
-WALLPAPER = u"/usr/share/backgrounds/gnome/Terraform-blue.jpg"
-LOGO_ICON = u"distributor-logo"
-USER_LIST = False
-MENU_BTN = False
-BANNER = False
-BANNER_TEXT = u"Welcome"
-
 #-----------------------------------------------
-class WallpaperChooserClass(Gtk.HBox):
+class WallpaperChooserButton(Gtk.Button):
 
 	def __init__(self):
-		Gtk.HBox.__init__(self)
+		Gtk.Button.__init__(self)
 		gettext.install("gtk30")
-		self.Button = Gtk.Button(_('(None)'))
-		self.add(self.Button)
+		self.Label = Gtk.Label(_('(None)'))
 		gettext.install("gdm3setup")
-		self.Label = self.Button.get_children()[0]
 		self.Image = Gtk.Image()
 		self.Image.set_from_icon_name("fileopen",Gtk.IconSize.SMALL_TOOLBAR)
-		self.Sepparator = Gtk.Separator.new(Gtk.Orientation.VERTICAL)
+		self.Separator = Gtk.Separator.new(Gtk.Orientation.VERTICAL)
 		self.Box = Gtk.HBox.new(False,0)
-		self.Button.remove(self.Label)
-		self.Button.add(self.Box)
+		self.add(self.Box)
 		self.Box.pack_start(self.Label,False,False,2)
 		self.Box.pack_end(self.Image,False,False,2)
-		self.Box.pack_end(self.Sepparator,False,False,2)
-		GObject.signal_new("file-changed", WallpaperChooserClass, GObject.SIGNAL_RUN_FIRST,GObject.TYPE_NONE, ())
+		self.Box.pack_end(self.Separator,False,False,2)
+		self.PreviewImage = Gtk.Image()
+		self.PreviewBox = Gtk.VBox.new(False, 16)
+		GObject.signal_new("file-changed", WallpaperChooserButton, GObject.SIGNAL_RUN_FIRST,GObject.TYPE_NONE, ())
 		self.Filename = ""
-		self.Button.connect("clicked",self._Clicked)
+		self.connect("clicked",self._Clicked)
 
 	def Get_Filename(self):
 		return self.Filename
@@ -63,8 +50,6 @@ class WallpaperChooserClass(Gtk.HBox):
 		filter = Gtk.FileFilter()
 		filter.add_pixbuf_formats()
 		filter.set_name('Image')
-		self.PreviewImage = Gtk.Image()
-		self.PreviewBox = Gtk.VBox.new(False, 16)
 		self.PreviewBox.set_size_request(200,-1);
 		self.PreviewBox.pack_start(self.PreviewImage, False, False, 0)
 		self.PreviewImage.show()
@@ -98,42 +83,482 @@ class WallpaperChooserClass(Gtk.HBox):
 			self.FileChooserDialog.set_preview_widget_active(False)
 			print(e)
 
-#-----------------------------------------------
-def mainwin_close(event):
-	try :
-		StopDaemon()
-	except dbus.exceptions.DBusException :
-		print ""
-	Gtk.main_quit()
+class AutologinButton (Gtk.Button) :
+	def __init__(self,parent_window):
+		Gtk.Button.__init__(self)
+		self.autologin=False
+		self.username=""
+		self.timed=False
+		self.time=30
+		self.box=Gtk.HBox(False,0)
+		self.add(self.box)
+		self.label_state=Gtk.Label(_("Disabled"))
+		self.label_state.set_no_show_all(True)
+		self.label_state.show()
+		self.box.pack_start(self.label_state,False,False,2)
+		self.label_user=Gtk.Label("USER")
+		self.label_user.set_no_show_all(True)
+		self.box.pack_start(self.label_user,False,False,2)
+		self.Separator = Gtk.Separator.new(Gtk.Orientation.VERTICAL)
+		self.Separator.set_no_show_all(True)
+		self.box.pack_start(self.Separator,False,False,2)
+		self.label_time=Gtk.Label("TIME")
+		self.label_time.set_no_show_all(True)
+		self.box.pack_start(self.label_time,False,False,2)
+		self.connect("clicked",self._clicked)
+		self.window = AutoLoginWindow(parent_window)
+		self.window.connect("changed",self._changed)
+		GObject.signal_new("changed", AutologinButton, GObject.SIGNAL_RUN_FIRST,GObject.TYPE_NONE, ())
 
-def load_gtk3_list():
-
-	lst_gtk_themes = os.listdir('/usr/share/themes')
-
-	for i in range(len(lst_gtk_themes)):
-		if os.path.isdir('/usr/share/themes/'+lst_gtk_themes[i]+'/gtk-3.0') :
-			ComboBox_gtk.append_text(lst_gtk_themes[i])
-
-def load_shell_list():
-
-	lst_shell_themes = os.listdir('/usr/share/themes')
-	if not os.path.islink('/usr/share/gnome-shell/theme'):
-		ComboBox_shell.append_text("Adwaita")
-
-	for i in range(len(lst_shell_themes)):
-		if os.path.isdir('/usr/share/themes/'+lst_shell_themes[i]+'/gnome-shell') :
-			if os.path.isfile('/usr/share/themes/'+lst_shell_themes[i]+'/gnome-shell/gdm.css') :
-				ComboBox_shell.append_text(lst_shell_themes[i])
-
-def load_icon_list():
-	lst_icons = os.listdir('/usr/share/icons')
-
-	for i in range(len(lst_icons)):
-		if os.path.isdir('/usr/share/icons/'+lst_icons[i]+'/') :
-			if 	os.path.isdir('/usr/share/icons/'+lst_icons[i]+'/cursors/') :
-				ComboBox_cursor.append_text(lst_icons[i])
+	def update(self) :
+		if self.autologin :
+			self.label_state.hide()
+			self.label_user.show()
+			if self.timed :
+				self.Separator.show()
+				self.label_time.show()
 			else :
-				ComboBox_icon.append_text(lst_icons[i])
+				self.Separator.hide()
+				self.label_time.hide()
+		else :
+			self.label_state.show()
+			self.label_user.hide()
+			self.Separator.hide()
+			self.label_time.hide()
+		self.label_user.set_text(self.username)
+		self.label_time.set_text(str(self.time) + " s")
+
+	def set_autologin(self,b) :
+		self.autologin = b
+		self.update()
+
+	def get_autologin(self) :
+		return self.autologin
+
+	def set_timed(self,timed):
+		self.timed=timed
+		self.update()
+
+	def get_timed(self):
+		return self.timed
+
+	def set_time(self,time):
+		self.time=time
+		self.update()
+
+	def get_time(self):
+		return self.time
+
+	def set_username(self,username):
+		self.username=username
+		self.update()
+
+	def get_username(self):
+		return self.username
+
+	def _clicked(self,e) :
+		self.window.CheckButton_AutoLogin.set_active(self.get_autologin())
+		self.window.Entry_username.set_text(self.get_username())
+		self.window.CheckButton_Delay.set_active(self.get_timed())
+		self.window.SpinButton_Delay.set_value(self.get_time())
+		self.window.show_all()
+
+	def _changed(self,e) :
+		self.set_autologin(self.window.CheckButton_AutoLogin.get_active())
+		self.set_username(self.window.Entry_username.get_text())
+		self.set_timed(self.window.CheckButton_Delay.get_active())
+		self.set_time(self.window.SpinButton_Delay.get_value_as_int())
+
+		self.emit("changed")
+
+class AutoLoginWindow(Gtk.Window):
+	def __init__(self,parent_window):
+		Gtk.Window.__init__(self)
+		self.connect("delete-event",self._Close)
+		self.set_border_width(10)
+		self.set_position(Gtk.WindowPosition.CENTER_ON_PARENT)
+		self.set_modal(True)
+		self.set_transient_for(parent_window)
+		self.set_resizable(False)
+		self.set_title(_("GDM AutoLogin Setup"))
+		GObject.signal_new("changed", AutoLoginWindow, GObject.SIGNAL_RUN_FIRST,GObject.TYPE_NONE, ())
+
+		self.VBoxMain = Gtk.VBox.new(False, 8)
+		self.add(self.VBoxMain)
+
+		self.CheckButton_AutoLogin = Gtk.CheckButton(label=_("Enable Automatic Login"),use_underline=True)
+		self.CheckButton_AutoLogin.connect("toggled",self.AutoLogin_toggled)
+		self.VBoxMain.pack_start(self.CheckButton_AutoLogin, False, False, 0)
+
+		self.HBox_username = Gtk.HBox.new(False, 0)
+		self.HBox_username.set_sensitive(False)
+		self.VBoxMain.pack_start(self.HBox_username, False, False, 0)
+
+		self.Label_username = Gtk.Label(_("User Name"))
+		self.Label_username.set_alignment(0,0.5)
+		self.HBox_username.pack_start(self.Label_username, False, False, 0)
+
+		self.Entry_username =  Gtk.Entry()
+		self.Entry_username.connect("changed",self.username_changed)
+		self.HBox_username.pack_end(self.Entry_username, False, False, 0)
+
+		self.HBox_Delay = Gtk.HBox.new(False, 8)
+		self.HBox_Delay.set_sensitive(False)
+		self.VBoxMain.pack_start(self.HBox_Delay, False, False, 0)
+
+		self.CheckButton_Delay = Gtk.CheckButton(label=_("Enable Delay before autologin"),use_underline=True)
+		self.CheckButton_Delay.connect("toggled",self.Delay_toggled)
+		self.HBox_Delay.pack_start(self.CheckButton_Delay, False, False, 0)
+
+		self.SpinButton_Delay = Gtk.SpinButton.new_with_range(1,60,1)
+		self.SpinButton_Delay.set_value(10)
+		self.SpinButton_Delay.set_sensitive(False)
+		self.HBox_Delay.pack_end(self.SpinButton_Delay, False, False, 0)
+
+		self.HBox_Apply = Gtk.HBox.new(False, 0)
+		self.VBoxMain.pack_end(self.HBox_Apply, False, False, 0)
+
+		self.BTN_Apply = Gtk.Button(_('Apply'))
+		self.BTN_Apply.connect("clicked",self.Apply_clicked)
+		self.HBox_Apply.pack_start(self.BTN_Apply, True, False, 0)
+
+	def _Close(self,e,data):
+		self.hide()
+		return True
+
+	def AutoLogin_toggled(self,e):
+		if self.CheckButton_AutoLogin.get_active():
+			self.HBox_username.set_sensitive(True)
+			self.HBox_Delay.set_sensitive(True)
+		else:
+			self.HBox_username.set_sensitive(False)
+			self.HBox_Delay.set_sensitive(False)
+
+		if self.Entry_username.get_text()!="" or not self.CheckButton_AutoLogin.get_active():
+			self.HBox_Apply.set_sensitive(True)
+		else:
+			self.HBox_Apply.set_sensitive(False)
+
+	def username_changed(self,e):
+		if self.Entry_username.get_text()!="":
+			self.HBox_Apply.set_sensitive(True)
+		else:
+			self.HBox_Apply.set_sensitive(False)
+
+	def Delay_toggled(self,e):
+		if self.CheckButton_Delay.get_active():
+			self.SpinButton_Delay.set_sensitive(True)
+		else:
+			self.SpinButton_Delay.set_sensitive(False)
+
+	def Apply_clicked(self,e):
+		self.emit("changed")
+		self.hide()
+
+class MainWindow(Gtk.Window) :
+	def __init__(self) :
+		Gtk.Window.__init__(self)
+		self.connect("destroy",self._close)
+		self.set_border_width(10)
+		self.set_position(Gtk.WindowPosition.CENTER)
+		self.set_resizable(False)
+		self.set_title(_("GDM3 Setup"))
+		self.set_icon_name("preferences-desktop-theme")
+
+		self.VBox_Main = Gtk.VBox.new(False, 4)
+		self.add(self.VBox_Main)
+		self.HBox_Main = Gtk.HBox.new(False, 16)
+		self.VBox_Main.pack_start(self.HBox_Main, False, False, 0)
+		self.VBox_Left = Gtk.VBox.new(True, 0)
+		self.HBox_Main.pack_start(self.VBox_Left, False, False, 0)
+		self.VBox_Right = Gtk.VBox.new(False, 0)
+		self.HBox_Main.pack_start(self.VBox_Right, False, False, 0)
+		self.Label_gtk = Gtk.Label(_("GTK3 theme"))
+		self.Label_gtk.set_alignment(0,0.5)
+		self.VBox_Left.pack_start(self.Label_gtk, False, True, 0)
+		self.ComboBox_gtk =  Gtk.ComboBoxText.new()
+		self.VBox_Right.pack_start(self.ComboBox_gtk, False, True, 0)
+		self.Label_shell = Gtk.Label(_("Shell theme"))
+		self.Label_shell.set_alignment(0,0.5)
+		self.VBox_Left.pack_start(self.Label_shell, False, True, 0)
+		self.ComboBox_shell =  Gtk.ComboBoxText.new()
+		self.VBox_Right.pack_start(self.ComboBox_shell, False, True, 0)
+		self.Label_bkg = Gtk.Label(_("Wallpaper"))
+		self.Label_bkg.set_alignment(0,0.5)
+		self.VBox_Left.pack_start(self.Label_bkg, False, True, 0)
+		self.WallpaperChooser = WallpaperChooserButton()
+		self.VBox_Right.pack_start(self.WallpaperChooser, False, True, 0)
+		self.Label_font = Gtk.Label(_("Font"))
+		self.Label_font.set_alignment(0,0.5)
+		self.VBox_Left.pack_start(self.Label_font, False, True, 0)
+		self.FontButton = Gtk.FontButton.new()
+		self.VBox_Right.pack_start(self.FontButton, False, True, 0)
+		self.Label_icon = Gtk.Label(_("Icon theme"))
+		self.Label_icon.set_alignment(0,0.5)
+		self.VBox_Left.pack_start(self.Label_icon, False, True, 0)
+		self.ComboBox_icon =  Gtk.ComboBoxText.new()
+		self.VBox_Right.pack_start(self.ComboBox_icon, False, True, 0)
+		self.Label_cursor = Gtk.Label(_("Cursor theme"))
+		self.Label_cursor.set_alignment(0,0.5)
+		self.VBox_Left.pack_start(self.Label_cursor, False, True, 0)
+		self.ComboBox_cursor =  Gtk.ComboBoxText.new()
+		self.VBox_Right.pack_start(self.ComboBox_cursor, False, True, 0)
+		self.Label_logo = Gtk.Label(_("Logo Icon"))
+		self.Label_logo.set_alignment(0,0.5)
+		self.VBox_Left.pack_start(self.Label_logo, False, True, 0)
+		self.Entry_logo = Gtk.Entry()
+		self.VBox_Right.pack_start(self.Entry_logo, False, True, 0)
+		self.CheckButton_banner = Gtk.CheckButton(label=_("Enable Banner"),use_underline=True)
+		self.VBox_Left.pack_start(self.CheckButton_banner, False, True, 0)
+		self.Entry_banner_text = Gtk.Entry()
+		self.Entry_banner_text.set_sensitive(False)
+		self.VBox_Right.pack_start(self.Entry_banner_text, False, True, 0)
+		self.HBox_user = Gtk.HBox.new(True, 0)
+		self.VBox_Main.pack_start(self.HBox_user, False, True, 0)
+		self.CheckButton_user = Gtk.CheckButton(label=_("Disable User List"),use_underline=True)
+		self.HBox_user.pack_start(self.CheckButton_user, False, True, 0)
+		self.HBox_restart = Gtk.HBox.new(True, 0)
+		self.VBox_Main.pack_start(self.HBox_restart, False, True, 0)
+		self.CheckButton_restart = Gtk.CheckButton(label=_("Disable Restart Buttons"),use_underline=True)
+		self.HBox_restart.pack_start(self.CheckButton_restart, False, True, 0)
+		self.HBox_autologin = Gtk.HBox.new(False, 8)
+		self.VBox_Main.pack_end(self.HBox_autologin, False, False, 0)
+		self.Label_Autologin = Gtk.Label(_("AutoLogin"))
+		self.HBox_autologin.pack_start(self.Label_Autologin, False, False, 0)
+		self.BTN_autologin = AutologinButton(self)
+		self.HBox_autologin.pack_end(self.BTN_autologin, False, False, 0)
+
+		proxy = dbus.SystemBus().get_object('apps.nano77.gdm3setup','/apps/nano77/gdm3setup')
+		self.SetUI = proxy.get_dbus_method('SetUI','apps.nano77.gdm3setup')
+		self.GetUI = proxy.get_dbus_method('GetUI','apps.nano77.gdm3setup')
+		self.SetAutoLogin = proxy.get_dbus_method('SetAutoLogin','apps.nano77.gdm3setup')
+		self.GetAutoLogin = proxy.get_dbus_method('GetAutoLogin','apps.nano77.gdm3setup')
+		self.StopDaemon = proxy.get_dbus_method('StopDaemon', 'apps.nano77.gdm3setup')
+
+		self.load_gtk3_list()
+		self.load_shell_list()
+		self.load_icon_list()
+		self.get_gdm()
+		self.get_autologin()
+
+		self.FontButton.connect("font-set",self.font_set)
+		self.WallpaperChooser.connect("file-changed",self.wallpaper_filechanged)
+		self.ComboBox_shell.connect("changed",self.shell_theme_changed)
+		self.ComboBox_icon.connect("changed",self.icon_theme_changed)
+		self.ComboBox_cursor.connect("changed",self.cursor_theme_changed)
+		self.Entry_logo.connect("changed",self.logo_icon_changed)
+		self.ComboBox_gtk.connect("changed",self.gtk3_theme_changed)
+		self.CheckButton_banner.connect("toggled",self.banner_toggled)
+		self.Entry_banner_text.connect("changed",self.banner_text_changed)
+		self.CheckButton_user.connect("toggled",self.user_list_toggled)
+		self.CheckButton_restart.connect("toggled",self.menu_btn_toggled)
+		self.BTN_autologin.connect("changed",self.autologin_changed)
+
+	def load_gtk3_list(self):
+		lst_gtk_themes = os.listdir('/usr/share/themes')
+		for i in range(len(lst_gtk_themes)) :
+			if os.path.isdir('/usr/share/themes/'+lst_gtk_themes[i]+'/gtk-3.0') :
+				self.ComboBox_gtk.append_text(lst_gtk_themes[i])
+
+	def load_shell_list(self):
+
+		lst_shell_themes = os.listdir('/usr/share/themes')
+		if not os.path.islink('/usr/share/gnome-shell/theme'):
+			self.ComboBox_shell.append_text("Adwaita")
+
+		for i in range(len(lst_shell_themes)):
+			if os.path.isdir('/usr/share/themes/'+lst_shell_themes[i]+'/gnome-shell') :
+				if os.path.isfile('/usr/share/themes/'+lst_shell_themes[i]+'/gnome-shell/gdm.css') :
+					self.ComboBox_shell.append_text(lst_shell_themes[i])
+
+	def load_icon_list(self):
+		lst_icons = os.listdir('/usr/share/icons')
+
+		for i in range(len(lst_icons)):
+			if os.path.isdir('/usr/share/icons/'+lst_icons[i]+'/') :
+				if 	os.path.isdir('/usr/share/icons/'+lst_icons[i]+'/cursors/') :
+					self.ComboBox_cursor.append_text(lst_icons[i])
+				else :
+					self.ComboBox_icon.append_text(lst_icons[i])
+
+	def _close(self,e):
+		try :
+			self.StopDaemon()
+		except dbus.exceptions.DBusException :
+			print ""
+		Gtk.main_quit()
+
+	def set_gdm(self,name,value):
+		if self.SetUI(name,value)=="OK" :
+			return True
+		else :
+			return False
+
+	def get_gdm(self):
+		settings = list(self.GetUI())
+		self.GTK3_THEME = get_setting("GTK",settings)
+		self.SHELL_THEME = get_setting("SHELL",settings)
+		self.ICON_THEME = get_setting("ICON",settings)
+		self.CURSOR_THEME = get_setting("CURSOR",settings)
+		BKG = get_setting("BKG",settings)
+		self.WALLPAPER = BKG[8:len(BKG)-1]
+		self.LOGO_ICON = get_setting("LOGO",settings)
+		self.USER_LIST = str_to_bool(get_setting("USER_LIST",settings))
+		self.MENU_BTN = str_to_bool( get_setting("BTN" ,settings))
+		self.BANNER = str_to_bool(get_setting("BANNER",settings))
+		self.BANNER_TEXT = get_setting("BANNER_TEXT",settings)
+		self.FONT_NAME = unquote(get_setting("FONT",settings))
+		self.ComboBox_gtk.set_active_iter(get_iter(self.ComboBox_gtk.get_model(),self.GTK3_THEME))
+		self.ComboBox_shell.set_active_iter(get_iter(self.ComboBox_shell.get_model(),self.SHELL_THEME))
+		self.WallpaperChooser.Set_Filename(self.WALLPAPER) 
+		self.ComboBox_icon.set_active_iter(get_iter(self.ComboBox_icon.get_model(),self.ICON_THEME))
+		self.ComboBox_cursor.set_active_iter(get_iter(self.ComboBox_cursor.get_model(),self.CURSOR_THEME))
+		self.Entry_logo.set_text(self.LOGO_ICON)
+		self.CheckButton_banner.set_active(self.BANNER)
+		self.Entry_banner_text.set_text(self.BANNER_TEXT)
+		self.CheckButton_user.set_active(self.USER_LIST)
+		self.CheckButton_restart.set_active(self.MENU_BTN)
+		self.Entry_banner_text.set_sensitive(self.BANNER)
+		self.FontButton.set_font_name(self.FONT_NAME)
+
+	def set_autologin(self,autologin,username,timed,time):
+		if self.SetAutoLogin(autologin,username,timed,time)=="OK" :
+			return True
+		else :
+			return False
+
+	def get_autologin(self):
+		AUTOLOGIN,USERNAME,TIMED,TIMED_TIME = self.GetAutoLogin()
+		self.AUTOLOGIN_ENABLED = str_to_bool(AUTOLOGIN)
+		self.AUTOLOGIN_USERNAME = USERNAME
+		self.AUTOLOGIN_TIMED = str_to_bool(TIMED)
+		self.AUTOLOGIN_TIME = int(TIMED_TIME)
+		self.BTN_autologin.set_autologin(self.AUTOLOGIN_ENABLED) 
+		self.BTN_autologin.set_username(self.AUTOLOGIN_USERNAME)
+		self.BTN_autologin.set_timed(self.AUTOLOGIN_TIMED) 
+		self.BTN_autologin.set_time(self.AUTOLOGIN_TIME)
+
+	def gtk3_theme_changed(self,e):
+		gtk_theme = unicode(self.ComboBox_gtk.get_active_text(),'UTF_8')
+		if gtk_theme!=unquote(self.GTK3_THEME) :
+			if self.set_gdm('GTK_THEME',gtk_theme) :
+				self.GTK3_THEME = gtk_theme
+				print("GTK3 Theme Changed : " + self.GTK3_THEME)
+			else :
+				self.ComboBox_gtk.set_active_iter(get_iter(self.ComboBox_gtk.get_model(),self.GTK3_THEME))
+
+	def shell_theme_changed(self,e):
+		shell_theme = unicode(self.ComboBox_shell.get_active_text(),'UTF_8')
+		if shell_theme!=unquote(self.SHELL_THEME) :
+			if self.set_gdm('SHELL_THEME',shell_theme) :
+				self.SHELL_THEME = shell_theme
+				print("SHELL Theme Changed : " + self.SHELL_THEME)
+			else :
+				self.ComboBox_shell.set_active_iter(get_iter(self.ComboBox_shell.get_model(),self.SHELL_THEME))
+
+	def font_set(self,e):
+		font_name = self.FontButton.get_font_name()
+		if self.FONT_NAME != font_name : 
+			if self.set_gdm('FONT',font_name) :
+				self.FONT_NAME = font_name
+				print("Font Changed : " + self.FONT_NAME)
+			else :
+				self.FontButton.set_font_name(self.FONT_NAME)
+
+	def wallpaper_filechanged(self,e):
+		wallpaper = self.WallpaperChooser.Get_Filename()
+		if self.WALLPAPER != wallpaper :
+			if self.set_gdm('WALLPAPER',wallpaper) :
+				self.WALLPAPER = wallpaper 
+				print("Wallpaper Changed : " + self.WALLPAPER)
+			else :
+				self.WallpaperChooser.Set_Filename(self.WALLPAPER)
+
+	def icon_theme_changed(self,e):
+		icon_theme = unicode(self.ComboBox_icon.get_active_text(),'UTF_8')
+		if unquote(self.ICON_THEME) != icon_theme:
+			if self.set_gdm('ICON_THEME',icon_theme) :
+				self.ICON_THEME = icon_theme
+				print ("Icon Theme Changed : " + self.ICON_THEME)
+			else :
+				self.ComboBox_icon.set_active_iter(get_iter(self.ComboBox_icon.get_model(),self.ICON_THEME))
+
+	def cursor_theme_changed(self,e):
+		cursor_theme = unicode(self.ComboBox_cursor.get_active_text(),'UTF_8')
+		if unquote(self.CURSOR_THEME) != cursor_theme:
+			if self.set_gdm('CURSOR_THEME',cursor_theme) :
+				self.CURSOR_THEME = cursor_theme
+				print ("Cursor Theme Changed : " + self.CURSOR_THEME)
+			else :
+				self.ComboBox_cursor.set_active_iter(get_iter(self.ComboBox_cursor.get_model(),self.CURSOR_THEME))
+
+	def logo_icon_changed(self,e):
+		logo_icon = unicode(self.Entry_logo.get_text(),'UTF_8')
+		if self.LOGO_ICON != logo_icon :
+			if self.set_gdm('LOGO_ICON',logo_icon) :
+				self.LOGO_ICON = logo_icon
+				print ("Logo Icon Changed : " + self.LOGO_ICON)
+			else:
+				self.Entry_logo.set_text(self.LOGO_ICON)
+
+	def banner_toggled(self,e):
+		banner = self.CheckButton_banner.get_active()
+		if banner!=self.BANNER :
+			if self.set_gdm('BANNER',str(banner)) :
+				self.BANNER = banner
+				print ("Banner Changed : " + str(self.BANNER))
+				if self.BANNER :
+					self.Entry_banner_text.set_sensitive(True)
+				else:
+					self.Entry_banner_text.set_sensitive(False)
+			else:
+				self.CheckButton_banner.set_active(self.BANNER)
+
+	def banner_text_changed(self,e):
+		banner_text = unicode(self.Entry_banner_text.get_text(),'UTF_8')
+		if banner_text!=self.BANNER_TEXT :
+			if self.set_gdm('BANNER_TEXT',banner_text) :
+				self.BANNER_TEXT = banner_text
+				print ("Banner Text Changed : " + self.BANNER_TEXT)
+			else :
+				self.Entry_banner_text.set_text(self.BANNER_TEXT)
+
+	def user_list_toggled(self,e):
+		user_list = self.CheckButton_user.get_active()
+		if self.USER_LIST != user_list :
+			if self.set_gdm('USER_LIST',str(user_list)) :
+				self.USER_LIST = user_list
+				print ("User List Changed : " + str(self.USER_LIST))
+			else:
+				self.CheckButton_user.set_active(self.USER_LIST)
+
+	def menu_btn_toggled(self,e):
+		menu_btn = self.CheckButton_restart.get_active()
+		if self.MENU_BTN != menu_btn :
+			if self.set_gdm('MENU_BTN',str(menu_btn)) :
+				self.MENU_BTN = menu_btn
+				print ("Menu Btn Changed : " + str(self.MENU_BTN))
+			else:
+				self.CheckButton_restart.set_active(self.MENU_BTN)
+
+	def autologin_changed(self,e) :
+		autologin_enabled = self.BTN_autologin.get_autologin()
+		autologin_username = self.BTN_autologin.get_username()
+		autologin_timed = self.BTN_autologin.get_timed()
+		autologin_time = self.BTN_autologin.get_time()
+		if self.set_autologin(autologin_enabled,autologin_username,autologin_timed,autologin_time) :
+			print("Autologin Changed : " + autologin_username)
+			self.AUTOLOGIN_ENABLED = autologin_enabled
+			self.AUTOLOGIN_USERNAME = autologin_username
+			self.AUTOLOGIN_TIMED = autologin_timed
+			self.AUTOLOGIN_TIME = autologin_time
+		else :
+			self.BTN_autologin.set_autologin(self.AUTOLOGIN_ENABLED)
+			self.BTN_autologin.set_username(self.AUTOLOGIN_USERNAME)
+			self.BTN_autologin.set_timed(self.AUTOLOGIN_TIMED)
+			self.BTN_autologin.set_time(self.AUTOLOGIN_TIME)
+
+#-----------------------------------------------
 
 def get_setting(name,data):
 	for line in data:
@@ -167,380 +592,8 @@ def get_iter(model,target):
 		iter_test = model.iter_next(iter_test)
 	return target_iter
 
-def set_gdm(name,value):
-	if SetUI(name,value)=="OK" :
-		return True
-	else :
-		return False
-
-def get_gdm():
-	settings = list(GetUI())
-	global GTK3_THEME,SHELL_THEME,ICON_THEME,CURSOR_THEME,WALLPAPER,LOGO_ICON,USER_LIST,MENU_BTN,BANNER,BANNER_TEXT,FONT_NAME
-	GTK3_THEME = get_setting("GTK",settings)
-	SHELL_THEME = get_setting("SHELL",settings)
-	ICON_THEME = get_setting("ICON",settings)
-	CURSOR_THEME = get_setting("CURSOR",settings)
-	BKG = get_setting("BKG",settings)
-	WALLPAPER = BKG[8:len(BKG)-1]
-	LOGO_ICON = get_setting("LOGO",settings)
-	USER_LIST = str_to_bool(get_setting("USER_LIST",settings))
-	MENU_BTN = str_to_bool( get_setting("BTN" ,settings))
-	BANNER = str_to_bool(get_setting("BANNER",settings))
-	BANNER_TEXT = get_setting("BANNER_TEXT",settings)
-	FONT_NAME = unquote(get_setting("FONT",settings))
-
-	ComboBox_gtk.set_active_iter(get_iter(ComboBox_gtk.get_model(),GTK3_THEME))
-	ComboBox_shell.set_active_iter(get_iter(ComboBox_shell.get_model(),SHELL_THEME))
-	WallpaperChooser.Set_Filename(WALLPAPER) 
-	ComboBox_icon.set_active_iter(get_iter(ComboBox_icon.get_model(),ICON_THEME))
-	ComboBox_cursor.set_active_iter(get_iter(ComboBox_cursor.get_model(),CURSOR_THEME))
-	Entry_logo.set_text(LOGO_ICON)
-	CheckButton_banner.set_active(BANNER)
-	Entry_banner_text.set_text(BANNER_TEXT)
-	CheckButton_user.set_active(USER_LIST)
-	CheckButton_restart.set_active(MENU_BTN)
-	Entry_banner_text.set_sensitive(BANNER)
-	FontButton.set_font_name(FONT_NAME)
-
-def gtk3_theme_changed(e):
-	global GTK3_THEME
-	gtk_theme = unicode(ComboBox_gtk.get_active_text(),'UTF_8')
-	if gtk_theme!=unquote(GTK3_THEME) :
-		if set_gdm('GTK_THEME',gtk_theme) :
-			GTK3_THEME = gtk_theme
-			print("GTK3 Theme Changed : " + GTK3_THEME)
-		else :
-			ComboBox_gtk.set_active_iter(get_iter(ComboBox_gtk.get_model(),GTK3_THEME))
-
-def shell_theme_changed(e):
-	global SHELL_THEME
-	shell_theme = unicode(ComboBox_shell.get_active_text(),'UTF_8')
-	if shell_theme!=unquote(SHELL_THEME) :
-		if set_gdm('SHELL_THEME',shell_theme) :
-			SHELL_THEME = shell_theme
-			print("SHELL Theme Changed : " + SHELL_THEME)
-		else :
-			ComboBox_shell.set_active_iter(get_iter(ComboBox_shell.get_model(),SHELL_THEME))
-
-def font_set(e):
-	global FONT_NAME
-	font_name = FontButton.get_font_name()
-	if FONT_NAME != font_name : 
-		if set_gdm('FONT',font_name) :
-			FONT_NAME = font_name
-			print("Font Changed : " + font_name)
-		else :
-			FontButton.set_font_name(FONT_NAME)
-
-def wallpaper_filechanged(e):
-	global WALLPAPER
-	wallpaper = WallpaperChooser.Get_Filename()
-	if WALLPAPER != wallpaper :
-		if set_gdm('WALLPAPER',wallpaper) :
-			WALLPAPER = wallpaper 
-			print("Wallpaper Changed : " + WALLPAPER)
-		else :
-			WallpaperChooser.Set_Filename(WALLPAPER)
-
-def icon_theme_changed(e):
-	global ICON_THEME
-	icon_theme = unicode(ComboBox_icon.get_active_text(),'UTF_8')
-	if unquote(ICON_THEME) != icon_theme:
-		if set_gdm('ICON_THEME',icon_theme) :
-			ICON_THEME = icon_theme
-			print ("Icon Theme Changed : " + ICON_THEME)
-		else:
-			ComboBox_icon.set_active_iter(get_iter(ComboBox_icon.get_model(),ICON_THEME))
-
-def cursor_theme_changed(e):
-	global CURSOR_THEME
-	cursor_theme = unicode(ComboBox_cursor.get_active_text(),'UTF_8')
-	if unquote(CURSOR_THEME) != cursor_theme:
-		if set_gdm('CURSOR_THEME',cursor_theme) :
-			CURSOR_THEME = cursor_theme
-			print ("Cursor Theme Changed : " + CURSOR_THEME)
-		else :
-			ComboBox_cursor.set_active_iter(get_iter(ComboBox_cursor.get_model(),CURSOR_THEME))
-
-def logo_icon_changed(e):
-	global LOGO_ICON
-	logo_icon = unicode(Entry_logo.get_text(),'UTF_8')
-	if LOGO_ICON != logo_icon :
-		if set_gdm('LOGO_ICON',logo_icon) :
-			LOGO_ICON = logo_icon
-			print ("Logo Icon Changed : " + LOGO_ICON)
-		else:
-			Entry_logo.set_text(LOGO_ICON)
-
-def banner_toggled(e):
-	global BANNER
-	banner = CheckButton_banner.get_active()
-	if banner!=BANNER :
-		if set_gdm('BANNER',str(banner)) :
-			BANNER = banner
-			print ("Banner Changed : " + str(BANNER))
-
-			if BANNER :
-				Entry_banner_text.set_sensitive(True)
-			else:
-				Entry_banner_text.set_sensitive(False)
-		else:
-			CheckButton_banner.set_active(BANNER)
-
-def banner_text_changed(e):
-	global BANNER_TEXT
-	banner_text = unicode(Entry_banner_text.get_text(),'UTF_8')
-	if banner_text!=BANNER_TEXT :
-		if set_gdm('BANNER_TEXT',banner_text) :
-			BANNER_TEXT = banner_text
-			print ("Banner Text Changed : " + BANNER_TEXT)
-		else :
-			Entry_banner_text.set_text(BANNER_TEXT)
-
-def user_list_toggled(e):
-	global USER_LIST
-	user_list = CheckButton_user.get_active()
-	if USER_LIST != user_list :
-		if set_gdm('USER_LIST',str(user_list)) :
-			USER_LIST = user_list
-			print ("User List Changed : " + str(USER_LIST))
-		else:
-			CheckButton_user.set_active(USER_LIST)
-
-def menu_btn_toggled(e):
-	global MENU_BTN
-	menu_btn = CheckButton_restart.get_active()
-	if MENU_BTN != menu_btn :
-		if set_gdm('MENU_BTN',str(menu_btn)) :
-			MENU_BTN = menu_btn
-			print ("Menu Btn Changed : " + str(MENU_BTN))
-		else:
-			CheckButton_restart.set_active(MENU_BTN)
-
-
-#--------------------------------------------------------
-
-def autologin_clicked(e):
-	win_autologin.show_all()
-
-def Close_AutoLogin(e,data):
-	win_autologin.hide()
-	return True
-
-def AutoLogin_toggled(e):
-	if CheckButton_AutoLogin.get_active():
-		HBox_username.set_sensitive(True)
-		HBox_Delay.set_sensitive(True)
-	else:
-		HBox_username.set_sensitive(False)
-		HBox_Delay.set_sensitive(False)
-
-	if Entry_username.get_text()!="" or not CheckButton_AutoLogin.get_active():
-		HBox_AutoLogin_Apply.set_sensitive(True)
-	else:
-		HBox_AutoLogin_Apply.set_sensitive(False)
-
-def username_changed(e):
-	if Entry_username.get_text()!="":
-		HBox_AutoLogin_Apply.set_sensitive(True)
-	else:
-		HBox_AutoLogin_Apply.set_sensitive(False)
-
-def Delay_toggled(e):
-	if CheckButton_Delay.get_active():
-		SpinButton_Delay.set_sensitive(True)
-	else:
-		SpinButton_Delay.set_sensitive(False)
-
-def AutoLogin_Apply_clicked(e):
-	AUTOLOGIN = CheckButton_AutoLogin.get_active()
-	TIMED = CheckButton_Delay.get_active()
-	TIMED_TIME = SpinButton_Delay.get_value()
-	USERNAME = Entry_username.get_text()
-
-	SetAutoLogin(AUTOLOGIN,USERNAME,TIMED,int(TIMED_TIME))
-
-	win_autologin.hide()
-
-def get_autologin():
-	AUTOLOGIN,USERNAME,TIMED,TIMED_TIME = GetAutoLogin()
-	CheckButton_AutoLogin.set_active(str_to_bool(AUTOLOGIN))
-	CheckButton_Delay.set_active(str_to_bool(TIMED))
-	SpinButton_Delay.set_value(int(TIMED_TIME))
-	Entry_username.set_text(USERNAME)
-
 #-----------------------------------------------
-mainwin = Gtk.Window()
-mainwin.connect("destroy",mainwin_close)
-mainwin.set_border_width(10)
-mainwin.set_position(Gtk.WindowPosition.CENTER)
-mainwin.set_resizable(False)
-mainwin.set_title(_("GDM3 Setup"))
-mainwin.set_icon_name("preferences-desktop-theme")
 
-VBox_Main = Gtk.VBox.new(False, 4)
-mainwin.add(VBox_Main)
-
-HBox_Main = Gtk.HBox.new(False, 16)
-VBox_Main.pack_start(HBox_Main, False, False, 0)
-
-VBox_Left = Gtk.VBox.new(True, 0)
-HBox_Main.pack_start(VBox_Left, False, False, 0)
-
-VBox_Right = Gtk.VBox.new(False, 0)
-HBox_Main.pack_start(VBox_Right, False, False, 0)
-
-Label_gtk = Gtk.Label(_("GTK3 theme"))
-Label_gtk.set_alignment(0,0.5)
-VBox_Left.pack_start(Label_gtk, False, True, 0)
-
-ComboBox_gtk =  Gtk.ComboBoxText.new()
-VBox_Right.pack_start(ComboBox_gtk, False, True, 0)
-
-Label_shell = Gtk.Label(_("Shell theme"))
-Label_shell.set_alignment(0,0.5)
-VBox_Left.pack_start(Label_shell, False, True, 0)
-
-ComboBox_shell =  Gtk.ComboBoxText.new()
-VBox_Right.pack_start(ComboBox_shell, False, True, 0)
-
-Label_bkg = Gtk.Label(_("Wallpaper"))
-Label_bkg.set_alignment(0,0.5)
-VBox_Left.pack_start(Label_bkg, False, True, 0)
-
-WallpaperChooser = WallpaperChooserClass()
-VBox_Right.pack_start(WallpaperChooser, False, True, 0)
-
-Label_font = Gtk.Label(_("Font"))
-Label_font.set_alignment(0,0.5)
-VBox_Left.pack_start(Label_font, False, True, 0)
-
-FontButton = Gtk.FontButton.new()
-VBox_Right.pack_start(FontButton, False, True, 0)
-
-Label_icon = Gtk.Label(_("Icon theme"))
-Label_icon.set_alignment(0,0.5)
-VBox_Left.pack_start(Label_icon, False, True, 0)
-
-ComboBox_icon =  Gtk.ComboBoxText.new()
-VBox_Right.pack_start(ComboBox_icon, False, True, 0)
-
-Label_cursor = Gtk.Label(_("Cursor theme"))
-Label_cursor.set_alignment(0,0.5)
-VBox_Left.pack_start(Label_cursor, False, True, 0)
-
-ComboBox_cursor =  Gtk.ComboBoxText.new()
-VBox_Right.pack_start(ComboBox_cursor, False, True, 0)
-
-Label_logo = Gtk.Label(_("Logo Icon"))
-Label_logo.set_alignment(0,0.5)
-VBox_Left.pack_start(Label_logo, False, True, 0)
-
-Entry_logo = Gtk.Entry()
-VBox_Right.pack_start(Entry_logo, False, True, 0)
-
-CheckButton_banner = Gtk.CheckButton(label=_("Enable Banner"),use_underline=True)
-VBox_Left.pack_start(CheckButton_banner, False, True, 0)
-
-Entry_banner_text = Gtk.Entry()
-Entry_banner_text.set_sensitive(False)
-VBox_Right.pack_start(Entry_banner_text, False, True, 0)
-
-HBox_user = Gtk.HBox.new(True, 0)
-VBox_Main.pack_start(HBox_user, False, True, 0)
-
-CheckButton_user = Gtk.CheckButton(label=_("Disable User List"),use_underline=True)
-HBox_user.pack_start(CheckButton_user, False, True, 0)
-
-HBox_restart = Gtk.HBox.new(True, 0)
-VBox_Main.pack_start(HBox_restart, False, True, 0)
-
-CheckButton_restart = Gtk.CheckButton(label=_("Disable Restart Buttons"),use_underline=True)
-HBox_restart.pack_start(CheckButton_restart, False, True, 0)
-
-HBox_autologin = Gtk.HBox.new(False, 8)
-VBox_Main.pack_end(HBox_autologin, False, False, 0)
-
-BTN_autologin = Gtk.Button(_('AutoLogin'))
-BTN_autologin.connect("clicked",autologin_clicked)
-HBox_autologin.pack_start(BTN_autologin, False, False, 0)
-
-#-------
-win_autologin = Gtk.Window()
-win_autologin.connect("delete-event",Close_AutoLogin)
-win_autologin.set_border_width(10)
-win_autologin.set_position(Gtk.WindowPosition.CENTER_ON_PARENT)
-win_autologin.set_modal(True)
-win_autologin.set_transient_for(mainwin)
-win_autologin.set_resizable(False)
-win_autologin.set_title(_("GDM AutoLogin Setup"))
-
-VBoxMain_Autologin = Gtk.VBox.new(False, 8)
-win_autologin.add(VBoxMain_Autologin)
-
-CheckButton_AutoLogin = Gtk.CheckButton(label=_("Enable Automatic Login"),use_underline=True)
-CheckButton_AutoLogin.connect("toggled",AutoLogin_toggled)
-VBoxMain_Autologin.pack_start(CheckButton_AutoLogin, False, False, 0)
-
-HBox_username = Gtk.HBox.new(False, 0)
-HBox_username.set_sensitive(False)
-VBoxMain_Autologin.pack_start(HBox_username, False, False, 0)
-
-Label_username = Gtk.Label(_("User Name"))
-Label_username.set_alignment(0,0.5)
-HBox_username.pack_start(Label_username, False, False, 0)
-
-Entry_username =  Gtk.Entry()
-Entry_username.connect("changed",username_changed)
-HBox_username.pack_end(Entry_username, False, False, 0)
-
-HBox_Delay = Gtk.HBox.new(False, 8)
-HBox_Delay.set_sensitive(False)
-VBoxMain_Autologin.pack_start(HBox_Delay, False, False, 0)
-
-CheckButton_Delay = Gtk.CheckButton(label=_("Enable Delay before autologin"),use_underline=True)
-CheckButton_Delay.connect("toggled",Delay_toggled)
-HBox_Delay.pack_start(CheckButton_Delay, False, False, 0)
-
-SpinButton_Delay = Gtk.SpinButton.new_with_range(1,60,1)
-SpinButton_Delay.set_value(10)
-SpinButton_Delay.set_sensitive(False)
-HBox_Delay.pack_end(SpinButton_Delay, False, False, 0)
-
-HBox_AutoLogin_Apply = Gtk.HBox.new(False, 0)
-VBoxMain_Autologin.pack_end(HBox_AutoLogin_Apply, False, False, 0)
-
-BTN_AutoLogin_Apply = Gtk.Button(_('Apply'))
-BTN_AutoLogin_Apply.connect("clicked",AutoLogin_Apply_clicked)
-HBox_AutoLogin_Apply.pack_start(BTN_AutoLogin_Apply, True, False, 0)
-
-mainwin.show_all()
-
-bus = dbus.SystemBus()
-gdm3setup = bus.get_object('apps.nano77.gdm3setup','/apps/nano77/gdm3setup')
-SetUI = gdm3setup.get_dbus_method('SetUI','apps.nano77.gdm3setup')
-GetUI = gdm3setup.get_dbus_method('GetUI','apps.nano77.gdm3setup')
-SetAutoLogin = gdm3setup.get_dbus_method('SetAutoLogin','apps.nano77.gdm3setup')
-GetAutoLogin = gdm3setup.get_dbus_method('GetAutoLogin','apps.nano77.gdm3setup')
-StopDaemon = gdm3setup.get_dbus_method('StopDaemon', 'apps.nano77.gdm3setup')
-
-load_gtk3_list()
-load_shell_list()
-load_icon_list()
-get_gdm()
-get_autologin()
-
-FontButton.connect("font-set",font_set)
-WallpaperChooser.connect("file-changed",wallpaper_filechanged)
-ComboBox_shell.connect("changed",shell_theme_changed)
-ComboBox_icon.connect("changed",icon_theme_changed)
-ComboBox_cursor.connect("changed",cursor_theme_changed)
-Entry_logo.connect("changed",logo_icon_changed)
-ComboBox_gtk.connect("changed",gtk3_theme_changed)
-CheckButton_banner.connect("toggled",banner_toggled)
-Entry_banner_text.connect("changed",banner_text_changed)
-CheckButton_user.connect("toggled",user_list_toggled)
-CheckButton_restart.connect("toggled",menu_btn_toggled)
-
+MainWindow().show_all()
 
 Gtk.main()

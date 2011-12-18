@@ -1,5 +1,5 @@
 # A GUI to setting GDM3.
-# Copyright (C) 2011
+# Copyright (C) 2011 Nano77 <nanoarch77@gmail.com>
 # This file is distributed under the same license as the package.
 # Nano77 <nanoarch77@gmail.com>, 2011.
 #
@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gdm3setup \n"
 "Report-Msgid-Bugs-To: https://github.com/Nano77/gdm3setup/issues\n"
-"POT-Creation-Date: 2011-06-27 11:32+0200\n"
-"PO-Revision-Date: 2011-07-05 16:19+0200\n"
+"POT-Creation-Date: 2011-06-27 11:32+0100\n"
+"PO-Revision-Date: 2011-12-17 14:19+0100\n"
 "Last-Translator: Nano77 <nanoarch77@gmail.com>\n"
 "Language: fr_FR\n"
 "MIME-Version: 1.0\n"
@@ -17,71 +17,74 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 
 
-#: gdm3setup.py:380
-msgid "GDM3 Setup"
-msgstr "Paramètre de GDM3"
+#: gdm3setup.py:95
+msgid "Disabled"
+msgstr "Désactivé"
 
-#: gdm3setup.py:395
-msgid "GTK3 theme"
-msgstr "Thème GTK3"
-
-#: gdm3setup.py:402
-msgid "Shell theme"
-msgstr "Thème du Shell"
-
-#: gdm3setup.py:409
-msgid "Wallpaper"
-msgstr "Arrière-plan"
-
-#: gdm3setup.py:416
-msgid "Font"
-msgstr "Police"
-
-#: gdm3setup.py:423
-msgid "Icon theme"
-msgstr "Thème d'Icône"
-
-#: gdm3setup.py:430
-msgid "Cursor theme"
-msgstr "Thème de Curseur"
-
-#: gdm3setup.py:437
-msgid "Logo Icon"
-msgstr "Icône du Logo"
-
-#: gdm3setup.py:444
-msgid "Enable Banner"
-msgstr "Activer la Bannière"
-
-#: gdm3setup.py:454
-msgid "Disable User List"
-msgstr "Désactiver la liste des utilisateurs"
-
-#: gdm3setup.py:460
-msgid "Disable Restart Buttons"
-msgstr "Désactiver 'Restart' boutons"
-
-#: gdm3setup.py:466
-msgid "AutoLogin"
-msgstr "Connexion Automatique"
-
-#: gdm3setup.py:478
+#: gdm3setup.py:183
 msgid "GDM AutoLogin Setup"
 msgstr "GDM Connexion Automatique"
 
-#: gdm3setup.py:483
+#: gdm3setup.py:189
 msgid "Enable Automatic Login"
 msgstr "Activer la Connexion Automatique"
 
-#: gdm3setup.py:491
+#: gdm3setup.py:197
 msgid "User Name"
 msgstr "Nom de l'utilisateur"
 
-#: gdm3setup.py:503
+#: gdm3setup.py:209
 msgid "Enable Delay before autologin"
 msgstr "Activer le délai avant connexion automatique"
 
-#: gdm3setup.py:515
+#: gdm3setup.py:221
 msgid "Apply"
 msgstr "Appliquer"
 
+#: gdm3setup.py:265
+msgid "GDM3 Setup"
+msgstr "Paramètre de GDM3"
+
+#: gdm3setup.py:276
+msgid "GTK3 theme"
+msgstr "Thème GTK3"
+
+#: gdm3setup.py:281
+msgid "Shell theme"
+msgstr "Thème du Shell"
+
+#: gdm3setup.py:286
+msgid "Wallpaper"
+msgstr "Arrière-plan"
+
+#: gdm3setup.py:291
+msgid "Font"
+msgstr "Police"
+
+#: gdm3setup.py:296
+msgid "Icon theme"
+msgstr "Thème d'Icône"
+
+#: gdm3setup.py:301
+msgid "Cursor theme"
+msgstr "Thème de Curseur"
+
+#: gdm3setup.py:306
+msgid "Logo Icon"
+msgstr "Icône du Logo"
+
+#: gdm3setup.py:311
+msgid "Enable Banner"
+msgstr "Activer la Bannière"
+
+#: gdm3setup.py:318
+msgid "Disable User List"
+msgstr "Désactiver la liste des utilisateurs"
+
+#: gdm3setup.py:322
+msgid "Disable Restart Buttons"
+msgstr "Désactiver 'Restart' boutons"
+
+#: gdm3setup.py:326
+msgid "AutoLogin"
+msgstr "Connexion Automatique"

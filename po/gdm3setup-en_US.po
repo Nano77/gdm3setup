@@ -1,5 +1,5 @@
 # A GUI to setting GDM3.
-# Copyright (C) 2011
+# Copyright (C) 2011 Nano77 <nanoarch77@gmail.com>
 # This file is distributed under the same license as the package.
 # Nano77 <nanoarch77@gmail.com>, 2011.
 #
@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gdm3setup \n"
 "Report-Msgid-Bugs-To: https://github.com/Nano77/gdm3setup/issues\n"
-"POT-Creation-Date: 2011-06-27 11:32+0200\n"
-"PO-Revision-Date: 2011-07-30 16:19+0200\n"
+"POT-Creation-Date: 2011-06-27 11:32+0100\n"
+"PO-Revision-Date: 2011-12-17 12:19+0100\n"
 "Last-Translator: Nano77 <nanoarch77@gmail.com>\n"
 "Language: en_US\n"
 "MIME-Version: 1.0\n"
@@ -17,71 +17,75 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 
 
-#: gdm3setup.py:282
-msgid "GDM3 Setup"
-msgstr "GDM3 settings"
 
-#: gdm3setup.py:297
-msgid "GTK3 theme"
-msgstr "GTK3 theme"
+#: gdm3setup.py:95
+msgid "Disabled"
+msgstr "Disabled"
 
-#: gdm3setup.py:402
-msgid "Shell theme"
-msgstr "Shell theme"
-
-#: gdm3setup.py:305
-msgid "Wallpaper"
-msgstr "Wallpaper"
-
-#: gdm3setup.py:416
-msgid "Font"
-msgstr "Font"
-
-#: gdm3setup.py:320
-msgid "Icon theme"
-msgstr "Icon Theme"
-
-#: gdm3setup.py:328
-msgid "Cursor theme"
-msgstr "Cursor Theme"
-
-#: gdm3setup.py:336
-msgid "Logo Icon"
-msgstr "Logo Icon"
-
-#: gdm3setup.py:344
-msgid "Enable Banner"
-msgstr "Enable Banner"
-
-#: gdm3setup.py:357
-msgid "Disable User List"
-msgstr "Disable User List"
-
-#: gdm3setup.py:364
-msgid "Disable Restart Buttons"
-msgstr "Disable 'Restart' Buttons"
-
-#: gdm3setup.py:371
-msgid "AutoLogin"
-msgstr "Automatic Login"
-
-#: gdm3setup.py:392
+#: gdm3setup.py:183
 msgid "GDM AutoLogin Setup"
 msgstr "GDM Automatic Login"
 
-#: gdm3setup.py:397
+#: gdm3setup.py:189
 msgid "Enable Automatic Login"
 msgstr "Enable Automatic Login"
 
-#: gdm3setup.py:405
+#: gdm3setup.py:197
 msgid "User Name"
 msgstr "User Name"
 
-#: gdm3setup.py:417
+#: gdm3setup.py:209
 msgid "Enable Delay before autologin"
 msgstr "Enable Delay before Automatic Login"
 
-#: gdm3setup.py:429
+#: gdm3setup.py:221
 msgid "Apply"
 msgstr "Apply"
 
+#: gdm3setup.py:265
+msgid "GDM3 Setup"
+msgstr "GDM3 settings"
+
+#: gdm3setup.py:276
+msgid "GTK3 theme"
+msgstr "GTK3 theme"
+
+#: gdm3setup.py:281
+msgid "Shell theme"
+msgstr "Shell theme"
+
+#: gdm3setup.py:286
+msgid "Wallpaper"
+msgstr "Wallpaper"
+
+#: gdm3setup.py:291
+msgid "Font"
+msgstr "Font"
+
+#: gdm3setup.py:296
+msgid "Icon theme"
+msgstr "Icon Theme"
+
+#: gdm3setup.py:301
+msgid "Cursor theme"
+msgstr "Cursor Theme"
+
+#: gdm3setup.py:306
+msgid "Logo Icon"
+msgstr "Logo Icon"
+
+#: gdm3setup.py:311
+msgid "Enable Banner"
+msgstr "Enable Banner"
+
+#: gdm3setup.py:318
+msgid "Disable User List"
+msgstr "Disable User List"
+
+#: gdm3setup.py:322
+msgid "Disable Restart Buttons"
+msgstr "Disable 'Restart' Buttons"
+
+#: gdm3setup.py:326
+msgid "AutoLogin"
+msgstr "Automatic Login"
