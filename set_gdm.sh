@@ -40,61 +40,85 @@ while getopts "v:n:h" opt; do
 	esac
 done
 
-if [ "$parameter_name" = "" ] || [ "$parameter_value" = "" ]
-then
-	echo  Syntax Error
-
-else
-
+can_be_empty () {
 	case $parameter_name in
-		GTK_THEME)
-			echo "$parameter_name = $parameter_value"
-			gsettings set org.gnome.desktop.interface gtk-theme "$parameter_value"
-			;;
-		FONT)
-			echo "$parameter_name = $parameter_value"
-			gsettings set org.gnome.desktop.interface font-name "$parameter_value"
-			;;
-		ICON_THEME)
-			echo "$parameter_name = $parameter_value"
-			gsettings set org.gnome.desktop.interface icon-theme "$parameter_value"
-			;;
-		CURSOR_THEME)
-			echo "$parameter_name = $parameter_value"
-			gsettings set org.gnome.desktop.interface cursor-theme "$parameter_value"
-			gconftool-2 --type string --set /desktop/gnome/peripherals/mouse/cursor_theme "$parameter_value"
-			;;
-		WALLPAPER)
-			echo "$parameter_name = $parameter_value"
-			gsettings set org.gnome.desktop.background picture-uri "'file://"$parameter_value"'"
-			;;
-		LOGO_ICON)
-			echo "$parameter_name = $parameter_value"
-			gconftool-2 --type string --set /apps/gdm/simple-greeter/logo_icon_name "$parameter_value"
-			;;
-		USER_LIST)
-			echo "$parameter_name = $parameter_value"
-			gconftool-2 --type bool --set /apps/gdm/simple-greeter/disable_user_list $parameter_value
-			gsettings set org.gnome.login-screen disable-user-list $parameter_value
-			;;
-		MENU_BTN)
-			echo "$parameter_name = $parameter_value"
-			gconftool-2 --type bool --set /apps/gdm/simple-greeter/disable_restart_buttons $parameter_value
-			;;
-		BANNER)
-			echo "$parameter_name = $parameter_value"
-			gconftool-2 --type bool --set /apps/gdm/simple-greeter/banner_message_enable $parameter_value
-			;;
-		BANNER_TEXT)
-			echo "$parameter_name = $parameter_value"
-			gconftool-2 --type string --set /apps/gdm/simple-greeter/banner_message_text "$parameter_value"
-			gconftool-2 --type string --set /apps/gdm/simple-greeter/banner_message_text_nochooser "$parameter_value"
-			;;
+		WALLPAPER|SHELL_LOGO|BANNER_TEXT)
+			return 0;;
 		*)
-			echo "Uknown GDM3 Parameter !"
-			;;
+			return 1;;
 	esac
+}
 
+if [ -z "$parameter_name" ]
+then
+	echo name can not be empty
+else
+	if [ -z "$parameter_value" ] && ! can_be_empty
+	then
+		echo value can not be empty
+	else
+
+		case $parameter_name in
+			GTK_THEME)
+				echo "$parameter_name = $parameter_value"
+				gsettings set org.gnome.desktop.interface gtk-theme "$parameter_value"
+				;;
+			FONT)
+				echo "$parameter_name = $parameter_value"
+				gsettings set org.gnome.desktop.interface font-name "$parameter_value"
+				;;
+			ICON_THEME)
+				echo "$parameter_name = $parameter_value"
+				gsettings set org.gnome.desktop.interface icon-theme "$parameter_value"
+				;;
+			CURSOR_THEME)
+				echo "$parameter_name = $parameter_value"
+				gsettings set org.gnome.desktop.interface cursor-theme "$parameter_value"
+				gconftool-2 --type string --set /desktop/gnome/peripherals/mouse/cursor_theme "$parameter_value"
+				;;
+			WALLPAPER)
+				echo "$parameter_name = $parameter_value"
+				gsettings set org.gnome.desktop.background picture-uri "'file://"$parameter_value"'"
+				;;
+			LOGO_ICON)
+				echo "$parameter_name = $parameter_value"
+				gconftool-2 --type string --set /apps/gdm/simple-greeter/logo_icon_name "$parameter_value"
+				;;
+			SHELL_LOGO)
+				echo "$parameter_name = $parameter_value"
+				gsettings set org.gnome.login-screen logo "$parameter_value"
+				;;
+			USER_LIST)
+				echo "$parameter_name = $parameter_value"
+				gconftool-2 --type bool --set /apps/gdm/simple-greeter/disable_user_list $parameter_value
+				gsettings set org.gnome.login-screen disable-user-list $parameter_value
+				;;
+			MENU_BTN)
+				echo "$parameter_name = $parameter_value"
+				gconftool-2 --type bool --set /apps/gdm/simple-greeter/disable_restart_buttons $parameter_value
+				;;
+			BANNER)
+				echo "$parameter_name = $parameter_value"
+				gconftool-2 --type bool --set /apps/gdm/simple-greeter/banner_message_enable $parameter_value
+				;;
+			BANNER_TEXT)
+				echo "$parameter_name = $parameter_value"
+				gconftool-2 --type string --set /apps/gdm/simple-greeter/banner_message_text "$parameter_value"
+				gconftool-2 --type string --set /apps/gdm/simple-greeter/banner_message_text_nochooser "$parameter_value"
+				;;
+			CLOCK_DATE)
+				echo "$parameter_name = $parameter_value"
+				gsettings set org.gnome.shell.clock show-date "$parameter_value"
+				;;
+			CLOCK_SECONDS)
+				echo "$parameter_name = $parameter_value"
+				gsettings set org.gnome.shell.clock show-seconds "$parameter_value"
+				;;
+			*)
+				echo "Uknown GDM3 Parameter !"
+				;;
+		esac
+	fi
 fi
 
 if $NEW_BUS 
