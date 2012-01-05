@@ -663,8 +663,8 @@ class MainWindow(Gtk.Window) :
 def get_setting(name,data):
 	for line in data:
 		line = unicode(line)
-		if line[0:len(name)+1]==name+"=":
-			value = line[len(name)+1:len(line)].strip()
+		if -1 != line.find(name+"="):
+			value = line[line.rfind("=")+1:len(line)].strip()
 			break
 	return value
 
