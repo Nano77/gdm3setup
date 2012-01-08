@@ -81,9 +81,12 @@ class WallpaperChooserButton(Gtk.Button):
 				mtime = file_info.get_attribute_uint64(Gio.FILE_ATTRIBUTE_TIME_MODIFIED)
 				ThumbnailFactory = GnomeDesktop.DesktopThumbnailFactory.new(GnomeDesktop.DesktopThumbnailSize.NORMAL)
 				thumbpath = ThumbnailFactory.lookup(uri,mtime)
-				pixbuf = GdkPixbuf.Pixbuf.new_from_file(thumbpath)
-				self.PreviewImage.set_from_pixbuf(pixbuf)
-				self.FileChooserDialog.set_preview_widget_active(True)
+				if thumbpath != None :
+					pixbuf = GdkPixbuf.Pixbuf.new_from_file(thumbpath)
+					self.PreviewImage.set_from_pixbuf(pixbuf)
+					self.FileChooserDialog.set_preview_widget_active(True)
+				else :
+					self.FileChooserDialog.set_preview_widget_active(False)
 			else :
 				self.FileChooserDialog.set_preview_widget_active(False)
 		else :
@@ -99,7 +102,7 @@ class AutologinButton (Gtk.Button) :
 		self.username=""
 		self.timed=False
 		self.time=30
-		self.box=Gtk.HBox(False,0)
+		self.box=Gtk.HBox.new(False,0)
 		self.add(self.box)
 		self.label_state=Gtk.Label(_("Disabled"))
 		self.label_state.set_no_show_all(True)
