@@ -2,6 +2,19 @@
 #
 #
 
+#Ubuntu
+#chown -R gdm:gdm /var/lib/gdm/
+
+#Ubuntu/Debian
+#sed -i 's/python2/python/' gdm3setup.py
+#sed -i 's/python2/python/' gdm3setup-daemon.py
+#sed -i 's/python2/python/' gdmlogin.py
+
+#Debian
+#sed -i 's/ gdm / Debian-gdm /' gdm3setup-daemon.py
+#sed -i 's/\/gdm\//\/gdm3\//' gdm3setup-daemon.py
+
+
 install --mode=755 -D gdm3setup.py /usr/bin/
 install --mode=755 -D gdm3setup-daemon.py /usr/bin/
 install --mode=755 -D start-gdm3setup-daemon /usr/bin/

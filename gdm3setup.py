@@ -4,6 +4,7 @@
 import os
 import gettext
 import dbus
+import mimetypes
 
 from gi.repository import Gtk
 from gi.repository import GdkPixbuf
@@ -16,6 +17,7 @@ gettext.install("gdm3setup")
 
 #-----------------------------------------------
 class ImageChooserButton(Gtk.Button):
+	__gtype_name__ = 'ImageChooserButton'
 
 	def __init__(self):
 		Gtk.Button.__init__(self)
@@ -80,20 +82,23 @@ class ImageChooserButton(Gtk.Button):
 			self.Label.set_label(_("(None)"))
 
 	def _UpdatePreview(self,e) :
-		uri = self.FileChooserDialog.get_preview_uri()
-		if uri!=None :
-			if not GLib.file_test(GLib.filename_from_uri(uri,""),GLib.FileTest.IS_DIR) :
-				file = Gio.File.new_for_uri(uri)
-				file_info = file.query_info("*",Gio.FileQueryInfoFlags.NONE,None)
-				mtime = file_info.get_attribute_uint64(Gio.FILE_ATTRIBUTE_TIME_MODIFIED)
+		PreviewURI = self.FileChooserDialog.get_preview_uri()
+		PreviewFile = self.FileChooserDialog.get_preview_file()
+		if PreviewURI!=None and PreviewFile !=None :
+			if not GLib.file_test(PreviewFile.get_path(),GLib.FileTest.IS_DIR) :
+				PreviewFileInfo = PreviewFile.query_info("*",Gio.FileQueryInfoFlags.NONE,None)
+				mtime = PreviewFileInfo.get_attribute_uint64(Gio.FILE_ATTRIBUTE_TIME_MODIFIED)
 				ThumbnailFactory = GnomeDesktop.DesktopThumbnailFactory.new(GnomeDesktop.DesktopThumbnailSize.NORMAL)
-				thumbpath = ThumbnailFactory.lookup(uri,mtime)
-				if thumbpath != None :
-					pixbuf = GdkPixbuf.Pixbuf.new_from_file(thumbpath)
+				ThumbnailPath = ThumbnailFactory.lookup(PreviewURI,mtime)
+				if ThumbnailPath != None :
+					pixbuf = GdkPixbuf.Pixbuf.new_from_file(ThumbnailPath)
 					self.PreviewImage.set_from_pixbuf(pixbuf)
 					self.FileChooserDialog.set_preview_widget_active(True)
 				else :
-					self.FileChooserDialog.set_preview_widget_active(False)
+					mimetype, enc = mimetypes.guess_type(PreviewURI,True)
+					pixbuf = ThumbnailFactory.generate_thumbnail(PreviewURI,mimetype)
+					self.PreviewImage.set_from_pixbuf(pixbuf)
+					self.FileChooserDialog.set_preview_widget_active(True)
 			else :
 				self.FileChooserDialog.set_preview_widget_active(False)
 		else :
@@ -103,6 +108,8 @@ GObject.signal_new("file-changed", ImageChooserButton, GObject.SIGNAL_RUN_FIRST,
 GObject.type_register(ImageChooserButton)
 
 class AutologinButton (Gtk.Button) :
+	__gtype_name__ = 'AutologinButton'
+
 	def __init__(self):
 		Gtk.Button.__init__(self)
 		self.autologin=False

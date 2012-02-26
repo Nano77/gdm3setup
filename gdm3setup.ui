@@ -69,6 +69,7 @@
                       <object class="GtkLabel" id="Label_autologin">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
+                        <property name="xalign">0</property>
                         <property name="label" translatable="yes">AutoLogin</property>
                       </object>
                       <packing>
@@ -91,9 +92,9 @@
                     <property name="orientation">vertical</property>
                     <property name="homogeneous">False</property>
                     <child>
-                      <object class="__main__+ImageChooserButton" id="Button_wallpaper">
+                      <object class="ImageChooserButton" id="Button_wallpaper">
                         <property name="visible">True</property>
-                        <property name="can_focus">False</property>
+                        <property name="can_focus">True</property>
                       </object>
                       <packing>
                         <property name="expand">False</property>
@@ -116,9 +117,6 @@
                       <object class="GtkComboBoxText" id="ComboBox_cursor">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
-                        <items>
-                          <item translatable="yes">XXXX</item>
-                        </items>
                       </object>
                       <packing>
                         <property name="expand">False</property>
@@ -127,7 +125,7 @@
                       </packing>
                     </child>
                     <child>
-                      <object class="__main__+AutologinButton" id="Button_autologin">
+                      <object class="AutologinButton" id="Button_autologin">
                         <property name="use_action_appearance">False</property>
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
@@ -234,7 +232,7 @@
                       </packing>
                     </child>
                     <child>
-                      <object class="__main__+ImageChooserButton" id="Button_shell_logo">
+                      <object class="ImageChooserButton" id="Button_shell_logo">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                       </object>
