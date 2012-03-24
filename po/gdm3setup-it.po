@@ -51,7 +51,7 @@ msgstr "Applica"
 
 #: gdm3setup.py:272
 msgid "GDM3 Setup"
-msgstr "Impostazioni di GDM3"
+msgstr "Impostazioni di GNOME Display Manager 3"
 
 #: gdm3setup.py:282
 msgid "General"
