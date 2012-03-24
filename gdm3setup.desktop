@@ -1,15 +1,21 @@
-#!/usr/bin/env xdg-open
 
 [Desktop Entry]
-Version=1.0
-Type=Application
-Terminal=false
-Exec=/usr/bin/gdm3setup.py
 Name=GDM3 Settings
-Name[fr_FR]=Paramètres de GDM3
 Name[de_DE]=Einstellungen der GDM3
-Name[it_IT]=impostazioni di GDM3
 Name[es_ES]=Configuratión de GDM3
+Name[fr]=Paramètres de GDM3
+Name[it]=Impostazioni di GNOME Display Manager 3
+Comment=Change GDM3 settings
+Comment[de_DE]=Einstellungen ändern für GDM3
+Comment[es_ES]=Cambiar la configuración de GDM3
+Comment[fr]=Modifier les paramètres de GDM3
+Comment[it]=Modifica il impostazioni di GNOME Display Manager 3
+Exec=gdm3setup.py
 Icon=preferences-desktop-theme
-Categories=Settings;
+Terminal=false
+Type=Application
+StartupNotify=true
+Categories=GNOME;GTK;Settings;X-GNOME-SystemSettings;
+OnlyShowIn=GNOME;Unity;
+
 

@@ -467,10 +467,9 @@
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkEntry" id="Entry_logo_icon">
+                      <object class="EditButton" id="Entry_logo_icon">
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
-                        <property name="invisible_char">●</property>
                       </object>
                       <packing>
                         <property name="expand">False</property>
@@ -479,10 +478,9 @@
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkEntry" id="Entry_banner_text">
+                      <object class="EditButton" id="Entry_banner_text">
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
-                        <property name="invisible_char">●</property>
                       </object>
                       <packing>
                         <property name="expand">False</property>

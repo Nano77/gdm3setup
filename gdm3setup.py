@@ -7,6 +7,7 @@ import dbus
 import mimetypes
 
 from gi.repository import Gtk
+from gi.repository import Gdk
 from gi.repository import GdkPixbuf
 from gi.repository import GnomeDesktop
 from gi.repository import GObject
@@ -32,6 +33,12 @@ class ImageChooserButton(Gtk.Button):
 		self.Box.pack_end(self.Separator,False,False,2)
 		self.PreviewImage = Gtk.Image()
 		self.PreviewBox = Gtk.VBox.new(False, 16)
+		self.Label_Size = Gtk.Label("0 x 0")
+		self.PreviewBox.set_size_request(200,-1);
+		self.PreviewBox.pack_start(self.PreviewImage, False, False, 0)
+		self.PreviewImage.show()
+		self.PreviewBox.pack_start(self.Label_Size, False, False, 0)
+		self.Label_Size.show()
 		self.Filename = ""
 		self.connect("clicked",self._Clicked)
 		self.FileChooserDialog = None
@@ -43,9 +50,6 @@ class ImageChooserButton(Gtk.Button):
 			filter = Gtk.FileFilter()
 			filter.add_pixbuf_formats()
 			filter.set_name('Image')
-			self.PreviewBox.set_size_request(200,-1);
-			self.PreviewBox.pack_start(self.PreviewImage, False, False, 0)
-			self.PreviewImage.show()
 			self.FileChooserDialog.add_filter(filter)
 			self.FileChooserDialog.set_filename(self.Filename)
 			self.FileChooserDialog.add_shortcut_folder('/usr/share/backgrounds')
@@ -97,8 +101,13 @@ class ImageChooserButton(Gtk.Button):
 				else :
 					mimetype, enc = mimetypes.guess_type(PreviewURI,True)
 					pixbuf = ThumbnailFactory.generate_thumbnail(PreviewURI,mimetype)
+					ThumbnailFactory.save_thumbnail(pixbuf,PreviewURI,mtime)
 					self.PreviewImage.set_from_pixbuf(pixbuf)
 					self.FileChooserDialog.set_preview_widget_active(True)
+
+				PreviewWidth = pixbuf.get_option("tEXt::Thumb::Image::Width")
+				PreviewHeight = pixbuf.get_option("tEXt::Thumb::Image::Height")
+				self.Label_Size.set_label( PreviewWidth + " x " + PreviewHeight)
 			else :
 				self.FileChooserDialog.set_preview_widget_active(False)
 		else :
@@ -275,6 +284,74 @@ class AutoLoginDialog(Gtk.Dialog):
 		else:
 			self.SpinButton_Delay.set_sensitive(False)
 
+class EditButton(Gtk.HBox) :
+	__gtype_name__ = 'EditButton'
+
+	def __init__(self):
+		Gtk.HBox.__init__(self)
+		self.Button = Gtk.Button('text')
+		self.Button.connect("clicked",self.set_state_active)
+		self.add(self.Button)
+		self.Entry = Gtk.Entry()
+		self.Entry.connect("key-press-event",self.key_press)
+		self.Entry.connect("button-press-event",self.button_press)
+		self.Entry.connect("focus-in-event",self.focus_in)
+		self.focus_out_event = None
+		self.update_size()
+
+	def update_size(self):
+		entry_preferred_width = self.Entry.get_preferred_width()[0]
+		entry_preferred_height = self.Entry.get_preferred_height()[0]
+		button_preferred_width = self.Button.get_preferred_width()[0]
+		if entry_preferred_width >= button_preferred_width :
+			preferred_width = entry_preferred_width
+		else :
+			preferred_width = button_preferred_width
+		self.set_size_request(preferred_width,entry_preferred_height)
+
+	def set_state_active(self,w):
+		self.Entry.set_text(self.Button.get_label())
+		self.remove(self.Button)
+		self.add(self.Entry)
+		self.Entry.show()
+		self.Entry.grab_focus()
+
+	def set_state_inactive(self):
+		self.Entry.disconnect(self.focus_out_event)
+		self.remove(self.Entry)
+		self.add(self.Button)
+
+	def key_press(self,w,e):
+		k = Gdk.keyval_name(e.keyval)
+		if k == "Return" :
+			self.Button.set_label(self.Entry.get_text())
+			self.set_state_inactive()
+			self.Button.grab_focus()
+			self.update_size()
+			self.emit("changed")
+		if k == "Escape" :
+			self.set_state_inactive()
+			self.Button.grab_focus()
+
+	def button_press(self,w,e):
+		b = e.button
+		if b == 3:
+			self.Entry.disconnect(self.focus_out_event)
+
+	def focus_out(self,w,e):
+		self.set_state_inactive()
+
+	def focus_in(self,w,e):
+		self.focus_out_event = self.Entry.connect("focus-out-event",self.focus_out)
+
+	def get_text(self):
+		return self.Button.get_label()
+
+	def set_text(self,text):
+		self.Button.set_label(text)
+		self.update_size()
+
+GObject.signal_new("changed", EditButton, GObject.SIGNAL_RUN_FIRST,GObject.TYPE_NONE, ())
 
 class MainWindow(Gtk.Window) :
 	def __init__(self) :
