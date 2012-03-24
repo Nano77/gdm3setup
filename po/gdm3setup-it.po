@@ -9,8 +9,8 @@ msgstr ""
 "Project-Id-Version: gdm3setup\n"
 "Report-Msgid-Bugs-To: https://github.com/Nano77/gdm3setup/issues\n"
 "POT-Creation-Date: 2011-12-22 19:35+0100\n"
-"PO-Revision-Date: 2011-12-22 21:40+0100\n"
-"Last-Translator: Nano77 <nanoarch77@gmail.com>\n"
+"PO-Revision-Date: 2012-03-24 21:40+0100\n"
+"Last-Translator: Odysseus86 <hal8600@hotmail.it>\n"
 "Language-Team: \n"
 "Language: it_IT\n"
 "MIME-Version: 1.0\n"
@@ -19,11 +19,11 @@ msgstr ""
 
 #: gdm3setup.py:22
 msgid "(None)"
-msgstr "(Nessuno)"
+msgstr "(Nessuna)"
 
 #: gdm3setup.py:47
 msgid "Select a File"
-msgstr "Selezionare un file"
+msgstr "Seleziona un file"
 
 #: gdm3setup.py:97
 msgid "Disabled"
@@ -31,23 +31,23 @@ msgstr "Disattivato"
 
 #: gdm3setup.py:187
 msgid "GDM AutoLogin Setup"
-msgstr "GDM Login Automatico"
+msgstr "Impostazioni accesso automatico"
 
 #: gdm3setup.py:192
 msgid "Enable Automatic Login"
-msgstr "Attivare il login automatico"
+msgstr "Attiva l'accesso automatico"
 
 #: gdm3setup.py:200
 msgid "User Name"
-msgstr "Nome Utente"
+msgstr "Nome utente"
 
 #: gdm3setup.py:212
 msgid "Enable Delay before autologin"
-msgstr "Attivare il ritardo prima login automatico"
+msgstr "Attesa (in secondi) prima dell'accesso automatico"
 
 #: gdm3setup.py:224
 msgid "Apply"
-msgstr "Applicare"
+msgstr "Applica"
 
 #: gdm3setup.py:272
 msgid "GDM3 Setup"
@@ -55,61 +55,61 @@ msgstr "Impostazioni di GDM3"
 
 #: gdm3setup.py:282
 msgid "General"
-msgstr "General"
+msgstr "Impostazioni generali"
 
 #: gdm3setup.py:317
 msgid "Wallpaper"
-msgstr "Carta da parati"
+msgstr "Immagine di sfondo"
 
 #: gdm3setup.py:322
 msgid "Icon theme"
-msgstr "Tema di Icona"
+msgstr "Tema delle icone"
 
 #: gdm3setup.py:327
 msgid "Cursor theme"
-msgstr "Tema di Cursore"
+msgstr "Tema del cursore"
 
 #: gdm3setup.py:332
 msgid "AutoLogin"
-msgstr "Login Automatico"
+msgstr "Accesso automatico"
 
 #: gdm3setup.py:338
 msgid "Shell theme"
-msgstr "Tema di Shell"
+msgstr "Tema di GNOME Shell"
 
 #: gdm3setup.py:343
 msgid "Shell Logo"
-msgstr "Logo del Shell"
+msgstr "Logo di GNOME Shell"
 
 #: gdm3setup.py:348
 msgid "Show Date in Clock"
-msgstr "Affiggere la data sull'orologio"
+msgstr "Visualizza la data nell'orologio"
 
 #: gdm3setup.py:353
 msgid "Show Seconds in Clock"
-msgstr "Affiggere i secondi sull'orologio"
+msgstr "Visualizza i secondi nell'orologio"
 
 #: gdm3setup.py:359
 msgid "GTK3 theme"
-msgstr "Tema GTK3"
+msgstr "Tema GTK+3"
 
 #: gdm3setup.py:364
 msgid "Font"
-msgstr "Tipo di Carattere"
+msgstr "Tipo di carattere"
 
 #: gdm3setup.py:369
 msgid "Logo Icon"
-msgstr "Icona del Logo"
+msgstr "Logo"
 
 #: gdm3setup.py:374
 msgid "Enable Banner"
-msgstr "Attivare la Banner"
+msgstr "Visualizza la frase"
 
 #: gdm3setup.py:381
 msgid "Disable User List"
-msgstr "Disattivare la lista degli utenti"
+msgstr "Nascondi la lista degli utenti"
 
 #: gdm3setup.py:385
 msgid "Disable Restart Buttons"
-msgstr "Disattivare 'Restart' Buttons"
+msgstr "Nascondi il pulsante di riavvio"
 
