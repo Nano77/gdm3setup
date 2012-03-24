@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: gdm3setup\n"
 "Report-Msgid-Bugs-To: https://github.com/Nano77/gdm3setup/issues\n"
 "POT-Creation-Date: 2011-12-22 19:35+0100\n"
-"PO-Revision-Date: 2012-03-24 21:40+0100\n"
+"PO-Revision-Date: 2012-03-24 11:10+0100\n"
 "Last-Translator: Odysseus86 <hal8600@hotmail.it>\n"
 "Language-Team: \n"
 "Language: it_IT\n"
@@ -27,15 +27,15 @@ msgstr "Seleziona un file"
 
 #: gdm3setup.py:97
 msgid "Disabled"
-msgstr "Disattivato"
+msgstr "Disabilitato"
 
 #: gdm3setup.py:187
 msgid "GDM AutoLogin Setup"
-msgstr "Impostazioni accesso automatico"
+msgstr "Impostazioni di accesso automatico"
 
 #: gdm3setup.py:192
 msgid "Enable Automatic Login"
-msgstr "Attiva l'accesso automatico"
+msgstr "Abilita l'accesso automatico"
 
 #: gdm3setup.py:200
 msgid "User Name"
