@@ -1,4 +1,3 @@
-
 [Desktop Entry]
 Name=GDM3 Settings
 Name[de_DE]=Einstellungen der GDM3
@@ -9,7 +8,7 @@ Comment=Change GDM3 settings
 Comment[de_DE]=Einstellungen ändern für GDM3
 Comment[es_ES]=Cambiar la configuración de GDM3
 Comment[fr]=Modifier les paramètres de GDM3
-Comment[it]=Modifica il impostazioni di GNOME Display Manager 3
+Comment[it]=Modifica le impostazioni di GNOME Display Manager 3
 Exec=gdm3setup.py
 Icon=preferences-desktop-theme
 Terminal=false
