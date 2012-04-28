@@ -5,6 +5,7 @@ import os
 import gettext
 import dbus
 import mimetypes
+import subprocess
 
 from gi.repository import Gtk
 from gi.repository import Gdk
@@ -15,6 +16,8 @@ from gi.repository import Gio
 from gi.repository import GLib
 
 gettext.install("gdm3setup")
+
+GDM_BIN_PATH="/usr/sbin/gdm"
 
 #-----------------------------------------------
 class ImageChooserButton(Gtk.Button):
@@ -31,6 +34,7 @@ class ImageChooserButton(Gtk.Button):
 		self.Box.pack_start(self.Label,False,False,2)
 		self.Box.pack_end(self.Image,False,False,2)
 		self.Box.pack_end(self.Separator,False,False,2)
+		self.Box.show_all()
 		self.PreviewImage = Gtk.Image()
 		self.PreviewBox = Gtk.VBox.new(False, 16)
 		self.Label_Size = Gtk.Label("0 x 0")
@@ -127,6 +131,7 @@ class AutologinButton (Gtk.Button) :
 		self.time=30
 		self.box=Gtk.HBox.new(False,0)
 		self.add(self.box)
+		self.box.show()
 		self.label_state=Gtk.Label(_("Disabled"))
 		self.label_state.set_no_show_all(True)
 		self.label_state.show()
@@ -142,8 +147,6 @@ class AutologinButton (Gtk.Button) :
 		self.box.pack_end(self.Separator,False,False,2)
 		self.connect("clicked",self._clicked)
 		self.Dialog = None 
-
-		GObject.signal_new("changed", AutologinButton, GObject.SIGNAL_RUN_FIRST,GObject.TYPE_NONE, ())
 
 	def update(self) :
 		if self.autologin :
@@ -226,6 +229,7 @@ class AutologinButton (Gtk.Button) :
 	def dialog_destroy(self,data) :
 		self.Dialog = None
 
+GObject.signal_new("changed", AutologinButton, GObject.SIGNAL_RUN_FIRST,GObject.TYPE_NONE, ())
 GObject.type_register(AutologinButton)
 
 class AutoLoginDialog(Gtk.Dialog):
@@ -292,6 +296,7 @@ class EditButton(Gtk.HBox) :
 		self.Button = Gtk.Button('text')
 		self.Button.connect("clicked",self.set_state_active)
 		self.add(self.Button)
+		self.Button.show()
 		self.Entry = Gtk.Entry()
 		self.Entry.connect("key-press-event",self.key_press)
 		self.Entry.connect("button-press-event",self.button_press)
@@ -323,7 +328,7 @@ class EditButton(Gtk.HBox) :
 
 	def key_press(self,w,e):
 		k = Gdk.keyval_name(e.keyval)
-		if k == "Return" :
+		if k == "Return" or k == "KP_Enter" :
 			self.Button.set_label(self.Entry.get_text())
 			self.set_state_inactive()
 			self.Button.grab_focus()
@@ -375,6 +380,7 @@ class MainWindow(Gtk.Window) :
 		self.ComboBox_icon = self.Builder.get_object("ComboBox_icon")
 		self.ComboBox_cursor = self.Builder.get_object("ComboBox_cursor")
 		self.Entry_logo_icon = self.Builder.get_object("Entry_logo_icon")
+		self.Button_fallback_logo = self.Builder.get_object("Button_fallback_logo")
 		self.Button_shell_logo = self.Builder.get_object("Button_shell_logo")
 		self.ComboBox_gtk = self.Builder.get_object("ComboBox_gtk")
 		self.CheckButton_banner = self.Builder.get_object("CheckButton_banner")
@@ -404,7 +410,8 @@ class MainWindow(Gtk.Window) :
 		self.ComboBox_icon.connect("changed",self.icon_theme_changed)
 		self.ComboBox_cursor.connect("changed",self.cursor_theme_changed)
 		self.Entry_logo_icon.connect("changed",self.logo_icon_changed)
-		self.Button_shell_logo.connect("file-changed",self.shell_logo_changed)
+		self.Button_fallback_logo.connect("file-changed",self.fallback_logo_filechanged)
+		self.Button_shell_logo.connect("file-changed",self.shell_logo_filechanged)
 		self.ComboBox_gtk.connect("changed",self.gtk3_theme_changed)
 		self.CheckButton_banner.connect("toggled",self.banner_toggled)
 		self.Entry_banner_text.connect("changed",self.banner_text_changed)
@@ -423,6 +430,7 @@ class MainWindow(Gtk.Window) :
 		self.ComboBox_shell.set_id_column(1)
 		self.ComboBox_gtk.set_entry_text_column(0)
 		self.ComboBox_gtk.set_id_column(1)
+		self.AdaptVersion()
 
 	def load_gtk3_list(self):
 		lst_gtk_themes = os.listdir('/usr/share/themes')
@@ -473,11 +481,12 @@ class MainWindow(Gtk.Window) :
 		BKG = get_setting("WALLPAPER",settings)
 		self.WALLPAPER = BKG[8:len(BKG)-1]
 		self.LOGO_ICON = get_setting("LOGO_ICON",settings)
+		self.FALLBACK_LOGO = unquote(get_setting("FALLBACK_LOGO",settings))
 		self.SHELL_LOGO = unquote(get_setting("SHELL_LOGO",settings))
 		self.USER_LIST = str_to_bool(get_setting("USER_LIST",settings))
 		self.MENU_BTN = str_to_bool( get_setting("BTN" ,settings))
 		self.BANNER = str_to_bool(get_setting("BANNER",settings))
-		self.BANNER_TEXT = get_setting("BANNER_TEXT",settings)
+		self.BANNER_TEXT = unquote(get_setting("BANNER_TEXT",settings))
 		self.FONT_NAME = unquote(get_setting("FONT",settings))
 		self.CLOCK_DATE = str_to_bool(get_setting("CLOCK_DATE",settings))
 		self.CLOCK_SECONDS = str_to_bool(get_setting("CLOCK_SECONDS",settings))
@@ -487,6 +496,7 @@ class MainWindow(Gtk.Window) :
 		self.ComboBox_icon.set_active_iter(get_iter(self.ComboBox_icon.get_model(),self.ICON_THEME))
 		self.ComboBox_cursor.set_active_iter(get_iter(self.ComboBox_cursor.get_model(),self.CURSOR_THEME))
 		self.Entry_logo_icon.set_text(self.LOGO_ICON)
+		self.Button_fallback_logo.set_filename(self.FALLBACK_LOGO)
 		self.Button_shell_logo.set_filename(self.SHELL_LOGO)
 		self.CheckButton_banner.set_active(self.BANNER)
 		self.Entry_banner_text.set_text(self.BANNER_TEXT)
@@ -513,6 +523,24 @@ class MainWindow(Gtk.Window) :
 		self.Button_autologin.set_username(self.AUTOLOGIN_USERNAME)
 		self.Button_autologin.set_timed(self.AUTOLOGIN_TIMED) 
 		self.Button_autologin.set_time(self.AUTOLOGIN_TIME)
+
+	def AdaptVersion(self) :
+		p = subprocess.Popen(GDM_BIN_PATH+" --version",stdout=subprocess.PIPE, shell=True)
+		GDMversion =  int(p.stdout.read().split(" ")[1].split(".")[1])
+		GSexists = os.path.exists("/usr/bin/gnome-shell")
+
+		if GDMversion >= 3 :
+			self.Entry_logo_icon.hide()
+			self.Builder.get_object("Label_logo_icon").hide()
+			self.Button_fallback_logo.show()
+			self.Builder.get_object("Label_fallback_logo").show()
+		else :
+			self.Entry_logo_icon.show()
+			self.Builder.get_object("Label_logo_icon").show()
+			self.Button_fallback_logo.hide()
+			self.Builder.get_object("Label_fallback_logo").hide()
+		if not GSexists or GDMversion == 0:
+			self.Builder.get_object("notebook1").remove_page(1)
 
 	def gtk3_theme_changed(self,e):
 		gtk_theme = unicode(self.ComboBox_gtk.get_active_text(),'UTF_8')
@@ -577,7 +605,16 @@ class MainWindow(Gtk.Window) :
 			else:
 				self.Entry_logo_icon.set_text(self.LOGO_ICON)
 
-	def shell_logo_changed(self,e):
+	def fallback_logo_filechanged(self,e):
+		fallback_logo = unicode(self.Button_fallback_logo.get_filename(),'UTF_8')
+		if self.FALLBACK_LOGO != fallback_logo :
+			if self.set_gdm('FALLBACK_LOGO',fallback_logo) :
+				self.FALLBACK_LOGO = fallback_logo
+				print ("Fallback Logo Changed : " + self.FALLBACK_LOGO)
+			else:
+				self.Button_fallback_logo.set_filename(self.FALLBACK_LOGO)
+
+	def shell_logo_filechanged(self,e):
 		shell_logo = unicode(self.Button_shell_logo.get_filename(),'UTF_8')
 		if self.SHELL_LOGO != shell_logo :
 			if self.set_gdm('SHELL_LOGO',shell_logo) :
@@ -589,7 +626,7 @@ class MainWindow(Gtk.Window) :
 	def banner_toggled(self,e):
 		banner = self.CheckButton_banner.get_active()
 		if banner!=self.BANNER :
-			if self.set_gdm('BANNER',str(banner)) :
+			if self.set_gdm('BANNER',str(banner).lower()) :
 				self.BANNER = banner
 				print ("Banner Changed : " + str(self.BANNER))
 				if self.BANNER :
@@ -620,7 +657,7 @@ class MainWindow(Gtk.Window) :
 	def menu_btn_toggled(self,e):
 		menu_btn = self.CheckButton_restart.get_active()
 		if self.MENU_BTN != menu_btn :
-			if self.set_gdm('MENU_BTN',str(menu_btn)) :
+			if self.set_gdm('MENU_BTN',str(menu_btn).lower()) :
 				self.MENU_BTN = menu_btn
 				print ("Menu Btn Changed : " + str(self.MENU_BTN))
 			else:
@@ -697,6 +734,6 @@ def get_iter(model,target):
 
 #-----------------------------------------------
 
-MainWindow().show_all()
+MainWindow().show()
 
 Gtk.main()

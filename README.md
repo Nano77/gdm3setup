@@ -35,7 +35,7 @@ Ubuntu (Oneiric Ocelot)
 -----------------------
 You can use the DEB package from : [https://github.com/Nano77/various/tree/master/deb]()
 
-Debian (experimental)
+Debian (wheezy)
 ------
 You can use the "debian" DEB package from : [https://github.com/Nano77/various/tree/master/deb]()
 

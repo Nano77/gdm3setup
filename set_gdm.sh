@@ -84,6 +84,10 @@ else
 				echo "$parameter_name = $parameter_value"
 				gconftool-2 --type string --set /apps/gdm/simple-greeter/logo_icon_name "$parameter_value"
 				;;
+			FALLBACK_LOGO)
+				echo "$parameter_name = $parameter_value"
+				gsettings set org.gnome.login-screen fallback-logo "$parameter_value"
+				;;
 			SHELL_LOGO)
 				echo "$parameter_name = $parameter_value"
 				gsettings set org.gnome.login-screen logo "$parameter_value"
@@ -96,15 +100,18 @@ else
 			MENU_BTN)
 				echo "$parameter_name = $parameter_value"
 				gconftool-2 --type bool --set /apps/gdm/simple-greeter/disable_restart_buttons $parameter_value
+				gsettings set org.gnome.login-screen disable-restart-buttons $parameter_value
 				;;
 			BANNER)
 				echo "$parameter_name = $parameter_value"
 				gconftool-2 --type bool --set /apps/gdm/simple-greeter/banner_message_enable $parameter_value
+				gsettings set org.gnome.login-screen banner-message-enable $parameter_value
 				;;
 			BANNER_TEXT)
 				echo "$parameter_name = $parameter_value"
 				gconftool-2 --type string --set /apps/gdm/simple-greeter/banner_message_text "$parameter_value"
 				gconftool-2 --type string --set /apps/gdm/simple-greeter/banner_message_text_nochooser "$parameter_value"
+				gsettings set org.gnome.login-screen banner-message-text $parameter_value
 				;;
 			CLOCK_DATE)
 				echo "$parameter_name = $parameter_value"

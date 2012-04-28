@@ -11,10 +11,14 @@ from gi.repository import GObject
 subprocess.call("echo $LANG",shell=True)
 LANG = os.environ['LANG']
 
+GDM_BIN_PATH="/usr/sbin/gdm"
+GDM_CONF_PATH="/etc/gdm/custom.conf"
+GDM_USER_NAME="gdm"
+
 loop = GObject.MainLoop()
 
 def GetValue(target,default):
-	targetfile = "/etc/gdm/custom.conf"
+	targetfile = GDM_CONF_PATH
 	try:
 		ofile = open(targetfile,'r')
 		lines = ofile.readlines()
@@ -63,7 +67,7 @@ def Get_Bus():
 					if ev[0:len('USERNAME')]=='USERNAME':
 						user_name = ev
 
-				if user_name=="USERNAME=gdm" and address!="":
+				if user_name=="USERNAME="+GDM_USER_NAME and address!="":
 					dbus_address = address[len('DBUS_SESSION_BUS_ADDRESS')+1:len(address)]
 					dbus_pid = ps
 
@@ -129,7 +133,7 @@ class GDM3SetupDBusService(dbus.service.Object):
 		if self.policykit_test(sender,connexion,'apps.nano77.gdm3setup.set') :
 			if name!='SHELL_THEME':
 				bus_adrress , bus_pid = Get_Bus()
-				subprocess.call('su - gdm -s /bin/bash -c "LANG='+LANG+' DBUS_SESSION_BUS_ADDRESS='+bus_adrress+' DBUS_SESSION_BUS_PID='+bus_pid+' set_gdm.sh -n '+name+' -v '+"'"+value+"'"+'"',shell=True)
+				subprocess.call('su - '+GDM_USER_NAME+' -s /bin/bash -c "LANG='+LANG+' DBUS_SESSION_BUS_ADDRESS='+bus_adrress+' DBUS_SESSION_BUS_PID='+bus_pid+' set_gdm.sh -n '+name+' -v '+"'"+value+"'"+'"',shell=True)
 			else :
 				Set_Shell_theme(value)
 
@@ -139,7 +143,7 @@ class GDM3SetupDBusService(dbus.service.Object):
 
 	@dbus.service.method('apps.nano77.gdm3setup','','as',sender_keyword='sender', connection_keyword='connexion')
 	def GetUI(self,sender=None, connexion=None):
-		subprocess.call("su - gdm -s /bin/sh -c 'LANG="+LANG+" get_gdm.sh'",shell=True)
+		subprocess.call("su - "+GDM_USER_NAME+" -s /bin/sh -c 'LANG="+LANG+" get_gdm.sh'",shell=True)
 		ifile = open("/tmp/GET_GDM",'r')
 		settings = ifile.readlines()
 		ifile.close()
