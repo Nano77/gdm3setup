@@ -703,10 +703,12 @@ class MainWindow(Gtk.Window) :
 def get_setting(name,data):
 	for line in data:
 		line = unicode(line)
-		if line[0:len(name)+1]==name+"=":
-			value = line[len(name)+1:len(line)].strip()
-			break
-	return value
+		# "=" can be in value so find last "=" before first "'"
+		value = line[0:line.rindex("=", 0, line.find("'"))]
+		names = line[0:len(value)].split("=")
+		if name in names:
+			return value
+	return None
 
 def unquote(value):
 	if value[0:1] == "'"  and value[len(value)-1:len(value)] == "'" :
