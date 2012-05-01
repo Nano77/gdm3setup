@@ -14,10 +14,11 @@ echo -n "WALLPAPER=" >> /tmp/GET_GDM
 gsettings get org.gnome.desktop.background picture-uri >> /tmp/GET_GDM
 echo -n "LOGO_ICON=" >> /tmp/GET_GDM
 gconftool-2 --get /apps/gdm/simple-greeter/logo_icon_name >> /tmp/GET_GDM
+echo >> /tmp/GET_GDM
 echo -n "FALLBACK_LOGO=" >> /tmp/GET_GDM
-gsettings get org.gnome.login-screen fallback-logo >> /tmp/GET_GDM || echo "" >> /tmp/GET_GDM
+gsettings get org.gnome.login-screen fallback-logo >> /tmp/GET_GDM || echo >> /tmp/GET_GDM
 echo -n "SHELL_LOGO=" >> /tmp/GET_GDM
-gsettings get org.gnome.login-screen logo >> /tmp/GET_GDM || echo "" >> /tmp/GET_GDM
+gsettings get org.gnome.login-screen logo >> /tmp/GET_GDM || echo >> /tmp/GET_GDM
 echo -n "USER_LIST=" >> /tmp/GET_GDM
 gsettings get org.gnome.login-screen disable-user-list >> /tmp/GET_GDM || gconftool-2 --get /apps/gdm/simple-greeter/disable_user_list >> /tmp/GET_GDM
 echo -n "BTN=" >> /tmp/GET_GDM
