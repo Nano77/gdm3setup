@@ -15,6 +15,7 @@
     <message xml:lang="de_DE">Authentifizierung erforderlichzur änderung von einstellungen der GDM3</message>
     <message xml:lang="it_IT">L'autenticazione è necessaria.per modificare impostazioni di GDM3</message>
     <message xml:lang="es_ES">La autenticación es necesaria para cambiar la Configuratión de GDM3</message>
+    <message xml:lang="pt_BR">A autenticação é necessaria para mudar as configurações do GDM3</message>
     <defaults>
       <allow_any>no</allow_any>
       <allow_inactive>no</allow_inactive>
