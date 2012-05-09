@@ -3,10 +3,11 @@ mkdir -p ../locale/en_US/LC_MESSAGES/
 mkdir -p ../locale/es_ES/LC_MESSAGES/
 mkdir -p ../locale/de_DE/LC_MESSAGES/
 mkdir -p  ../locale/it/LC_MESSAGES/
+mkdir -p  ../locale/pt_BR/LC_MESSAGES/
 
 msgfmt gdm3setup-fr.po -o ../locale/fr/LC_MESSAGES/gdm3setup.mo
 msgfmt gdm3setup-en_US.po -o ../locale/en_US/LC_MESSAGES/gdm3setup.mo
 msgfmt gdm3setup-es_ES.po -o ../locale/es_ES/LC_MESSAGES/gdm3setup.mo
 msgfmt gdm3setup-de_DE.po -o ../locale/de_DE/LC_MESSAGES/gdm3setup.mo
 msgfmt gdm3setup-it.po -o ../locale/it/LC_MESSAGES/gdm3setup.mo
-
+msgfmt gdm3setup-pt_BR.po -o ../locale/pt_BR/LC_MESSAGES/gdm3setup.mo
