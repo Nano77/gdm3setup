@@ -1,3 +1,6 @@
+#! /bin/sh
+#
+
 mkdir -p  ../locale/fr/LC_MESSAGES/
 mkdir -p ../locale/en_US/LC_MESSAGES/
 mkdir -p ../locale/es_ES/LC_MESSAGES/

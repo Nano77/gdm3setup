@@ -17,6 +17,11 @@
 #sed -i -e 's/etc\/gdm/etc\/gdm3/' gdmlogin.py
 #sed -i -e 's/"gdm"/"Debian-gdm"/' gdm3setup-daemon.py
 
+
+cd po
+./make-mo
+cd ..
+
 install --mode=755 -D gdm3setup.py /usr/bin/
 install --mode=755 -D gdm3setup-daemon.py /usr/bin/
 install --mode=755 -D start-gdm3setup-daemon /usr/bin/
