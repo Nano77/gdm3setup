@@ -1,0 +1,115 @@
+# A GUI to setting GDM3.
+# Copyright (C) 2011 Nano77 <nanoarch77@gmail.com>
+# This file is distributed under the same license as the package.
+# Nano77 <nanoarch77@gmail.com>, 2011.
+#
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: gdm3setup\n"
+"Report-Msgid-Bugs-To: https://github.com/Nano77/gdm3setup/issues\n"
+"POT-Creation-Date: 2011-12-22 19:35+0100\n"
+"PO-Revision-Date: 2012-05-03 22:53-0300\n"
+"Last-Translator: b34tslack <b34tslack@gmail.com>\n"
+"Language-Team: \n"
+"Language: pt_BR\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: gdm3setup.py:22
+msgid "(None)"
+msgstr "(Nenhum)"
+
+#: gdm3setup.py:47
+msgid "Select a File"
+msgstr "Selecionar um arquivo"
+
+#: gdm3setup.py:97
+msgid "Disabled"
+msgstr "Desativado"
+
+#: gdm3setup.py:187
+msgid "GDM AutoLogin Setup"
+msgstr "Configurações de accesso automático"
+
+#: gdm3setup.py:192
+msgid "Enable Automatic Login"
+msgstr "Permitir o accesso automático"
+
+#: gdm3setup.py:200
+msgid "User Name"
+msgstr "Nome usuário"
+
+#: gdm3setup.py:212
+msgid "Enable Delay before autologin"
+msgstr "Espera (em segundos) antes do accesso automático"
+
+#: gdm3setup.py:224
+msgid "Apply"
+msgstr "Aplicar"
+
+#: gdm3setup.py:272
+msgid "GDM3 Setup"
+msgstr "Configurações do GNOME Display Manager 3"
+
+#: gdm3setup.py:282
+msgid "General"
+msgstr "Configurações gerais"
+
+#: gdm3setup.py:317
+msgid "Wallpaper"
+msgstr "Papel de parede"
+
+#: gdm3setup.py:322
+msgid "Icon theme"
+msgstr "Tema de ícones"
+
+#: gdm3setup.py:327
+msgid "Cursor theme"
+msgstr "Tema do cursor"
+
+#: gdm3setup.py:332
+msgid "AutoLogin"
+msgstr "Accesso automático"
+
+#: gdm3setup.py:338
+msgid "Shell theme"
+msgstr "Tema do GNOME Shell"
+
+#: gdm3setup.py:343
+msgid "Shell Logo"
+msgstr "Logo do GNOME Shell"
+
+#: gdm3setup.py:348
+msgid "Show Date in Clock"
+msgstr "Exibir a data no relogio"
+
+#: gdm3setup.py:353
+msgid "Show Seconds in Clock"
+msgstr "Exibir os segundos no relogio"
+
+#: gdm3setup.py:359
+msgid "GTK3 theme"
+msgstr "Tema GTK+3"
+
+#: gdm3setup.py:364
+msgid "Font"
+msgstr "Tipo de caráter"
+
+#: gdm3setup.py:369
+msgid "Logo Icon"
+msgstr "Logo"
+
+#: gdm3setup.py:374
+msgid "Enable Banner"
+msgstr "Exibir a frase"
+
+#: gdm3setup.py:381
+msgid "Disable User List"
+msgstr "Esconder a lista dos usuários"
+
+#: gdm3setup.py:385
+msgid "Disable Restart Buttons"
+msgstr "Esconder a tecla de reinicio"
+
