@@ -4,8 +4,8 @@
 import os
 import gettext
 import dbus
-import mimetypes
 import subprocess
+from lxml import etree
 
 from gi.repository import Gtk
 from gi.repository import Gdk
@@ -35,30 +35,59 @@ class ImageChooserButton(Gtk.Button):
 		self.Box.pack_end(self.Image,False,False,2)
 		self.Box.pack_end(self.Separator,False,False,2)
 		self.Box.show_all()
-		self.PreviewImage = Gtk.Image()
+		self.filterImage = Gtk.FileFilter()
+		self.filterImage.add_pixbuf_formats()
+		self.filterImage.set_name(_('Image'))
+		self.filterXml = Gtk.FileFilter()
+		self.filterXml.add_pattern("*.xml")
+		self.filterXml.set_name(_('XML Background'))
+		self.filterAll = Gtk.FileFilter()
+		self.filterAll.add_pixbuf_formats()
+		self.filterAll.add_pattern("*.xml")
+		self.filterAll.set_name(_('All'))
 		self.PreviewBox = Gtk.VBox.new(False, 16)
-		self.Label_Size = Gtk.Label("0 x 0")
-		self.PreviewBox.set_size_request(200,-1);
+		self.PreviewBox.set_size_request(200,-1)
+		self.LabelInfo = Gtk.Label("No Image")
+		self.PreviewBox.pack_start(self.LabelInfo, False, False, 0)
+		self.PreviewImage = Gtk.Image()
 		self.PreviewBox.pack_start(self.PreviewImage, False, False, 0)
 		self.PreviewImage.show()
+		self.Label_Size = Gtk.Label("0 x 0")
 		self.PreviewBox.pack_start(self.Label_Size, False, False, 0)
 		self.Label_Size.show()
+		self.xmlBox = Gtk.HBox.new(False, 16)
+		self.PreviewBox.pack_start(self.xmlBox, False, False, 0)
+		self.xmlButtonLeft = Gtk.Button.new()
+		self.xmlButtonLeftImage = Gtk.Image.new_from_stock("gtk-go-back",Gtk.IconSize.BUTTON)
+		self.xmlButtonLeft.set_image(self.xmlButtonLeftImage)
+		self.xmlBox.pack_start(self.xmlButtonLeft, False, False, 0)
+		self.xmlButtonLeft.show()
+		self.xmlLabel = Gtk.Label("0/0")
+		self.xmlBox.pack_start(self.xmlLabel, True, True, 0)
+		self.xmlLabel.show()
+		self.xmlButtonRight = Gtk.Button.new()
+		self.xmlButtonRightImage = Gtk.Image.new_from_stock("gtk-go-forward",Gtk.IconSize.BUTTON)
+		self.xmlButtonRight.set_image(self.xmlButtonRightImage)
+		self.xmlBox.pack_end(self.xmlButtonRight, False, False, 0)
+		self.xmlButtonRight.show()
+		self.listImage = list()
 		self.Filename = ""
+		self.isWallpaper = False
 		self.connect("clicked",self._Clicked)
+		self.xmlButtonLeft.connect("clicked",self.change_pixbuf,-1)
+		self.xmlButtonRight.connect("clicked",self.change_pixbuf,1)
 		self.FileChooserDialog = None
 
 	def _Clicked(self,e) :
 		if self.FileChooserDialog == None :
 
 			self.FileChooserDialog = Gtk.FileChooserDialog(title=_("Select a File"),action=Gtk.FileChooserAction.OPEN,buttons=(Gtk.STOCK_CANCEL,Gtk.ResponseType.CANCEL,Gtk.STOCK_CLEAR,Gtk.ResponseType.NONE,Gtk.STOCK_OPEN,Gtk.ResponseType.ACCEPT))
-			filter = Gtk.FileFilter()
-			filter.add_pixbuf_formats()
-			filter.set_name('Image')
-			self.FileChooserDialog.add_filter(filter)
+			self.FileChooserDialog.add_filter(self.filterImage)
+			self._update_isWallpaper(True)
 			self.FileChooserDialog.set_filename(self.Filename)
-			self.FileChooserDialog.add_shortcut_folder('/usr/share/backgrounds')
 			self.FileChooserDialog.set_preview_widget(self.PreviewBox)
 			self.FileChooserDialog.set_preview_widget_active(False)
+			self.PreviewBox.show_all()
 			self.FileChooserDialog.connect("update-preview",self._UpdatePreview)
 			self.FileChooserDialog.connect("response",self.response_cb)
 			self.FileChooserDialog.connect("destroy",self.dialog_destroy)
@@ -89,33 +118,127 @@ class ImageChooserButton(Gtk.Button):
 		else :
 			self.Label.set_label(_("(None)"))
 
+	def get_isWallpaper(self):
+		return self.isWallpaper
+
+	def set_isWallpaper(self,isWallpaper=False):
+		if self.isWallpaper != isWallpaper :
+			self.isWallpaper = isWallpaper
+			if self.FileChooserDialog :
+				self._update_isWallpaper(False)
+
+	def _update_isWallpaper(self,creation) :
+
+		if self.isWallpaper :
+			self.FileChooserDialog.add_shortcut_folder('/usr/share/backgrounds')
+			self.FileChooserDialog.add_filter(self.filterXml)
+			self.FileChooserDialog.add_filter(self.filterAll)
+			self.FileChooserDialog.set_filter(self.filterAll)
+		elif not creation :
+			self.FileChooserDialog.remove_shortcut_folder('/usr/share/backgrounds')
+			self.FileChooserDialog.remove_filter(self.filterXml)
+			self.FileChooserDialog.remove_filter(self.filterAll)
+			self.FileChooserDialog.set_filter(self.filterImage)
+
+
 	def _UpdatePreview(self,e) :
 		PreviewURI = self.FileChooserDialog.get_preview_uri()
 		PreviewFile = self.FileChooserDialog.get_preview_file()
 		if PreviewURI!=None and PreviewFile !=None :
 			if not GLib.file_test(PreviewFile.get_path(),GLib.FileTest.IS_DIR) :
 				PreviewFileInfo = PreviewFile.query_info("*",Gio.FileQueryInfoFlags.NONE,None)
-				mtime = PreviewFileInfo.get_attribute_uint64(Gio.FILE_ATTRIBUTE_TIME_MODIFIED)
-				ThumbnailFactory = GnomeDesktop.DesktopThumbnailFactory.new(GnomeDesktop.DesktopThumbnailSize.NORMAL)
-				ThumbnailPath = ThumbnailFactory.lookup(PreviewURI,mtime)
-				if ThumbnailPath != None :
-					pixbuf = GdkPixbuf.Pixbuf.new_from_file(ThumbnailPath)
+				mimetype = PreviewFileInfo.get_content_type();
+				name = PreviewFile.get_basename()
+				xml = name[len(name)-3:len(name)].lower() == 'xml'
+				if not xml :
+					mtime = PreviewFileInfo.get_modification_time().tv_sec
+					ThumbnailFactory = GnomeDesktop.DesktopThumbnailFactory.new(GnomeDesktop.DesktopThumbnailSize.NORMAL)
+					ThumbnailPath = ThumbnailFactory.lookup(PreviewURI,mtime)
+					if ThumbnailPath != None :
+						pixbuf = GdkPixbuf.Pixbuf.new_from_file(ThumbnailPath)
+					else :
+						pixbuf = ThumbnailFactory.generate_thumbnail(PreviewURI,mimetype)
+						ThumbnailFactory.save_thumbnail(pixbuf,PreviewURI,mtime)
 					self.PreviewImage.set_from_pixbuf(pixbuf)
+					PreviewWidth = pixbuf.get_option("tEXt::Thumb::Image::Width")
+					PreviewHeight = pixbuf.get_option("tEXt::Thumb::Image::Height")
+					self.Label_Size.set_label( PreviewWidth + " x " + PreviewHeight)
 					self.FileChooserDialog.set_preview_widget_active(True)
-				else :
-					mimetype, enc = mimetypes.guess_type(PreviewURI,True)
-					pixbuf = ThumbnailFactory.generate_thumbnail(PreviewURI,mimetype)
-					ThumbnailFactory.save_thumbnail(pixbuf,PreviewURI,mtime)
-					self.PreviewImage.set_from_pixbuf(pixbuf)
-					self.FileChooserDialog.set_preview_widget_active(True)
+					self.LabelInfo.hide()
+					self.PreviewImage.show()
+					self.Label_Size.show()
+					self.xmlBox.hide()
 
-				PreviewWidth = pixbuf.get_option("tEXt::Thumb::Image::Width")
-				PreviewHeight = pixbuf.get_option("tEXt::Thumb::Image::Height")
-				self.Label_Size.set_label( PreviewWidth + " x " + PreviewHeight)
+				else :
+					xml_file_path = PreviewFile.get_path()
+					xml_data = file(xml_file_path,'r').read()
+					root = etree.fromstring(xml_data)
+					if root.tag == "background" :
+						nodeset = root.xpath('/background/static/file')
+						for i in range(len(self.listImage)) :
+							self.listImage.pop(0)
+						if len(nodeset) :
+							for i in range(len(nodeset)):
+								background_path = nodeset[i].text
+								gfile = Gio.File.new_for_path(background_path)
+								fileInfo = gfile.query_info("*",Gio.FileQueryInfoFlags.NONE,None)
+								mtime = fileInfo.get_modification_time().tv_sec
+								mimetype = fileInfo.get_content_type()
+								name = fileInfo.get_name()
+								uri = gfile.get_uri()
+								ThumbnailFactory = GnomeDesktop.DesktopThumbnailFactory.new(GnomeDesktop.DesktopThumbnailSize.NORMAL)
+								ThumbnailPath = ThumbnailFactory.lookup(uri,mtime)
+								if ThumbnailPath :
+									pixbuf = GdkPixbuf.Pixbuf.new_from_file(ThumbnailPath)
+								else :
+									pixbuf = ThumbnailFactory.generate_thumbnail(uri,mimetype)
+									ThumbnailFactory.save_thumbnail(pixbuf,uri,mtime)
+								self.listImage.append(pixbuf)
+								self.LabelInfo.hide()
+								self.PreviewImage.show()
+								self.Label_Size.show()
+								self.xmlBox.show()
+								self.listImageIndex = 0;
+								self.change_pixbuf(self,0)
+							self.FileChooserDialog.set_preview_widget_active(True)
+						else :
+							self.LabelInfo.set_text("No Image")
+							self.LabelInfo.show()
+							self.PreviewImage.hide()
+							self.Label_Size.hide()
+							self.xmlBox.hide()
+							self.FileChooserDialog.set_preview_widget_active(True)
+					else :
+						self.LabelInfo.set_text("Invalid XML Background")
+						self.LabelInfo.show()
+						self.PreviewImage.hide()
+						self.Label_Size.hide()
+						self.xmlBox.hide()
+						self.FileChooserDialog.set_preview_widget_active(True)
 			else :
 				self.FileChooserDialog.set_preview_widget_active(False)
 		else :
 			self.FileChooserDialog.set_preview_widget_active(False)
+
+	def change_pixbuf(self,e,b) :
+		if self.listImageIndex < len(self.listImage)-1 and b==1 :
+			self.listImageIndex = self.listImageIndex +1
+		if self.listImageIndex > 0 and  b==-1:
+			self.listImageIndex = self.listImageIndex -1
+		if self.listImageIndex == 0 :
+			self.xmlButtonLeft.set_sensitive(False)
+		else :
+			self.xmlButtonLeft.set_sensitive(True)
+		if self.listImageIndex == len(self.listImage)-1 :
+			self.xmlButtonRight.set_sensitive(False)
+		else :
+			self.xmlButtonRight.set_sensitive(True)
+		pixbuf = self.listImage[self.listImageIndex]
+		self.PreviewImage.set_from_pixbuf(pixbuf)
+		PreviewWidth = pixbuf.get_option("tEXt::Thumb::Image::Width")
+		PreviewHeight = pixbuf.get_option("tEXt::Thumb::Image::Height")
+		self.Label_Size.set_label( PreviewWidth + " x " + PreviewHeight)
+		self.xmlLabel.set_text(str(self.listImageIndex+1) + "/" + str(len(self.listImage)))
 
 GObject.signal_new("file-changed", ImageChooserButton, GObject.SIGNAL_RUN_FIRST,GObject.TYPE_NONE, ())
 GObject.type_register(ImageChooserButton)
@@ -390,6 +513,7 @@ class MainWindow(Gtk.Window) :
 		self.Button_autologin = self.Builder.get_object("Button_autologin")
 		self.Switch_clock_date = self.Builder.get_object("Switch_clock_date")
 		self.Switch_clock_seconds = self.Builder.get_object("Switch_clock_seconds")
+		self.Button_wallpaper.set_isWallpaper(True)
 
 		proxy = dbus.SystemBus().get_object('apps.nano77.gdm3setup','/apps/nano77/gdm3setup')
 		self.SetUI = proxy.get_dbus_method('SetUI','apps.nano77.gdm3setup')
@@ -420,6 +544,7 @@ class MainWindow(Gtk.Window) :
 		self.Button_autologin.connect("changed",self.autologin_changed)
 		self.Switch_clock_date.connect("notify::active",self.clock_date_toggled)
 		self.Switch_clock_seconds.connect("notify::active",self.clock_seconds_toggled)
+		self.AdaptVersion()
 
 		#https://bugzilla.gnome.org/show_bug.cgi?id=653579
 		self.ComboBox_icon.set_entry_text_column(0)
@@ -430,7 +555,6 @@ class MainWindow(Gtk.Window) :
 		self.ComboBox_shell.set_id_column(1)
 		self.ComboBox_gtk.set_entry_text_column(0)
 		self.ComboBox_gtk.set_id_column(1)
-		self.AdaptVersion()
 
 	def load_gtk3_list(self):
 		lst_gtk_themes = os.listdir('/usr/share/themes')
@@ -441,8 +565,7 @@ class MainWindow(Gtk.Window) :
 	def load_shell_list(self):
 
 		lst_shell_themes = os.listdir('/usr/share/themes')
-		if not os.path.islink('/usr/share/gnome-shell/theme'):
-			self.ComboBox_shell.append_text("Adwaita")
+		self.ComboBox_shell.append_text("Adwaita")
 
 		for i in range(len(lst_shell_themes)):
 			if os.path.isdir('/usr/share/themes/'+lst_shell_themes[i]+'/gnome-shell') :
@@ -526,10 +649,10 @@ class MainWindow(Gtk.Window) :
 
 	def AdaptVersion(self) :
 		p = subprocess.Popen(GDM_BIN_PATH+" --version",stdout=subprocess.PIPE, shell=True)
-		GDMversion =  int(p.stdout.read().split(" ")[1].split(".")[1])
+		GdmSubVersion =  int(p.stdout.read().split(" ")[1].split(".")[1])
 		GSexists = os.path.exists("/usr/bin/gnome-shell")
 
-		if GDMversion >= 3 :
+		if GdmSubVersion >= 3 :
 			self.Entry_logo_icon.hide()
 			self.Builder.get_object("Label_logo_icon").hide()
 			self.Button_fallback_logo.show()
@@ -539,7 +662,7 @@ class MainWindow(Gtk.Window) :
 			self.Builder.get_object("Label_logo_icon").show()
 			self.Button_fallback_logo.hide()
 			self.Builder.get_object("Label_fallback_logo").hide()
-		if not GSexists or GDMversion == 0:
+		if not GSexists or GdmSubVersion == 0:
 			self.Builder.get_object("notebook1").remove_page(1)
 
 	def gtk3_theme_changed(self,e):

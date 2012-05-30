@@ -6,6 +6,7 @@ import dbus.service
 from dbus.mainloop.glib import DBusGMainLoop
 import subprocess
 import os
+import shutil
 from gi.repository import GObject
 
 subprocess.call("echo $LANG",shell=True)
@@ -76,37 +77,53 @@ def Get_Bus():
 
 	return dbus_address,dbus_pid
 
-def HackShellTheme(b):
-	if b :
-		os.rename('/usr/share/gnome-shell/theme','/usr/share/gnome-shell/theme.original')
-		os.symlink('/usr/share/gnome-shell/theme.original','/usr/share/gnome-shell/theme')
-		os.symlink('/usr/share/gnome-shell/theme.original','/usr/share/themes/Adwaita/gnome-shell')
-	else :
-		os.remove('/usr/share/themes/Adwaita/gnome-shell')
-		os.remove('/usr/share/gnome-shell/theme')
-		os.rename('/usr/share/gnome-shell/theme.original','/usr/share/gnome-shell/theme')
-
 def Get_Shell_theme():
-	if os.path.islink('/usr/share/gnome-shell/theme'):
-		theme_path = os.readlink('/usr/share/gnome-shell/theme')
-		if theme_path == '/usr/share/gnome-shell/theme.original':
-			shell_theme='Adwaita'
-		else :
-			tb_path =  theme_path.split('/')
-			shell_theme = tb_path[len(tb_path)-2]
-	else :
-		shell_theme='Adwaita'
+	shell_theme = 'Adwaita'
+	ifile = file('/usr/share/gnome-shell/theme/gnome-shell.css',"r")
+	lines = ifile.readlines()
+	for i in range(len(lines)) :
+		line = lines[i].strip()
+		if line[0:2] == "/*" and line[len(line)-2:len(line)] == "*/" :
+			comment = line[2:len(line)-2]
+			if comment[0:6] == "theme=" :
+				shell_theme = comment[6:len(comment)]
 
 	return shell_theme
 
-def Set_Shell_theme(value):
-	if value=='Adwaita':
-		HackShellTheme(False)
-	else:
-		if not os.path.islink('/usr/share/gnome-shell/theme'):
-			HackShellTheme(True)
-		os.remove('/usr/share/gnome-shell/theme')
-		os.symlink('/usr/share/themes/'+value+'/gnome-shell','/usr/share/gnome-shell/theme')
+def Set_Shell_theme(new_theme) :
+	theme = Get_Shell_theme()
+	if theme == "Adwaita" and new_theme != "Adwaita":
+		if os.path.isdir('/usr/share/themes/'+new_theme+'/gnome-shell') :
+			if not os.path.islink('/usr/share/gnome-shell/theme') :
+				if os.path.isdir('/usr/share/gnome-shell/theme.original/') :
+					shutil.rmtree('/usr/share/gnome-shell/theme.original/')
+				shutil.move('/usr/share/gnome-shell/theme/','/usr/share/gnome-shell/theme.original/')
+				shutil.copytree('/usr/share/themes/'+new_theme+'/gnome-shell','/usr/share/gnome-shell/theme/')
+			elif os.path.isdir('/usr/share/gnome-shell/theme.original/') :
+				os.remove('/usr/share/gnome-shell/theme')
+				shutil.copytree('/usr/share/themes/'+new_theme+'/gnome-shell','/usr/share/gnome-shell/theme/')
+		ifile = file('/usr/share/gnome-shell/theme/gnome-shell.css','r')
+		lines = ifile.readlines()
+		lines.insert(0,"/*theme="+new_theme+"*/\n")
+		ifile.close()
+		ofile = file('/usr/share/gnome-shell/theme/gnome-shell.css','w')
+		ofile.writelines(lines)
+		ofile.close()
+
+	if theme != "Adwaita" and new_theme == "Adwaita" and os.path.isdir('/usr/share/gnome-shell/theme.original/') :
+		shutil.rmtree('/usr/share/gnome-shell/theme/')
+		shutil.move('/usr/share/gnome-shell/theme.original/','/usr/share/gnome-shell/theme/')
+
+	if theme != "Adwaita" and new_theme != "Adwaita" and os.path.isdir('/usr/share/themes/'+new_theme+'/gnome-shell') :
+		shutil.rmtree('/usr/share/gnome-shell/theme/')
+		shutil.copytree('/usr/share/themes/'+new_theme+'/gnome-shell','/usr/share/gnome-shell/theme/')
+		ifile = file('/usr/share/gnome-shell/theme/gnome-shell.css','r')
+		lines = ifile.readlines()
+		lines.insert(0,"/*theme="+new_theme+"*/\n")
+		ifile.close()
+		ofile = file('/usr/share/gnome-shell/theme/gnome-shell.css','w')
+		ofile.writelines(lines)
+		ofile.close()
 
 class GDM3SetupDBusService(dbus.service.Object):
 	def __init__(self):
@@ -124,7 +141,7 @@ class GDM3SetupDBusService(dbus.service.Object):
 
 		Subject = ('unix-process', {'pid': dbus.UInt32(sender_pid, variant_level=1),
 						'start-time': dbus.UInt64(0, variant_level=1)})
-		(is_authorized,is_challenge,details) = policykit_authority.CheckAuthorization(Subject, action, {'': ''}, dbus.UInt32(1), '') #, timeout=5000
+		(is_authorized,is_challenge,details) = policykit_authority.CheckAuthorization(Subject, action, {'': ''}, dbus.UInt32(1), '')
 		return is_authorized
 
 	@dbus.service.method('apps.nano77.gdm3setup',in_signature='ss', out_signature='s',
