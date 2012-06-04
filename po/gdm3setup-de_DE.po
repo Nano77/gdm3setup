@@ -84,11 +84,11 @@ msgstr "Shell-Logo"
 
 #: gdm3setup.py:348
 msgid "Show Date in Clock"
-msgstr "Den Datum auf der Uhr anzeigen"
+msgstr "Uhrzeit mit Datum"
 
 #: gdm3setup.py:353
 msgid "Show Seconds in Clock"
-msgstr "Die Sekunden auf der Uhr anzeigen"
+msgstr "Uhrzeit mit Sekunden"
 
 #: gdm3setup.py:359
 msgid "GTK3 theme"
