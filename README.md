@@ -10,7 +10,7 @@ Nano77 <nanoarch77@gmail.com>
 Archlinux
 ---------
 
-GDM3setup is in AUR, you can install : 
+GDM3setup is in AUR, you can install :
 
 - With an AUR helper like yaourt : `yaourt -S gdm3setup`
 
@@ -23,20 +23,20 @@ GDM3setup is in AUR, you can install :
 
 Fedora
 ------
-You can use the RPM package from : [https://github.com/Nano77/various/tree/master/rpm]()
+You can use the RPM package from : https://github.com/Nano77/various/tree/master/rpm
 
 
 OpenSUSE
 --------
-You can use the RPM package from : [https://github.com/Nano77/various/tree/master/rpm]()
+You can use the RPM package from : https://github.com/Nano77/various/tree/master/rpm
 
 
 Ubuntu (Oneiric Ocelot)
 -----------------------
-You can use the DEB package from : [https://github.com/Nano77/various/tree/master/deb]()
+You can use the DEB package from : https://github.com/Nano77/various/tree/master/deb
 
 Debian (wheezy)
 ------
-You can use the "debian" DEB package from : [https://github.com/Nano77/various/tree/master/deb]()
+You can use the "debian" DEB package from : https://github.com/Nano77/various/tree/master/deb
 
 
