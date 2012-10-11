@@ -116,10 +116,12 @@ else
 			CLOCK_DATE)
 				echo "$parameter_name = $parameter_value"
 				gsettings set org.gnome.shell.clock show-date "$parameter_value"
+				gsettings set org.gnome.desktop.interface clock-show-date "$parameter_value"
 				;;
 			CLOCK_SECONDS)
 				echo "$parameter_name = $parameter_value"
 				gsettings set org.gnome.shell.clock show-seconds "$parameter_value"
+				gsettings set org.gnome.desktop.interface clock-show-seconds  "$parameter_value"
 				;;
 			*)
 				echo "Uknown GDM3 Parameter !"

@@ -508,6 +508,8 @@ class MainWindow(Gtk.Window) :
 		self.ComboBox_gtk = self.Builder.get_object("ComboBox_gtk")
 		self.CheckButton_banner = self.Builder.get_object("CheckButton_banner")
 		self.Entry_banner_text = self.Builder.get_object("Entry_banner_text")
+		self.CheckButton_banner6 = self.Builder.get_object("CheckButton_banner6")
+		self.Entry_banner_text6 = self.Builder.get_object("Entry_banner_text6")
 		self.CheckButton_user = self.Builder.get_object("CheckButton_user")
 		self.CheckButton_restart = self.Builder.get_object("CheckButton_restart")
 		self.Button_autologin = self.Builder.get_object("Button_autologin")
@@ -521,6 +523,8 @@ class MainWindow(Gtk.Window) :
 		self.SetAutoLogin = proxy.get_dbus_method('SetAutoLogin','apps.nano77.gdm3setup')
 		self.GetAutoLogin = proxy.get_dbus_method('GetAutoLogin','apps.nano77.gdm3setup')
 		self.StopDaemon = proxy.get_dbus_method('StopDaemon', 'apps.nano77.gdm3setup')
+
+		self.GetGdmMinorVersion()
 
 		self.load_gtk3_list()
 		self.load_shell_list()
@@ -539,6 +543,8 @@ class MainWindow(Gtk.Window) :
 		self.ComboBox_gtk.connect("changed",self.gtk3_theme_changed)
 		self.CheckButton_banner.connect("toggled",self.banner_toggled)
 		self.Entry_banner_text.connect("changed",self.banner_text_changed)
+		self.CheckButton_banner6.connect("toggled",self.banner_6_toggled)
+		self.Entry_banner_text6.connect("changed",self.banner_text_6_changed)
 		self.CheckButton_user.connect("toggled",self.user_list_toggled)
 		self.CheckButton_restart.connect("toggled",self.menu_btn_toggled)
 		self.Button_autologin.connect("changed",self.autologin_changed)
@@ -569,8 +575,17 @@ class MainWindow(Gtk.Window) :
 
 		for i in range(len(lst_shell_themes)):
 			if os.path.isdir('/usr/share/themes/'+lst_shell_themes[i]+'/gnome-shell') :
-				if os.path.isfile('/usr/share/themes/'+lst_shell_themes[i]+'/gnome-shell/gdm.css') :
-					self.ComboBox_shell.append_text(lst_shell_themes[i])
+				if self.GdmMinorVersion > 0 and self.GdmMinorVersion < 5 :
+					 if os.path.isfile('/usr/share/themes/'+lst_shell_themes[i]+'/gnome-shell/gdm.css') :
+						self.ComboBox_shell.append_text(lst_shell_themes[i])
+				elif self.GdmMinorVersion >= 5 :
+					ofile = open('/usr/share/themes/'+lst_shell_themes[i]+'/gnome-shell/gnome-shell.css','r')
+					lines = ofile.readlines()
+					ofile.close()
+					for line in lines :
+						if line.strip() == ".login-dialog {" :
+							self.ComboBox_shell.append_text(lst_shell_themes[i])
+							break
 
 	def load_icon_list(self):
 		lst_icons = os.listdir('/usr/share/icons')
@@ -623,9 +638,12 @@ class MainWindow(Gtk.Window) :
 		self.Button_shell_logo.set_filename(self.SHELL_LOGO)
 		self.CheckButton_banner.set_active(self.BANNER)
 		self.Entry_banner_text.set_text(self.BANNER_TEXT)
+		self.CheckButton_banner6.set_active(self.BANNER)
+		self.Entry_banner_text6.set_text(self.BANNER_TEXT)
 		self.CheckButton_user.set_active(self.USER_LIST)
 		self.CheckButton_restart.set_active(self.MENU_BTN)
 		self.Entry_banner_text.set_sensitive(self.BANNER)
+		self.Entry_banner_text6.set_sensitive(self.BANNER)
 		self.Button_font.set_font_name(self.FONT_NAME)
 		self.Switch_clock_date.set_active(self.CLOCK_DATE)
 		self.Switch_clock_seconds.set_active(self.CLOCK_SECONDS)
@@ -647,12 +665,14 @@ class MainWindow(Gtk.Window) :
 		self.Button_autologin.set_timed(self.AUTOLOGIN_TIMED) 
 		self.Button_autologin.set_time(self.AUTOLOGIN_TIME)
 
-	def AdaptVersion(self) :
+	def GetGdmMinorVersion(self) :
 		p = subprocess.Popen(GDM_BIN_PATH+" --version",stdout=subprocess.PIPE, shell=True)
-		GdmSubVersion =  int(p.stdout.read().split(" ")[1].split(".")[1])
+		self.GdmMinorVersion =  int(p.stdout.read().split(" ")[1].split(".")[1])
+
+	def AdaptVersion(self) :
 		GSexists = os.path.exists("/usr/bin/gnome-shell")
 
-		if GdmSubVersion >= 3 :
+		if self.GdmMinorVersion >= 3 :
 			self.Entry_logo_icon.hide()
 			self.Builder.get_object("Label_logo_icon").hide()
 			self.Button_fallback_logo.show()
@@ -662,8 +682,17 @@ class MainWindow(Gtk.Window) :
 			self.Builder.get_object("Label_logo_icon").show()
 			self.Button_fallback_logo.hide()
 			self.Builder.get_object("Label_fallback_logo").hide()
-		if not GSexists or GdmSubVersion == 0:
+		if not GSexists or self.GdmMinorVersion == 0:
 			self.Builder.get_object("notebook1").remove_page(1)
+
+		if self.GdmMinorVersion >= 5 :
+			self.CheckButton_banner.hide()
+			self.Entry_banner_text.hide()
+		else :
+			self.CheckButton_banner6.hide()
+			self.Entry_banner_text6.hide()
+
+
 
 	def gtk3_theme_changed(self,e):
 		gtk_theme = unicode(self.ComboBox_gtk.get_active_text(),'UTF_8')
@@ -767,6 +796,28 @@ class MainWindow(Gtk.Window) :
 				print ("Banner Text Changed : " + self.BANNER_TEXT)
 			else :
 				self.Entry_banner_text.set_text(self.BANNER_TEXT)
+
+	def banner_6_toggled(self,e):
+		banner = self.CheckButton_banner6.get_active()
+		if banner!=self.BANNER :
+			if self.set_gdm('BANNER',str(banner).lower()) :
+				self.BANNER = banner
+				print ("Banner Changed : " + str(self.BANNER))
+				if self.BANNER :
+					self.Entry_banner_text6.set_sensitive(True)
+				else:
+					self.Entry_banner_text6.set_sensitive(False)
+			else:
+				self.CheckButton_banner6.set_active(self.BANNER)
+
+	def banner_text_6_changed(self,e):
+		banner_text = unicode(self.Entry_banner_text6.get_text(),'UTF_8')
+		if banner_text!=self.BANNER_TEXT :
+			if self.set_gdm('BANNER_TEXT',banner_text) :
+				self.BANNER_TEXT = banner_text
+				print ("Banner Text Changed : " + self.BANNER_TEXT)
+			else :
+				self.Entry_banner_text6.set_text(self.BANNER_TEXT)
 
 	def user_list_toggled(self,e):
 		user_list = self.CheckButton_user.get_active()
