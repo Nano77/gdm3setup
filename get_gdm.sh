@@ -18,7 +18,7 @@ gsettings get org.gnome.desktop.interface cursor-theme >> /tmp/GET_GDM
 echo -n "WALLPAPER=" >> /tmp/GET_GDM
 gsettings get org.gnome.desktop.background picture-uri >> /tmp/GET_GDM
 echo -n "LOGO_ICON=" >> /tmp/GET_GDM
-if [ $SubVersion -ge 5 ]
+if [ $SubVersion -ge 3 ]
 then
 echo >> /tmp/GET_GDM
 else
