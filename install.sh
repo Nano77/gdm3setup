@@ -16,7 +16,7 @@
 #sed -i -e 's/etc\/gdm/etc\/gdm3/' gdm3setup-daemon.py
 #sed -i -e 's/etc\/gdm/etc\/gdm3/' gdmlogin.py
 #sed -i -e 's/"gdm"/"Debian-gdm"/' gdm3setup-daemon.py
-
+#sed -i -e 's/sbin\/gdm/sbin\/gdm3/' get_gdm.sh
 
 cd po
 ./make-mo
