@@ -1,0 +1,115 @@
+# A GUI to setting GDM3.
+# Copyright (C) 2011 Nano77 <nanoarch77@gmail.com>
+# This file is distributed under the same license as the package.
+# Nano77 <nanoarch77@gmail.com>, 2011.
+# tuhaihe <1132321739qq@gmail.com>
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: gdm3setup\n"
+"Report-Msgid-Bugs-To: https://github.com/Nano77/gdm3setup/issues\n"
+"POT-Creation-Date: 2011-12-22 19:35+0100\n"
+"PO-Revision-Date: 2012-11-12 21:27+0800\n"
+"Last-Translator: tuhaihe <1132321739qq@gmail.com>\n"
+"Language-Team: \n"
+"Language: en_US\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: gdm3setup.py:22
+msgid "(None)"
+msgstr "(无)"
+
+#: gdm3setup.py:47
+msgid "Select a File"
+msgstr "选择文件"
+
+#: gdm3setup.py:97
+msgid "Disabled"
+msgstr "已禁用"
+
+#: gdm3setup.py:187
+msgid "GDM AutoLogin Setup"
+msgstr "GDM 自动登陆设置"
+
+#: gdm3setup.py:192
+msgid "Enable Automatic Login"
+msgstr "启用自动登陆"
+
+#: gdm3setup.py:200
+msgid "User Name"
+msgstr "用户名"
+
+#: gdm3setup.py:212
+msgid "Enable Delay before autologin"
+msgstr "自动登录前启用延迟"
+
+#: gdm3setup.py:224
+msgid "Apply"
+msgstr "应用"
+
+#: gdm3setup.py:272
+msgid "GDM3 Setup"
+msgstr "GDM3 设置"
+
+#: gdm3setup.py:282
+msgid "General"
+msgstr "常规"
+
+#: gdm3setup.py:317
+msgid "Wallpaper"
+msgstr "壁纸"
+
+#: gdm3setup.py:322
+msgid "Icon theme"
+msgstr "图标主题"
+
+#: gdm3setup.py:327
+msgid "Cursor theme"
+msgstr "鼠标主题"
+
+#: gdm3setup.py:332
+msgid "AutoLogin"
+msgstr "自动登陆"
+
+#: gdm3setup.py:338
+msgid "Shell theme"
+msgstr "Shell 主题"
+
+#: gdm3setup.py:343
+msgid "Shell Logo"
+msgstr "Shell 标志"
+
+#: gdm3setup.py:348
+msgid "Show Date in Clock"
+msgstr "在钟表处显示日期"
+
+#: gdm3setup.py:353
+msgid "Show Seconds in Clock"
+msgstr "在钟表处显示秒"
+
+#: gdm3setup.py:359
+msgid "GTK3 theme"
+msgstr "GTK3 主题"
+
+#: gdm3setup.py:364
+msgid "Font"
+msgstr "字体"
+
+#: gdm3setup.py:369
+msgid "Logo Icon"
+msgstr "标志图标"
+
+#: gdm3setup.py:374
+msgid "Enable Banner"
+msgstr "启用标语"
+
+#: gdm3setup.py:381
+msgid "Disable User List"
+msgstr "禁用用户列表"
+
+#: gdm3setup.py:385
+msgid "Disable Restart Buttons"
+msgstr "禁用重启按钮"
+
