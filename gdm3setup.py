@@ -26,13 +26,18 @@ class ImageChooserButton(Gtk.Button):
 	def __init__(self):
 		Gtk.Button.__init__(self)
 		self.Label = Gtk.Label(_('(None)'))
-		self.Image = Gtk.Image()
-		self.Image.set_from_icon_name("fileopen",Gtk.IconSize.SMALL_TOOLBAR)
+		self.ImageBadPath = Gtk.Image()
+		self.ImageBadPath.set_from_icon_name("dialog-warning",Gtk.IconSize.SMALL_TOOLBAR)
+		self.ImageBadPath.set_no_show_all(True)
+		self.ImageBadPath.set_tooltip_text(_("Bad path :\nFile must be in /usr/share or /usr/local/share"))
+		self.ImageFileOpen = Gtk.Image()
+		self.ImageFileOpen.set_from_icon_name("fileopen",Gtk.IconSize.SMALL_TOOLBAR)
 		self.Separator = Gtk.Separator.new(Gtk.Orientation.VERTICAL)
 		self.Box = Gtk.HBox.new(False,0)
 		self.add(self.Box)
+		self.Box.pack_start(self.ImageBadPath,False,False,2)
 		self.Box.pack_start(self.Label,False,False,2)
-		self.Box.pack_end(self.Image,False,False,2)
+		self.Box.pack_end(self.ImageFileOpen,False,False,2)
 		self.Box.pack_end(self.Separator,False,False,2)
 		self.Box.show_all()
 		self.filterImage = Gtk.FileFilter()
@@ -97,12 +102,10 @@ class ImageChooserButton(Gtk.Button):
 	def response_cb(self,dialog,response) :
 		self.FileChooserDialog.hide()
 		if response==Gtk.ResponseType.ACCEPT :
-			self.Filename = self.FileChooserDialog.get_filename()
-			self.Label.set_label(os.path.basename(self.Filename))
+			self.set_filename(self.FileChooserDialog.get_filename())
 			self.emit("file-changed")
 		elif response==Gtk.ResponseType.NONE :
-			self.Filename = ""
-			self.Label.set_label(_("(None)"))
+			self.set_filename("")
 			self.emit("file-changed")
 
 	def dialog_destroy(self,data) :
@@ -113,6 +116,10 @@ class ImageChooserButton(Gtk.Button):
 
 	def set_filename(self,filename=""):
 		self.Filename = filename
+		if filename[0:len("/home")] == "/home" :
+			self.ImageBadPath.show()
+		else:
+			self.ImageBadPath.hide()
 		if filename != "" :
 			self.Label.set_label(os.path.basename(filename))
 		else :
