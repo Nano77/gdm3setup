@@ -1,11 +1,11 @@
 #! /bin/bash
 #
 #
-. /etc/rc.conf 2>/dev/null
+. /etc/locale.conf
 
-if [ "$LOCALE" != "" ] 
+if [ "$LANG" != "" ] 
 then
-	export LANG="$LOCALE"
+	export LANG="$LANG"
 else
 	export LANG="en_US.utf8"
 fi

@@ -173,11 +173,11 @@ class GDM3SetupDBusService(dbus.service.Object):
 		if self.policykit_test(sender,connexion,'apps.nano77.gdm3setup.set') :
 			if AUTOLOGIN :
 				if TIMED :
-					subprocess.call("gdmlogin.py -a -u "+USERNAME+" -d "+str(int(TIMED_TIME)),shell=True)
+					subprocess.call("/usr/bin/gdmlogin.py -a -u "+USERNAME+" -d "+str(int(TIMED_TIME)),shell=True)
 				else:
-					subprocess.call("gdmlogin.py -a -u "+USERNAME,shell=True)
+					subprocess.call("/usr/bin/gdmlogin.py -a -u "+USERNAME,shell=True)
 			else:
-				subprocess.call("gdmlogin.py -m",shell=True)
+				subprocess.call("/usr/bin/gdmlogin.py -m",shell=True)
 			return "OK"
 		else :
 			return "ERROR : YOU ARE NOT ALLOWED !"

@@ -1,4 +1,4 @@
-#! /usr/bin/env python2
+#! /usr/bin/python2
 
 import os
 import sys
@@ -41,7 +41,6 @@ def SetValue(targetfile,targetsection,target,value):
 			ofile.writelines(lines)
 			ofile.close()
 		else:
-			#print >> sys.stderr, "SECTION "+targetsection+" NOT FOUND"
 			lines.append("\n")
 			lines.append("["+targetsection+"]\n")
 			lines.append(target+'='+value+'\n')
@@ -60,10 +59,9 @@ optlist, optargs = getopt.getopt(args,'mau:d:')
 MANUALLOGIN = False
 AUTOLOGIN = False
 TIMED = False
-TIMED_TIME = 0
+TIME = 0
 USER = False
 USER_NAME = ""
-
 
 for i in range(len(optlist)) :
 	opt , arg = optlist[i]
@@ -76,9 +74,7 @@ for i in range(len(optlist)) :
 		USER_NAME = arg
 	elif opt == "-d" :
 		TIMED = True
-		TIMED_TIME = arg
-
-
+		TIME = arg
 
 if os.getuid()==0 :
 
@@ -102,7 +98,7 @@ if os.getuid()==0 :
 		if AUTOLOGIN and not USER :
 			print >> sys.stderr, "ERROR : Automatic Login Without User Name !"
 		if not AUTOLOGIN and not MANUALLOGIN :
-			print "gdm3setup.py :\n\
+			print "gdmlogin.py :\n\
  -m :\tManual login\n\
  -a :\tAutomtic login\n\
  -u :\tUserName (Need for autologin)\n\
@@ -121,11 +117,11 @@ if os.getuid()==0 :
 				print "AutomaticLoginEnable=0"
 				print "TimedLoginEnable=1"
 				print "TimedLogin="+USER_NAME
-				print "TimedLoginDelay : "+TIMED_TIME
+				print "TimedLoginDelay : "+ TIME
 				SetValue(CONF_PATH,"daemon","AutomaticLoginEnable","0")
 				SetValue(CONF_PATH,"daemon","TimedLoginEnable","1")
 				SetValue(CONF_PATH,"daemon","TimedLogin",USER_NAME)
-				SetValue(CONF_PATH,"daemon","TimedLoginDelay",TIMED_TIME)
+				SetValue(CONF_PATH,"daemon","TimedLoginDelay",TIME)
 		else:
 			print "AutomaticLoginEnable=0"
 			print "TimedLoginEnable=0"
