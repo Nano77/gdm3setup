@@ -125,6 +125,15 @@ def Set_Shell_theme(new_theme) :
 		ofile.writelines(lines)
 		ofile.close()
 
+def _SetAutoLogin(AUTOLOGIN,USERNAME,TIMED,TIME) :
+	if AUTOLOGIN :
+		if TIMED :
+			subprocess.call("/usr/bin/gdmlogin.py -a -u "+USERNAME+" -d "+str(int(TIME)),shell=True)
+		else:
+			subprocess.call("/usr/bin/gdmlogin.py -a -u "+USERNAME,shell=True)
+	else:
+		subprocess.call("/usr/bin/gdmlogin.py -m",shell=True)
+
 class GDM3SetupDBusService(dbus.service.Object):
 	def __init__(self):
 		bus=dbus.SystemBus()
@@ -169,15 +178,9 @@ class GDM3SetupDBusService(dbus.service.Object):
 		return settings
 
 	@dbus.service.method('apps.nano77.gdm3setup','bsbi','s',sender_keyword='sender', connection_keyword='connexion')
-	def SetAutoLogin(self,AUTOLOGIN,USERNAME,TIMED,TIMED_TIME,sender=None, connexion=None):
+	def SetAutoLogin(self,AUTOLOGIN,USERNAME,TIMED,TIME,sender=None, connexion=None):
 		if self.policykit_test(sender,connexion,'apps.nano77.gdm3setup.set') :
-			if AUTOLOGIN :
-				if TIMED :
-					subprocess.call("/usr/bin/gdmlogin.py -a -u "+USERNAME+" -d "+str(int(TIMED_TIME)),shell=True)
-				else:
-					subprocess.call("/usr/bin/gdmlogin.py -a -u "+USERNAME,shell=True)
-			else:
-				subprocess.call("/usr/bin/gdmlogin.py -m",shell=True)
+			_SetAutoLogin(AUTOLOGIN,USERNAME,TIMED,TIME)
 			return "OK"
 		else :
 			return "ERROR : YOU ARE NOT ALLOWED !"
@@ -205,8 +208,98 @@ class GDM3SetupDBusService(dbus.service.Object):
 		if not (AutomaticLoginEnable or TimedLoginEnable ):
 			USERNAME = ""
 
-
 		return AUTOLOGIN,USERNAME,TIMED,TIMED_TIME
+
+	@dbus.service.method('apps.nano77.gdm3setup','b','b',sender_keyword='sender', connection_keyword='connexion')
+	def SetAutoLoginState(self,AUTOLOGIN,sender=None, connexion=None):
+		if self.policykit_test(sender,connexion,'apps.nano77.gdm3setup.set') :
+			USERNAME=GetValue("AutomaticLogin","")
+			TIMEDUSERNAME=GetValue("TimedLogin","")
+			if USERNAME=="" :
+				if TIMEDUSERNAME!="" :
+					USERNAME=TIMEDUSERNAME;
+				else :
+					USERNAME="nobody"
+			if AUTOLOGIN :
+				_SetAutoLogin(True,USERNAME,"","")
+			else :
+				_SetAutoLogin(False,"","","")
+			return True
+		else :
+			return False
+
+	@dbus.service.method('apps.nano77.gdm3setup','s','b',sender_keyword='sender', connection_keyword='connexion')
+	def SetAutoLoginUserName(self,USERNAME,sender=None, connexion=None):
+		if self.policykit_test(sender,connexion,'apps.nano77.gdm3setup.set') :
+			_SetAutoLogin(True,USERNAME,GetValue("TimedLoginEnable",False),GetValue("TimedLoginDelay",30))
+			return True
+		else :
+			return False
+
+	@dbus.service.method('apps.nano77.gdm3setup','b','b',sender_keyword='sender', connection_keyword='connexion')
+	def SetAutoLoginTimed(self,TIMED,sender=None, connexion=None):
+		if self.policykit_test(sender,connexion,'apps.nano77.gdm3setup.set') :
+			USERNAME=GetValue("AutomaticLogin","")
+			TIMEDUSERNAME=GetValue("TimedLogin","")
+			if TIMEDUSERNAME!="" :
+				USERNAME=TIMEDUSERNAME
+			if TIMED :
+				_SetAutoLogin(True,USERNAME,True,30)
+			else:
+				_SetAutoLogin(True,USERNAME,False,0)
+			return True
+		else :
+			return False
+
+	@dbus.service.method('apps.nano77.gdm3setup','i','b',sender_keyword='sender', connection_keyword='connexion')
+	def SetAutoLoginTime(self,TIME,sender=None, connexion=None):
+		if self.policykit_test(sender,connexion,'apps.nano77.gdm3setup.set') :
+			USERNAME=GetValue("AutomaticLogin","")
+			TIMEDUSERNAME=GetValue("TimedLogin","")
+			if TIMEDUSERNAME!="" :
+				USERNAME=TIMEDUSERNAME
+			_SetAutoLogin(True,USERNAME,True,TIME)
+			return True
+		else :
+			return False
+
+	@dbus.service.method('apps.nano77.gdm3setup','','b',sender_keyword='sender', connection_keyword='connexion')
+	def GetAutoLoginState(self,sender=None, connexion=None):
+		AutomaticLoginEnable = str_to_bool(GetValue("AutomaticLoginEnable","False"))
+		TimedLoginEnable = str_to_bool(GetValue("TimedLoginEnable","False"))
+		return AutomaticLoginEnable or TimedLoginEnable
+
+	@dbus.service.method('apps.nano77.gdm3setup','','s',sender_keyword='sender', connection_keyword='connexion')
+	def GetAutoLoginUserName(self,sender=None, connexion=None):
+		AutomaticLoginEnable = str_to_bool(GetValue("AutomaticLoginEnable","False"))
+		AutomaticLogin = GetValue("AutomaticLogin","")
+		TimedLoginEnable = str_to_bool(GetValue("TimedLoginEnable","False"))
+		TimedLogin = GetValue("TimedLogin","")
+		USERNAME = ""
+		if AutomaticLoginEnable:
+			USERNAME = AutomaticLogin
+		elif TimedLoginEnable:
+			USERNAME = TimedLogin
+		else :
+			if AutomaticLogin!="" :
+				USERNAME = AutomaticLogin
+			elif TimedLogin!="":
+				USERNAME=TimedLogin
+		return USERNAME
+
+	@dbus.service.method('apps.nano77.gdm3setup','','b',sender_keyword='sender', connection_keyword='connexion')
+	def GetAutoLoginTimed(self,sender=None, connexion=None):
+		TimedLoginEnable = str_to_bool(GetValue("TimedLoginEnable","False"))
+		return TimedLoginEnable
+
+	@dbus.service.method('apps.nano77.gdm3setup','','i',sender_keyword='sender', connection_keyword='connexion')
+	def GetAutoLoginTime(self,sender=None, connexion=None):
+		TimedLoginEnable = str_to_bool(GetValue("TimedLoginEnable","False"))
+		TimedLoginDelay = int(GetValue("TimedLoginDelay","30"))
+		if TimedLoginEnable :
+			return TimedLoginDelay
+		else :
+			return 0
 
 	@dbus.service.method('apps.nano77.gdm3setup',sender_keyword='sender', connection_keyword='connexion')
 	def StopDaemon(self,sender=None, connexion=None):
