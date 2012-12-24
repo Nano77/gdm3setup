@@ -109,7 +109,7 @@
                     <property name="orientation">vertical</property>
                     <property name="homogeneous">False</property>
                     <child>
-                      <object class="ImageChooserButton" id="Button_wallpaper">
+                      <object class="WallpaperSelectorButton" id="Button_wallpaper">
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
                       </object>

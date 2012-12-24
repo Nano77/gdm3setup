@@ -114,3 +114,8 @@ msgstr "Benutzerliste deaktivieren"
 msgid "Disable Restart Buttons"
 msgstr "Neustart-Knopf deaktivieren"
 
+#: gdm3setup.py:413
+msgid "Select Wallpaper"
+msgstr "Hintergrund auswählen"
+
+

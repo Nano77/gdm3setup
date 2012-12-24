@@ -113,3 +113,8 @@ msgstr "Esconder a lista dos usuários"
 msgid "Disable Restart Buttons"
 msgstr "Esconder a tecla de reinicio"
 
+#: gdm3setup.py:413
+msgid "Select Wallpaper"
+msgstr "Selecionar um Papel de parede"
+
+

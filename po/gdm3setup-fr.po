@@ -113,3 +113,8 @@ msgstr "Désactiver la liste des utilisateurs"
 msgid "Disable Restart Buttons"
 msgstr "Désactiver 'Restart' boutons"
 
+#: gdm3setup.py:413
+msgid "Select Wallpaper"
+msgstr "Sélectionner un Arrière-plan"
+
+

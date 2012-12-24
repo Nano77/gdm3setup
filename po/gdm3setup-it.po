@@ -113,3 +113,9 @@ msgstr "Nascondi la lista degli utenti"
 msgid "Disable Restart Buttons"
 msgstr "Nascondi il pulsante di riavvio"
 
+#: gdm3setup.py:413
+msgid "Select Wallpaper"
+msgstr "Seleziona un'Immagine di sfondo"
+
+
+

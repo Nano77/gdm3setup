@@ -5,6 +5,8 @@ import os
 import gettext
 import dbus
 import subprocess
+import datetime
+
 from lxml import etree
 
 from gi.repository import Gtk
@@ -249,6 +251,234 @@ class ImageChooserButton(Gtk.Button):
 
 GObject.signal_new("file-changed", ImageChooserButton, GObject.SIGNAL_RUN_FIRST,GObject.TYPE_NONE, ())
 GObject.type_register(ImageChooserButton)
+
+class WallpaperSelectorWidget(Gtk.Box) :
+	__gtype_name__ = 'WallpaperSelectorWidget'
+	def __init__(self) :
+		Gtk.Box.__init__(self)
+
+		self._filename = ""
+
+		self.TbStartTime = list()
+		self.TbEndTime = list()
+		self.TbStartWallpaper = list()
+		self.TbEndWallpaper = list()
+
+		self.connect("destroy",self._close)
+
+		self.Box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
+		self.add(self.Box)
+
+		self.scrolledwindow = Gtk.ScrolledWindow()
+		self.scrolledwindow.set_size_request(848,480)
+		self.Box.pack_start(self.scrolledwindow,True,True,0)
+
+		self.ListStore = Gtk.ListStore(GdkPixbuf.Pixbuf,str)
+		self.IconView = Gtk.IconView()
+		self.IconView.set_model(self.ListStore)
+		self.IconView.set_pixbuf_column(0)
+		self.scrolledwindow.add(self.IconView)
+
+		self.Scale = Gtk.Scale.new_with_range(Gtk.Orientation.HORIZONTAL,0,24,1)
+		self.Scale.set_draw_value(False)
+		self.Scale.set_no_show_all(True)
+		self.Box.pack_end(self.Scale,True,True,0)
+
+
+		self.IconView.connect("selection_changed",self.WallpaperChanged)
+
+		self.background_properties_path = "/usr/share/gnome-background-properties"
+		background_properties_list = os.listdir(self.background_properties_path)
+
+		for background_property in background_properties_list :
+			xml_file_path = self.background_properties_path + "/"+ background_property
+			xml_data = file(xml_file_path,'r').read()
+			root = etree.fromstring(xml_data)
+
+			nodeset = root.xpath('/wallpapers/wallpaper/filename')
+			for i in range(len(nodeset)):
+				targetfile = nodeset[i].text
+				PreviewFile = Gio.File.new_for_path(targetfile)
+				PreviewFileInfo = PreviewFile.query_info("*",Gio.FileQueryInfoFlags.NONE,None)
+				mtime = PreviewFileInfo.get_modification_time().tv_sec;
+				mimetype = PreviewFileInfo.get_content_type();
+				name = PreviewFile.get_basename()
+				isXml = name[len(name)-3:len(name)].lower() == 'xml'
+
+				if isXml :
+					self.LoadInformations(targetfile)
+					self.UpdatePixbuf(datetime.datetime.now().hour)
+
+				else :
+					self.Pixbuf = GetPixbufForPath(targetfile)
+
+				ThumbnailIter = self.ListStore.append()
+				self.ListStore.set_value(ThumbnailIter,0,self.Pixbuf)
+				self.ListStore.set_value(ThumbnailIter,1,targetfile)
+
+		self.Scale.connect("value-changed",self.ValueChanged)
+
+	def _close(self,e):
+		Gtk.main_quit()
+
+	def set_filename(self,filename) :
+			self._filename = filename
+
+	def get_filename(self) :
+			return self._filename
+
+	def LoadInformations(self,xml_file_path) :
+
+		self.TbStartTime[:] = []
+		self.TbEndTime[:] = []
+		self.TbStartWallpaper[:] = []
+		self.TbEndWallpaper[:] = []
+
+		xml_data = file(xml_file_path,'r').read()
+		root = etree.fromstring(xml_data)
+
+		nodeset = root.xpath('/background/starttime/hour')
+		self.StartTime = int(nodeset[0].text)
+
+		lasttime = self.StartTime
+		for child in root :
+			if child.tag == "static" :
+				duration = int(float(child.xpath('duration')[0].text))/3600
+				Wallpaper = child.xpath('file')[0].text
+				self.TbStartTime.append(lasttime)
+				self.TbEndTime.append(lasttime+duration)
+				self.TbStartWallpaper.append(GetPixbufForPath(Wallpaper)) 
+				self.TbEndWallpaper.append(GetPixbufForPath(Wallpaper))
+				lasttime = lasttime + duration
+			elif child.tag == "transition" :
+				duration = int(float(child.xpath('duration')[0].text))/3600
+				StartWallpaper = child.xpath('from')[0].text
+				EndWallpaper = child.xpath('to')[0].text
+				self.TbStartTime.append(lasttime)
+				self.TbEndTime.append(lasttime+duration)
+				self.TbStartWallpaper.append(GetPixbufForPath(StartWallpaper))
+				self.TbEndWallpaper.append(GetPixbufForPath(EndWallpaper))
+				lasttime = lasttime + duration
+
+		self.Pixbuf = self.TbStartWallpaper[0].copy()
+
+	def WallpaperChanged(self,e) :
+		model = self.IconView.get_model()
+		items = self.IconView.get_selected_items()
+		name = ""
+		if len(items) > 0 :
+			path = items[0]
+			iter1 = model.get_iter(path)
+			name = model.get_value(iter1,1)
+			isXml = name[len(name)-3:len(name)].lower() == 'xml'
+			if isXml :
+				self.Scale.show()
+				self.LoadInformations(name)
+				self.Scale.set_value(datetime.datetime.now().hour)
+			else :
+				self.Scale.hide()
+		else :
+			self.Scale.hide()
+		self._filename = name
+		self.emit("file-changed")
+
+	def UpdatePixbuf(self,value) :
+		if value < self.StartTime :
+			value = value + 24
+
+		for i in range(len(self.TbStartTime)) :
+			if value>= self.TbStartTime[i] and value <= self.TbEndTime[i] : 
+				intensity = ( value - self.TbStartTime[i] ) * 255 / (self.TbEndTime[i] - self.TbStartTime[i] )
+				self.TbStartWallpaper[i].composite(self.Pixbuf,0,0,self.TbStartWallpaper[i].get_width(),self.TbStartWallpaper[i].get_height(),0,0,1,1,GdkPixbuf.InterpType.NEAREST,255)
+				self.TbEndWallpaper[i].composite(self.Pixbuf,0,0,self.TbEndWallpaper[i].get_width(),self.TbEndWallpaper[i].get_height(),0,0,1,1,GdkPixbuf.InterpType.NEAREST,intensity)
+				break
+
+	def ValueChanged(self,e) :
+		self.UpdatePixbuf(int(e.get_value()))
+		model = self.IconView.get_model()
+		items = self.IconView.get_selected_items()
+		if len(items) > 0 :
+			path = items[0]
+			iter1 = model.get_iter(path)
+			self.ListStore.set_value(iter1,0,self.Pixbuf)
+
+GObject.signal_new("file-changed", WallpaperSelectorWidget, GObject.SIGNAL_RUN_FIRST,GObject.TYPE_NONE, ())
+GObject.type_register(WallpaperSelectorWidget)
+
+class WallpaperSelectorDialog(Gtk.Dialog) :
+	__gtype_name__ = 'WallpaperSelectorDialog'
+	def __init__(self) :
+		Gtk.Dialog.__init__(self)
+		self.set_resizable(False)
+		self.set_title(_("Select Wallpaper"))
+		self.add_button(Gtk.STOCK_CANCEL,Gtk.ResponseType.CANCEL)
+		self.add_button(Gtk.STOCK_OK,Gtk.ResponseType.OK)
+		self.content_area = self.get_content_area()
+		self.Widget = WallpaperSelectorWidget()
+		self.content_area.add(self.Widget)
+		self.show_all()
+
+	def set_filename(self,filename) :
+			self.Widget.set_filename(filename)
+
+	def get_filename(self) :
+			return self.Widget.get_filename()
+
+GObject.type_register(WallpaperSelectorDialog)
+
+class WallpaperSelectorButton(Gtk.Button):
+	__gtype_name__ = 'WallpaperSelectorButton'
+
+	def __init__(self):
+		Gtk.Button.__init__(self)
+		self.Label = Gtk.Label(_('(None)'))
+		self.ImageFileOpen = Gtk.Image()
+		self.ImageFileOpen.set_from_icon_name("fileopen",Gtk.IconSize.SMALL_TOOLBAR)
+		self.Separator = Gtk.Separator.new(Gtk.Orientation.VERTICAL)
+		self.Box = Gtk.HBox.new(False,0)
+		self.add(self.Box)
+		self.Box.pack_start(self.Label,False,False,2)
+		self.Box.pack_end(self.ImageFileOpen,False,False,2)
+		self.Box.pack_end(self.Separator,False,False,2)
+		self.Box.show_all()
+		self.connect("clicked",self._Clicked)
+		self.Dialog = None
+		self._filename = ""
+
+	def _Clicked(self,e) :
+		if self.Dialog == None :
+			self.Dialog = WallpaperSelectorDialog()
+			self.Dialog.connect("response",self._Reponse)
+			self.Dialog.connect("destroy",self._Destroy)
+			self.Dialog.set_transient_for(self.get_ancestor(Gtk.Window))
+		self.Dialog.present()
+
+	def _Reponse(self,dialog,response) :
+		self.Dialog.hide()
+		if response == -5 :
+			self._filename = self.Dialog.get_filename()
+			if (self._filename != "") :
+				self.Label.set_text(os.path.basename(self._filename))
+			else :
+				self.Label.set_text(_("(None)"))
+			self.emit("file-changed")
+
+	def _Destroy(self,e) :
+		self.Dialog = None
+
+	def set_filename(self,filename) :
+		self._filename = filename
+		if (self._filename != "") :
+			self.Label.set_text(os.path.basename(self._filename))
+		else :
+			self.Label.set_text(_("(None)"))
+
+	def get_filename(self) :
+		return self._filename
+
+GObject.signal_new("file-changed", WallpaperSelectorButton, GObject.SIGNAL_RUN_FIRST,GObject.TYPE_NONE, ())
+GObject.type_register(WallpaperSelectorButton)
+
 
 class AutologinButton (Gtk.Button) :
 	__gtype_name__ = 'AutologinButton'
@@ -522,7 +752,6 @@ class MainWindow(Gtk.Window) :
 		self.Button_autologin = self.Builder.get_object("Button_autologin")
 		self.Switch_clock_date = self.Builder.get_object("Switch_clock_date")
 		self.Switch_clock_seconds = self.Builder.get_object("Switch_clock_seconds")
-		self.Button_wallpaper.set_isWallpaper(True)
 
 		proxy = dbus.SystemBus().get_object('apps.nano77.gdm3setup','/apps/nano77/gdm3setup')
 		self.SetUI = proxy.get_dbus_method('SetUI','apps.nano77.gdm3setup')
@@ -912,6 +1141,20 @@ def get_iter(model,target):
 			break 
 		iter_test = model.iter_next(iter_test)
 	return target_iter
+
+def GetPixbufForPath(targetfile) :
+	PreviewFile = Gio.File.new_for_path(targetfile)
+	PreviewFileInfo = PreviewFile.query_info("*",Gio.FileQueryInfoFlags.NONE,None)
+	mtime = PreviewFileInfo.get_modification_time().tv_sec;
+	mimetype = PreviewFileInfo.get_content_type();
+	ThumbnailFactory = GnomeDesktop.DesktopThumbnailFactory.new(GnomeDesktop.DesktopThumbnailSize.LARGE);
+	ThumbnailPath = ThumbnailFactory.lookup(PreviewFile.get_uri(),mtime);
+	if (ThumbnailPath != None) :
+		pixbuf = GdkPixbuf.Pixbuf.new_from_file(ThumbnailPath)
+	else :
+		pixbuf = ThumbnailFactory.generate_thumbnail(PreviewFile.get_uri(),mimetype)
+		ThumbnailFactory.save_thumbnail(pixbuf,PreviewFile.get_uri(),mtime)
+	return pixbuf
 
 #-----------------------------------------------
 
