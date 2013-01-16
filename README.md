@@ -3,7 +3,7 @@ GDM3setup
 
 A GUI to setting GDM3
 
-Nano77 <nanoarch77@gmail.com>
+NanoArch <nanoarch77@gmail.com>
 
 
 
