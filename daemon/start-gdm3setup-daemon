@@ -10,5 +10,5 @@ else
 	export LANG="en_US.utf8"
 fi
 
-gdm3setup-daemon.py &
+gdm3setup-daemon &
 

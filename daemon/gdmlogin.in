@@ -1,10 +1,8 @@
-#! /usr/bin/python2
+#! /usr/bin/%PYTHON%
 
 import os
 import sys
 import getopt
-
-CONF_PATH = "/etc/gdm/custom.conf"
 
 #---
 def SetValue(targetfile,targetsection,target,value):
@@ -79,9 +77,9 @@ for i in range(len(optlist)) :
 if os.getuid()==0 :
 
 
-	if not os.path.isfile(CONF_PATH) :
+	if not os.path.isfile("%GDM_CONF%") :
 
-		ofile = open(CONF_PATH,'w')
+		ofile = open("%GDM_CONF%",'w')
 		ofile.write("# GDM configuration storage\n\n\
 [daemon]\n\n\
 [security]\n\n\
@@ -110,23 +108,23 @@ if os.getuid()==0 :
 				print "AutomaticLoginEnable=1"
 				print "AutomaticLogin="+USER_NAME
 				print "TimedLoginEnable=0"
-				SetValue(CONF_PATH,"daemon","AutomaticLoginEnable","1")
-				SetValue(CONF_PATH,"daemon","AutomaticLogin",USER_NAME)
-				SetValue(CONF_PATH,"daemon","TimedLoginEnable","0")
+				SetValue("%GDM_CONF%","daemon","AutomaticLoginEnable","1")
+				SetValue("%GDM_CONF%","daemon","AutomaticLogin",USER_NAME)
+				SetValue("%GDM_CONF%","daemon","TimedLoginEnable","0")
 			else:
 				print "AutomaticLoginEnable=0"
 				print "TimedLoginEnable=1"
 				print "TimedLogin="+USER_NAME
 				print "TimedLoginDelay : "+ TIME
-				SetValue(CONF_PATH,"daemon","AutomaticLoginEnable","0")
-				SetValue(CONF_PATH,"daemon","TimedLoginEnable","1")
-				SetValue(CONF_PATH,"daemon","TimedLogin",USER_NAME)
-				SetValue(CONF_PATH,"daemon","TimedLoginDelay",TIME)
+				SetValue("%GDM_CONF%","daemon","AutomaticLoginEnable","0")
+				SetValue("%GDM_CONF%","daemon","TimedLoginEnable","1")
+				SetValue("%GDM_CONF%","daemon","TimedLogin",USER_NAME)
+				SetValue("%GDM_CONF%","daemon","TimedLoginDelay",TIME)
 		else:
 			print "AutomaticLoginEnable=0"
 			print "TimedLoginEnable=0"
-			SetValue(CONF_PATH,"daemon","AutomaticLoginEnable","0")
-			SetValue(CONF_PATH,"daemon","TimedLoginEnable","0")
+			SetValue("%GDM_CONF%","daemon","AutomaticLoginEnable","0")
+			SetValue("%GDM_CONF%","daemon","TimedLoginEnable","0")
 else:
 	print >> sys.stderr, "Must Be Run as root"
 

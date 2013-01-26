@@ -2,7 +2,7 @@
 #
 #
 
-info=$(/usr/sbin/gdm --version)
+info=$(%GDM_BIN% --version)
 Version=$(echo "$info" | cut -d " " -f2)
 SubVersion=$(echo "$Version" | cut -d "." -f2)
 

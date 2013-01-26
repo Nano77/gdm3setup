@@ -16,7 +16,7 @@ GDM3setup is in AUR, you can install :
 
 - Or without an AUR Helper :
 
-	Get the PKGBUILD from AUR : `wget http://aur.archlinux.org/packages/gdm3setup/PKGBUILD`
+	Get the PKGBUILD from AUR : `wget https://aur.archlinux.org/packages/gd/gdm3setup/PKGBUILD`
 
 	and run `makepkg -i`
 

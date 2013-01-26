@@ -1,4 +1,4 @@
-#! /usr/bin/python2
+#! /usr/bin/%PYTHON%
 # -*- coding: <utf-8> -*-
 
 import dbus
@@ -12,14 +12,10 @@ from gi.repository import GObject
 subprocess.call("echo $LANG",shell=True)
 LANG = os.environ['LANG']
 
-GDM_BIN_PATH="/usr/sbin/gdm"
-GDM_CONF_PATH="/etc/gdm/custom.conf"
-GDM_USER_NAME="gdm"
-
 loop = GObject.MainLoop()
 
 def GetValue(target,default):
-	targetfile = GDM_CONF_PATH
+	targetfile = "%GDM_CONF%"
 	try:
 		ofile = open(targetfile,'r')
 		lines = ofile.readlines()
@@ -68,7 +64,7 @@ def Get_Bus():
 					if ev[0:len('USERNAME')]=='USERNAME':
 						user_name = ev
 
-				if user_name=="USERNAME="+GDM_USER_NAME and address!="":
+				if user_name=="USERNAME=%GDM_USER%" and address!="":
 					dbus_address = address[len('DBUS_SESSION_BUS_ADDRESS')+1:len(address)]
 					dbus_pid = ps
 
@@ -128,11 +124,11 @@ def Set_Shell_theme(new_theme) :
 def _SetAutoLogin(AUTOLOGIN,USERNAME,TIMED,TIME) :
 	if AUTOLOGIN :
 		if TIMED :
-			subprocess.call("/usr/bin/gdmlogin.py -a -u "+USERNAME+" -d "+str(int(TIME)),shell=True)
+			subprocess.call("/usr/bin/gdmlogin -a -u "+USERNAME+" -d "+str(int(TIME)),shell=True)
 		else:
-			subprocess.call("/usr/bin/gdmlogin.py -a -u "+USERNAME,shell=True)
+			subprocess.call("/usr/bin/gdmlogin -a -u "+USERNAME,shell=True)
 	else:
-		subprocess.call("/usr/bin/gdmlogin.py -m",shell=True)
+		subprocess.call("/usr/bin/gdmlogin -m",shell=True)
 
 class GDM3SetupDBusService(dbus.service.Object):
 	def __init__(self):
@@ -159,7 +155,7 @@ class GDM3SetupDBusService(dbus.service.Object):
 		if self.policykit_test(sender,connexion,'apps.nano77.gdm3setup.set') :
 			if name!='SHELL_THEME':
 				bus_adrress , bus_pid = Get_Bus()
-				subprocess.call('su - '+GDM_USER_NAME+' -s /bin/bash -c "LANG='+LANG+' DBUS_SESSION_BUS_ADDRESS='+bus_adrress+' DBUS_SESSION_BUS_PID='+bus_pid+' set_gdm.sh -n '+name+' -v '+"'"+value+"'"+'"',shell=True)
+				subprocess.call('su - %GDM_USER% -s /bin/bash -c "LANG='+LANG+' DBUS_SESSION_BUS_ADDRESS='+bus_adrress+' DBUS_SESSION_BUS_PID='+bus_pid+' set_gdm -n '+name+' -v '+"'"+value+"'"+'"',shell=True)
 			else :
 				Set_Shell_theme(value)
 
@@ -169,7 +165,7 @@ class GDM3SetupDBusService(dbus.service.Object):
 
 	@dbus.service.method('apps.nano77.gdm3setup','','as',sender_keyword='sender', connection_keyword='connexion')
 	def GetUI(self,sender=None, connexion=None):
-		subprocess.call("su - "+GDM_USER_NAME+" -s /bin/sh -c 'LANG="+LANG+" get_gdm.sh'",shell=True)
+		subprocess.call("su - %GDM_USER% -s /bin/sh -c 'LANG="+LANG+" get_gdm'",shell=True)
 		ifile = open("/tmp/GET_GDM",'r')
 		settings = ifile.readlines()
 		ifile.close()

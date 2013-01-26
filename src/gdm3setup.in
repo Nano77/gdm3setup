@@ -19,8 +19,6 @@ from gi.repository import GLib
 
 gettext.install("gdm3setup")
 
-GDM_BIN_PATH="/usr/sbin/gdm"
-
 #-----------------------------------------------
 class ImageChooserButton(Gtk.Button):
 	__gtype_name__ = 'ImageChooserButton'
@@ -782,7 +780,7 @@ class MainWindow(Gtk.Window) :
 		self.Button_autologin.set_time(self.AUTOLOGIN_TIME)
 
 	def GetGdmMinorVersion(self) :
-		p = subprocess.Popen(GDM_BIN_PATH+" --version",stdout=subprocess.PIPE, shell=True)
+		p = subprocess.Popen("%GDM_BIN%  --version",stdout=subprocess.PIPE, shell=True)
 		self.GdmMinorVersion =  int(p.stdout.read().split(" ")[1].split(".")[1])
 
 	def AdaptVersion(self) :
