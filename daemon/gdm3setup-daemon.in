@@ -73,54 +73,6 @@ def Get_Bus():
 
 	return dbus_address,dbus_pid
 
-def Get_Shell_theme():
-	shell_theme = 'Adwaita'
-	ifile = file('/usr/share/gnome-shell/theme/gnome-shell.css',"r")
-	lines = ifile.readlines()
-	for i in range(len(lines)) :
-		line = lines[i].strip()
-		if line[0:2] == "/*" and line[len(line)-2:len(line)] == "*/" :
-			comment = line[2:len(line)-2]
-			if comment[0:6] == "theme=" :
-				shell_theme = comment[6:len(comment)]
-
-	return shell_theme
-
-def Set_Shell_theme(new_theme) :
-	theme = Get_Shell_theme()
-	if theme == "Adwaita" and new_theme != "Adwaita":
-		if os.path.isdir('/usr/share/themes/'+new_theme+'/gnome-shell') :
-			if not os.path.islink('/usr/share/gnome-shell/theme') :
-				if os.path.isdir('/usr/share/gnome-shell/theme.original/') :
-					shutil.rmtree('/usr/share/gnome-shell/theme.original/')
-				shutil.move('/usr/share/gnome-shell/theme/','/usr/share/gnome-shell/theme.original/')
-				shutil.copytree('/usr/share/themes/'+new_theme+'/gnome-shell','/usr/share/gnome-shell/theme/')
-			elif os.path.isdir('/usr/share/gnome-shell/theme.original/') :
-				os.remove('/usr/share/gnome-shell/theme')
-				shutil.copytree('/usr/share/themes/'+new_theme+'/gnome-shell','/usr/share/gnome-shell/theme/')
-		ifile = file('/usr/share/gnome-shell/theme/gnome-shell.css','r')
-		lines = ifile.readlines()
-		lines.insert(0,"/*theme="+new_theme+"*/\n")
-		ifile.close()
-		ofile = file('/usr/share/gnome-shell/theme/gnome-shell.css','w')
-		ofile.writelines(lines)
-		ofile.close()
-
-	if theme != "Adwaita" and new_theme == "Adwaita" and os.path.isdir('/usr/share/gnome-shell/theme.original/') :
-		shutil.rmtree('/usr/share/gnome-shell/theme/')
-		shutil.move('/usr/share/gnome-shell/theme.original/','/usr/share/gnome-shell/theme/')
-
-	if theme != "Adwaita" and new_theme != "Adwaita" and os.path.isdir('/usr/share/themes/'+new_theme+'/gnome-shell') :
-		shutil.rmtree('/usr/share/gnome-shell/theme/')
-		shutil.copytree('/usr/share/themes/'+new_theme+'/gnome-shell','/usr/share/gnome-shell/theme/')
-		ifile = file('/usr/share/gnome-shell/theme/gnome-shell.css','r')
-		lines = ifile.readlines()
-		lines.insert(0,"/*theme="+new_theme+"*/\n")
-		ifile.close()
-		ofile = file('/usr/share/gnome-shell/theme/gnome-shell.css','w')
-		ofile.writelines(lines)
-		ofile.close()
-
 def _SetAutoLogin(AUTOLOGIN,USERNAME,TIMED,TIME) :
 	if AUTOLOGIN :
 		if TIMED :
@@ -157,8 +109,10 @@ class GDM3SetupDBusService(dbus.service.Object):
 				bus_adrress , bus_pid = Get_Bus()
 				subprocess.call('su - %GDM_USER% -s /bin/bash -c "LANG='+LANG+' DBUS_SESSION_BUS_ADDRESS='+bus_adrress+' DBUS_SESSION_BUS_PID='+bus_pid+' set_gdm -n '+name+' -v '+"'"+value+"'"+'"',shell=True)
 			else :
-				Set_Shell_theme(value)
-
+				if value == "" or value == "Adwaita" :
+					subprocess.call("gdmshelltheme -d",shell=True)
+				else :
+					subprocess.call("gdmshelltheme -n "+value,shell=True)
 			return "OK"
 		else :
 			return "ERROR : YOU ARE NOT ALLOWED !"
@@ -170,7 +124,9 @@ class GDM3SetupDBusService(dbus.service.Object):
 		settings = ifile.readlines()
 		ifile.close()
 		os.remove("/tmp/GET_GDM")
-		settings.append("SHELL='"+Get_Shell_theme()+"'\n")
+		p = subprocess.Popen("gdmshelltheme -g ",stdout=subprocess.PIPE,shell=True)
+		shelltheme = p.stdout.read().strip()
+		settings.append("SHELL='"+shelltheme+"'\n")
 		return settings
 
 	@dbus.service.method('apps.nano77.gdm3setup','bsbi','s',sender_keyword='sender', connection_keyword='connexion')
