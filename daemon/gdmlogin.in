@@ -100,7 +100,7 @@ if os.getuid()==0 :
  -m :\tManual login\n\
  -a :\tAutomtic login\n\
  -u :\tUserName (Need for autologin)\n\
- -d :\tDelay before autologin in second"
+ -d :\tDelay before autologin in seconds"
 
 	else:
 		if AUTOLOGIN :
@@ -126,6 +126,6 @@ if os.getuid()==0 :
 			SetValue("%GDM_CONF%","daemon","AutomaticLoginEnable","0")
 			SetValue("%GDM_CONF%","daemon","TimedLoginEnable","0")
 else:
-	print >> sys.stderr, "Must Be Run as root"
+	print >> sys.stderr, "Must be run as root"
 
 

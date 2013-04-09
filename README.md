@@ -1,9 +1,22 @@
 GDM3setup
 =========
 
-A GUI to setting GDM3
+Utilities to configure GDM3, autologin options and change Shell theme
 
 NanoArch <nanoarch77@gmail.com>
+
+
+
+About
+=====
+
+- gdmlogin : CLI tool to set autologin parameters
+
+- gdmshelltheme : CLI tool to set, get and list Shell themes 
+
+- gdm3setup-daemon : A D-Bus service to configure GDM3, autologin options and change Shell theme 
+
+- gdm3setup : A GUI for the daemon
 
 
 
@@ -23,20 +36,23 @@ GDM3setup is in AUR, you can install :
 
 Fedora
 ------
-You can use the RPM package from : https://github.com/Nano77/various/tree/master/rpm
+You can use RPM packages from : https://github.com/Nano77/various/tree/master/rpm
 
 
 OpenSUSE
 --------
-You can use the RPM package from : https://github.com/Nano77/various/tree/master/rpm
+You can use RPM packages from : https://github.com/Nano77/various/tree/master/rpm
 
 
-Ubuntu (Oneiric Ocelot)
------------------------
-You can use the DEB package from : https://github.com/Nano77/various/tree/master/deb
-
-Debian (wheezy)
+Ubuntu
 ------
-You can use the "debian" DEB package from : https://github.com/Nano77/various/tree/master/deb
+You can use DEB packages from : https://github.com/Nano77/various/tree/master/deb
 
+Debian
+------
+You can use "debian" DEB packages from : https://github.com/Nano77/various/tree/master/deb
 
+Manual install
+--------------
+
+see [INSTALL.md](https://github.com/Nano77/gdm3setup/blob/master/INSTALL.md)
