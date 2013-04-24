@@ -1,0 +1,118 @@
+# A GUI to setting GDM3.
+# Copyright (C) 2011 Nano77 <nanoarch77@gmail.com>
+# This file is distributed under the same license as the package.
+# Robert Wei <robert.wei@ossii.com.tw>, 2013.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: gdm3setup\n"
+"Report-Msgid-Bugs-To: https://github.com/Nano77/gdm3setup/issues\n"
+"POT-Creation-Date: 2011-12-22 19:35+0100\n"
+"PO-Revision-Date: 2013-04-22 18:05+0100\n"
+"Last-Translator: Robert Wei <robert.wei@ossii.com.tw>\n"
+"Language-Team: \n"
+"Language: zh_TW\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: gdm3setup.py:22
+msgid "(None)"
+msgstr "（無）"
+
+#: gdm3setup.py:47
+msgid "Select a File"
+msgstr "選擇檔案"
+
+#: gdm3setup.py:97
+msgid "Disabled"
+msgstr "停用"
+
+#: gdm3setup.py:187
+msgid "GDM AutoLogin Setup"
+msgstr "GDM 自動登入設定"
+
+#: gdm3setup.py:192
+msgid "Enable Automatic Login"
+msgstr "啟用自動登入"
+
+#: gdm3setup.py:200
+msgid "User Name"
+msgstr "使用者名稱"
+
+#: gdm3setup.py:212
+msgid "Enable Delay before autologin"
+msgstr "自動登入前先等待"
+
+#: gdm3setup.py:224
+msgid "Apply"
+msgstr "應用"
+
+#: gdm3setup.py:272
+msgid "GDM3 Setup"
+msgstr "GDM3 設定"
+
+#: gdm3setup.py:282
+msgid "General"
+msgstr "基本"
+
+#: gdm3setup.py:317
+msgid "Wallpaper"
+msgstr "桌布"
+
+#: gdm3setup.py:322
+msgid "Icon theme"
+msgstr "圖示主題"
+
+#: gdm3setup.py:327
+msgid "Cursor theme"
+msgstr "滑鼠指標主題"
+
+#: gdm3setup.py:332
+msgid "AutoLogin"
+msgstr "自動登入"
+
+#: gdm3setup.py:338
+msgid "Shell theme"
+msgstr "布景主題"
+
+#: gdm3setup.py:343
+msgid "Shell Logo"
+msgstr "布景標誌"
+
+#: gdm3setup.py:348
+msgid "Show Date in Clock"
+msgstr "在小時鐘裡顯示日期"
+
+#: gdm3setup.py:353
+msgid "Show Seconds in Clock"
+msgstr "在小時鐘裡顯示秒數"
+
+#: gdm3setup.py:359
+msgid "GTK3 theme"
+msgstr "GTK3 主題"
+
+#: gdm3setup.py:364
+msgid "Font"
+msgstr "字型"
+
+#: gdm3setup.py:369
+msgid "Logo Icon"
+msgstr "標誌圖示"
+
+#: gdm3setup.py:374
+msgid "Enable Banner"
+msgstr "啟用橫幅"
+
+#: gdm3setup.py:381
+msgid "Disable User List"
+msgstr "停用使用者列表"
+
+#: gdm3setup.py:385
+msgid "Disable Restart Buttons"
+msgstr "停用重新啟動按鈕"
+
+#: gdm3setup.py:413
+msgid "Select Wallpaper"
+msgstr "選擇桌布"
+
