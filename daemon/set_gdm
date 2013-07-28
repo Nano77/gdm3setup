@@ -123,6 +123,10 @@ else
 				gsettings set org.gnome.shell.clock show-seconds "$parameter_value"
 				gsettings set org.gnome.desktop.interface clock-show-seconds  "$parameter_value"
 				;;
+			ALLOWED_FAILURES)
+				echo "$parameter_name = $parameter_value"
+				gsettings set org.gnome.login-screen allowed-failures "$parameter_value"
+				;;
 			*)
 				echo "Uknown GDM3 Parameter !"
 				;;

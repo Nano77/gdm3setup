@@ -630,15 +630,23 @@ class MainWindow(Gtk.Window) :
 		self.Button_autologin = self.Builder.get_object("Button_autologin")
 		self.Switch_clock_date = self.Builder.get_object("Switch_clock_date")
 		self.Switch_clock_seconds = self.Builder.get_object("Switch_clock_seconds")
+		self.SpinButton_allowed_failures = self.Builder.get_object("SpinButton_allowed_failures")
 
 		proxy = dbus.SystemBus().get_object('apps.nano77.gdm3setup','/apps/nano77/gdm3setup')
 		self.SetUI = proxy.get_dbus_method('SetUI','apps.nano77.gdm3setup')
 		self.GetUI = proxy.get_dbus_method('GetUI','apps.nano77.gdm3setup')
 		self.SetAutoLogin = proxy.get_dbus_method('SetAutoLogin','apps.nano77.gdm3setup')
 		self.GetAutoLogin = proxy.get_dbus_method('GetAutoLogin','apps.nano77.gdm3setup')
+		self.SetAllowedFailures = proxy.get_dbus_method('SetAllowedFailures', 'apps.nano77.gdm3setup')
+		self.GetAllowedFailures = proxy.get_dbus_method('GetAllowedFailures', 'apps.nano77.gdm3setup')
 		self.StopDaemon = proxy.get_dbus_method('StopDaemon', 'apps.nano77.gdm3setup')
 
 		self.GetGdmMinorVersion()
+
+		self.SpinButton_allowed_failures.set_range(1,9)
+		self.SpinButton_allowed_failures.set_increments(1,1)
+		self.SpinButton_allowed_failures.set_numeric(True)
+		self.SpinButton_allowed_failures.set_wrap(True)
 
 		self.load_gtk3_list()
 		self.load_shell_list()
@@ -664,6 +672,7 @@ class MainWindow(Gtk.Window) :
 		self.Button_autologin.connect("changed",self.autologin_changed)
 		self.Switch_clock_date.connect("notify::active",self.clock_date_toggled)
 		self.Switch_clock_seconds.connect("notify::active",self.clock_seconds_toggled)
+		self.SpinButton_allowed_failures.connect("value-changed",self.allowed_failures_changed)
 		self.AdaptVersion()
 
 		#https://bugzilla.gnome.org/show_bug.cgi?id=653579
@@ -742,6 +751,7 @@ class MainWindow(Gtk.Window) :
 		self.FONT_NAME = unquote(get_setting("FONT",settings))
 		self.CLOCK_DATE = str_to_bool(get_setting("CLOCK_DATE",settings))
 		self.CLOCK_SECONDS = str_to_bool(get_setting("CLOCK_SECONDS",settings))
+		self.ALLOWED_FAILURES = self.GetAllowedFailures()
 		self.ComboBox_gtk.set_active_iter(get_iter(self.ComboBox_gtk.get_model(),self.GTK3_THEME))
 		self.ComboBox_shell.set_active_iter(get_iter(self.ComboBox_shell.get_model(),self.SHELL_THEME))
 		self.Button_wallpaper.set_filename(self.WALLPAPER) 
@@ -761,6 +771,7 @@ class MainWindow(Gtk.Window) :
 		self.Button_font.set_font_name(self.FONT_NAME)
 		self.Switch_clock_date.set_active(self.CLOCK_DATE)
 		self.Switch_clock_seconds.set_active(self.CLOCK_SECONDS)
+		self.SpinButton_allowed_failures.set_value(self.ALLOWED_FAILURES)
 
 	def set_autologin(self,autologin,username,timed,time):
 		if self.SetAutoLogin(autologin,username,timed,time)=="OK" :
@@ -805,7 +816,7 @@ class MainWindow(Gtk.Window) :
 		else :
 			self.CheckButton_banner6.hide()
 			self.Entry_banner_text6.hide()
-
+			self.SpinButton_allowed_failures.hide()
 
 
 	def gtk3_theme_changed(self,e):
@@ -985,6 +996,16 @@ class MainWindow(Gtk.Window) :
 				print ("Clock Seconds toggled : " + str(self.CLOCK_SECONDS))
 			else:
 				self.Switch_clock_seconds.set_active(self.CLOCK_SECONDS)
+
+	def allowed_failures_changed(self,e) :
+		allowed_failures = self.SpinButton_allowed_failures.get_value()
+		if self.ALLOWED_FAILURES != allowed_failures :
+			if self.SetAllowedFailures(allowed_failures) :
+				self.ALLOWED_FAILURES = allowed_failures
+				print ("Allowed Failures Changed : " + str(self.ALLOWED_FAILURES))
+			else:
+				self.SpinButton_allowed_failures.set_value(self.ALLOWED_FAILURES)
+		
 
 #-----------------------------------------------
 
