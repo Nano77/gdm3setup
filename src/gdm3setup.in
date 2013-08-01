@@ -626,6 +626,7 @@ class MainWindow(Gtk.Window) :
 		self.CheckButton_banner6 = self.Builder.get_object("CheckButton_banner6")
 		self.Entry_banner_text6 = self.Builder.get_object("Entry_banner_text6")
 		self.CheckButton_user = self.Builder.get_object("CheckButton_user")
+		self.CheckButton_user8 = self.Builder.get_object("CheckButton_user8")
 		self.CheckButton_restart = self.Builder.get_object("CheckButton_restart")
 		self.Button_autologin = self.Builder.get_object("Button_autologin")
 		self.Switch_clock_date = self.Builder.get_object("Switch_clock_date")
@@ -668,6 +669,7 @@ class MainWindow(Gtk.Window) :
 		self.CheckButton_banner6.connect("toggled",self.banner_6_toggled)
 		self.Entry_banner_text6.connect("changed",self.banner_text_6_changed)
 		self.CheckButton_user.connect("toggled",self.user_list_toggled)
+		self.CheckButton_user8.connect("toggled",self.user_list_8_toggled)
 		self.CheckButton_restart.connect("toggled",self.menu_btn_toggled)
 		self.Button_autologin.connect("changed",self.autologin_changed)
 		self.Switch_clock_date.connect("notify::active",self.clock_date_toggled)
@@ -765,6 +767,7 @@ class MainWindow(Gtk.Window) :
 		self.CheckButton_banner6.set_active(self.BANNER)
 		self.Entry_banner_text6.set_text(self.BANNER_TEXT)
 		self.CheckButton_user.set_active(self.USER_LIST)
+		self.CheckButton_user8.set_active(self.USER_LIST)
 		self.CheckButton_restart.set_active(self.MENU_BTN)
 		self.Entry_banner_text.set_sensitive(self.BANNER)
 		self.Entry_banner_text6.set_sensitive(self.BANNER)
@@ -817,6 +820,12 @@ class MainWindow(Gtk.Window) :
 			self.CheckButton_banner6.hide()
 			self.Entry_banner_text6.hide()
 			self.SpinButton_allowed_failures.hide()
+
+		if self.GdmMinorVersion >= 7 :
+			self.CheckButton_user.hide()
+		else :
+			self.CheckButton_user8.hide()
+
 
 
 	def gtk3_theme_changed(self,e):
@@ -952,6 +961,17 @@ class MainWindow(Gtk.Window) :
 				print ("User List Changed : " + str(self.USER_LIST))
 			else:
 				self.CheckButton_user.set_active(self.USER_LIST)
+
+
+	def user_list_8_toggled(self,e):
+		user_list = self.CheckButton_user8.get_active()
+		if self.USER_LIST != user_list :
+			if self.set_gdm('USER_LIST',str(user_list).lower()) :
+				self.USER_LIST = user_list
+				print ("User List Changed : " + str(self.USER_LIST))
+			else:
+				self.CheckButton_user8.set_active(self.USER_LIST)
+
 
 	def menu_btn_toggled(self,e):
 		menu_btn = self.CheckButton_restart.get_active()
