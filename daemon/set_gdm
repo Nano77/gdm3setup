@@ -111,7 +111,7 @@ else
 				echo "$parameter_name = $parameter_value"
 				gconftool-2 --type string --set /apps/gdm/simple-greeter/banner_message_text "$parameter_value"
 				gconftool-2 --type string --set /apps/gdm/simple-greeter/banner_message_text_nochooser "$parameter_value"
-				gsettings set org.gnome.login-screen banner-message-text $parameter_value
+				gsettings set org.gnome.login-screen banner-message-text "$parameter_value"
 				;;
 			CLOCK_DATE)
 				echo "$parameter_name = $parameter_value"
