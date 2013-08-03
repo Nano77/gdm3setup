@@ -131,6 +131,10 @@ else
 				echo "$parameter_name = $parameter_value"
 				gsettings set org.gnome.login-screen enable-fingerprint-authentication "$parameter_value"
 				;;
+			SMARTCARD_AUTHENTICATION)
+				echo "$parameter_name = $parameter_value"
+				gsettings set org.gnome.login-screen enable-smartcard-authentication "$parameter_value"
+				;;
 			*)
 				echo "Uknown GDM3 Parameter !"
 				;;
