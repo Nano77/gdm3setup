@@ -50,6 +50,8 @@ gsettings get org.gnome.desktop.interface clock-show-seconds >> /tmp/GET_GDM
 else
 gsettings get org.gnome.shell.clock show-seconds >> /tmp/GET_GDM
 fi
+echo -n "FINGERPRINT_AUTHENTICATION=" >> /tmp/GET_GDM 
+gsettings get org.gnome.login-screen enable-fingerprint-authentication >> /tmp/GET_GDM || echo >> /tmp/GET_GDM
 echo -n "ALLOWED_FAILURES=" >> /tmp/GET_GDM 
 gsettings get org.gnome.login-screen allowed-failures >> /tmp/GET_GDM || echo >> /tmp/GET_GDM
 echo "EOF" >> /tmp/GET_GDM
