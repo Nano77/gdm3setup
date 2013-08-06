@@ -612,26 +612,36 @@ class MainWindow(Gtk.Window) :
 		self.Box_Main = self.Builder.get_object("box_main")
 		self.add(self.Box_Main)
 
+		self.Notebook = self.Builder.get_object("notebook1")
 		self.Button_font = self.Builder.get_object("Button_font")
 		self.Button_wallpaper = self.Builder.get_object("Button_wallpaper")
 		self.ComboBox_shell = self.Builder.get_object("ComboBox_shell")
+		self.ComboBox_shell10 = self.Builder.get_object("ComboBox_shell10")
 		self.ComboBox_icon = self.Builder.get_object("ComboBox_icon")
 		self.ComboBox_cursor = self.Builder.get_object("ComboBox_cursor")
 		self.Entry_logo_icon = self.Builder.get_object("Entry_logo_icon")
 		self.Button_fallback_logo = self.Builder.get_object("Button_fallback_logo")
 		self.Button_shell_logo = self.Builder.get_object("Button_shell_logo")
+		self.Button_shell_logo10 = self.Builder.get_object("Button_shell_logo10")
 		self.ComboBox_gtk = self.Builder.get_object("ComboBox_gtk")
 		self.CheckButton_banner = self.Builder.get_object("CheckButton_banner")
 		self.Entry_banner_text = self.Builder.get_object("Entry_banner_text")
 		self.CheckButton_banner6 = self.Builder.get_object("CheckButton_banner6")
 		self.Entry_banner_text6 = self.Builder.get_object("Entry_banner_text6")
-		self.CheckButton_user = self.Builder.get_object("CheckButton_user")
-		self.CheckButton_user8 = self.Builder.get_object("CheckButton_user8")
-		self.CheckButton_restart = self.Builder.get_object("CheckButton_restart")
+		self.Switch_user = self.Builder.get_object("Switch_user")
+		self.Switch_user8 = self.Builder.get_object("Switch_user8")
+		self.Box_user = self.Builder.get_object("box_user")
+		self.Box_user8 = self.Builder.get_object("box_user8")
+		self.Switch_restart = self.Builder.get_object("Switch_restart")
 		self.Button_autologin = self.Builder.get_object("Button_autologin")
 		self.Switch_clock_date = self.Builder.get_object("Switch_clock_date")
+		self.Switch_clock_date10 = self.Builder.get_object("Switch_clock_date10")
 		self.Switch_clock_seconds = self.Builder.get_object("Switch_clock_seconds")
+		self.Switch_clock_seconds10 = self.Builder.get_object("Switch_clock_seconds10")
+		self.Box_clock_date10 = self.Builder.get_object("box_clock_date10")
+		self.Box_clock_seconds10 = self.Builder.get_object("box_clock_seconds10")
 		self.SpinButton_allowed_failures = self.Builder.get_object("SpinButton_allowed_failures")
+		self.SpinButton_allowed_failures10 = self.Builder.get_object("SpinButton_allowed_failures10")
 
 		proxy = dbus.SystemBus().get_object('apps.nano77.gdm3setup','/apps/nano77/gdm3setup')
 		self.SetUI = proxy.get_dbus_method('SetUI','apps.nano77.gdm3setup')
@@ -648,6 +658,10 @@ class MainWindow(Gtk.Window) :
 		self.SpinButton_allowed_failures.set_increments(1,1)
 		self.SpinButton_allowed_failures.set_numeric(True)
 		self.SpinButton_allowed_failures.set_wrap(True)
+		self.SpinButton_allowed_failures10.set_range(1,9)
+		self.SpinButton_allowed_failures10.set_increments(1,1)
+		self.SpinButton_allowed_failures10.set_numeric(True)
+		self.SpinButton_allowed_failures10.set_wrap(True)
 
 		self.load_gtk3_list()
 		self.load_shell_list()
@@ -658,23 +672,28 @@ class MainWindow(Gtk.Window) :
 		self.Button_font.connect("font-set",self.font_set)
 		self.Button_wallpaper.connect("file-changed",self.wallpaper_filechanged)
 		self.ComboBox_shell.connect("changed",self.shell_theme_changed)
+		self.ComboBox_shell10.connect("changed",self.shell_theme_10_changed)
 		self.ComboBox_icon.connect("changed",self.icon_theme_changed)
 		self.ComboBox_cursor.connect("changed",self.cursor_theme_changed)
 		self.Entry_logo_icon.connect("changed",self.logo_icon_changed)
 		self.Button_fallback_logo.connect("file-changed",self.fallback_logo_filechanged)
 		self.Button_shell_logo.connect("file-changed",self.shell_logo_filechanged)
+		self.Button_shell_logo10.connect("file-changed",self.shell_logo_10_filechanged)
 		self.ComboBox_gtk.connect("changed",self.gtk3_theme_changed)
 		self.CheckButton_banner.connect("toggled",self.banner_toggled)
 		self.Entry_banner_text.connect("changed",self.banner_text_changed)
 		self.CheckButton_banner6.connect("toggled",self.banner_6_toggled)
 		self.Entry_banner_text6.connect("changed",self.banner_text_6_changed)
-		self.CheckButton_user.connect("toggled",self.user_list_toggled)
-		self.CheckButton_user8.connect("toggled",self.user_list_8_toggled)
-		self.CheckButton_restart.connect("toggled",self.menu_btn_toggled)
+		self.Switch_user.connect("notify::active",self.user_list_toggled)
+		self.Switch_user8.connect("notify::active",self.user_list_8_toggled)
+		self.Switch_restart.connect("notify::active",self.menu_btn_toggled)
 		self.Button_autologin.connect("changed",self.autologin_changed)
 		self.Switch_clock_date.connect("notify::active",self.clock_date_toggled)
 		self.Switch_clock_seconds.connect("notify::active",self.clock_seconds_toggled)
 		self.SpinButton_allowed_failures.connect("value-changed",self.allowed_failures_changed)
+		self.Switch_clock_date10.connect("notify::active",self.clock_date_10_toggled)
+		self.Switch_clock_seconds10.connect("notify::active",self.clock_seconds_10_toggled)
+		self.SpinButton_allowed_failures10.connect("value-changed",self.allowed_failures_10_changed)
 		self.AdaptVersion()
 
 		#https://bugzilla.gnome.org/show_bug.cgi?id=653579
@@ -697,12 +716,14 @@ class MainWindow(Gtk.Window) :
 
 		lst_shell_themes = os.listdir('/usr/share/themes')
 		self.ComboBox_shell.append_text("Adwaita")
+		self.ComboBox_shell10.append_text("Adwaita")
 
 		for i in range(len(lst_shell_themes)):
 			if os.path.isdir('/usr/share/themes/'+lst_shell_themes[i]+'/gnome-shell') :
 				if self.GdmMinorVersion > 0 and self.GdmMinorVersion < 5 :
 					 if os.path.isfile('/usr/share/themes/'+lst_shell_themes[i]+'/gnome-shell/gdm.css') :
 						self.ComboBox_shell.append_text(lst_shell_themes[i])
+						self.ComboBox_shell10.append_text(lst_shell_themes[i])
 				elif self.GdmMinorVersion >= 5 :
 					ofile = open('/usr/share/themes/'+lst_shell_themes[i]+'/gnome-shell/gnome-shell.css','r')
 					lines = ofile.readlines()
@@ -710,6 +731,7 @@ class MainWindow(Gtk.Window) :
 					for line in lines :
 						if line.strip() == ".login-dialog {" :
 							self.ComboBox_shell.append_text(lst_shell_themes[i])
+							self.ComboBox_shell10.append_text(lst_shell_themes[i])
 							break
 
 	def load_icon_list(self):
@@ -756,25 +778,30 @@ class MainWindow(Gtk.Window) :
 		self.ALLOWED_FAILURES = self.GetAllowedFailures()
 		self.ComboBox_gtk.set_active_iter(get_iter(self.ComboBox_gtk.get_model(),self.GTK3_THEME))
 		self.ComboBox_shell.set_active_iter(get_iter(self.ComboBox_shell.get_model(),self.SHELL_THEME))
+		self.ComboBox_shell10.set_active_iter(get_iter(self.ComboBox_shell10.get_model(),self.SHELL_THEME))
 		self.Button_wallpaper.set_filename(self.WALLPAPER) 
 		self.ComboBox_icon.set_active_iter(get_iter(self.ComboBox_icon.get_model(),self.ICON_THEME))
 		self.ComboBox_cursor.set_active_iter(get_iter(self.ComboBox_cursor.get_model(),self.CURSOR_THEME))
 		self.Entry_logo_icon.set_text(self.LOGO_ICON)
 		self.Button_fallback_logo.set_filename(self.FALLBACK_LOGO)
 		self.Button_shell_logo.set_filename(self.SHELL_LOGO)
+		self.Button_shell_logo10.set_filename(self.SHELL_LOGO)
 		self.CheckButton_banner.set_active(self.BANNER)
 		self.Entry_banner_text.set_text(self.BANNER_TEXT)
 		self.CheckButton_banner6.set_active(self.BANNER)
 		self.Entry_banner_text6.set_text(self.BANNER_TEXT)
-		self.CheckButton_user.set_active(self.USER_LIST)
-		self.CheckButton_user8.set_active(self.USER_LIST)
-		self.CheckButton_restart.set_active(self.MENU_BTN)
+		self.Switch_user.set_active(self.USER_LIST)
+		self.Switch_user8.set_active(self.USER_LIST)
+		self.Switch_restart.set_active(self.MENU_BTN)
 		self.Entry_banner_text.set_sensitive(self.BANNER)
 		self.Entry_banner_text6.set_sensitive(self.BANNER)
 		self.Button_font.set_font_name(self.FONT_NAME)
 		self.Switch_clock_date.set_active(self.CLOCK_DATE)
+		self.Switch_clock_date10.set_active(self.CLOCK_DATE)
 		self.Switch_clock_seconds.set_active(self.CLOCK_SECONDS)
+		self.Switch_clock_seconds10.set_active(self.CLOCK_SECONDS)
 		self.SpinButton_allowed_failures.set_value(self.ALLOWED_FAILURES)
+		self.SpinButton_allowed_failures10.set_value(self.ALLOWED_FAILURES)
 
 	def set_autologin(self,autologin,username,timed,time):
 		if self.SetAutoLogin(autologin,username,timed,time)=="OK" :
@@ -822,12 +849,23 @@ class MainWindow(Gtk.Window) :
 			self.SpinButton_allowed_failures.hide()
 
 		if self.GdmMinorVersion >= 7 :
-			self.CheckButton_user.hide()
+			self.Box_user.hide()
 		else :
-			self.CheckButton_user8.hide()
+			self.Box_user8.hide()
 
-
-
+		if self.GdmMinorVersion >= 9 :
+			self.Notebook.set_show_tabs(False)
+		else :
+			self.Notebook.set_show_tabs(True)
+			self.Builder.get_object("Label_shell10").hide()
+			self.ComboBox_shell10.hide()
+			self.Builder.get_object("Label_shell_logo10").hide()
+			self.Button_shell_logo10.hide()
+			self.Builder.get_object("Label_failures10").hide()
+			self.SpinButton_allowed_failures10.hide()
+			self.Box_clock_date10.hide()
+			self.Box_clock_seconds10.hide()
+			print "..."
 	def gtk3_theme_changed(self,e):
 		gtk_theme = unicode(self.ComboBox_gtk.get_active_text(),'UTF_8')
 		if gtk_theme!=unquote(self.GTK3_THEME) :
@@ -845,6 +883,15 @@ class MainWindow(Gtk.Window) :
 				print("SHELL Theme Changed : " + self.SHELL_THEME)
 			else :
 				self.ComboBox_shell.set_active_iter(get_iter(self.ComboBox_shell.get_model(),self.SHELL_THEME))
+
+	def shell_theme_10_changed(self,e):
+		shell_theme = unicode(self.ComboBox_shell10.get_active_text(),'UTF_8')
+		if shell_theme!=unquote(self.SHELL_THEME) :
+			if self.set_gdm('SHELL_THEME',shell_theme) :
+				self.SHELL_THEME = shell_theme
+				print("SHELL Theme Changed : " + self.SHELL_THEME)
+			else :
+				self.ComboBox_shell10.set_active_iter(get_iter(self.ComboBox_shell10.get_model(),self.SHELL_THEME))
 
 	def font_set(self,e):
 		font_name = self.Button_font.get_font_name()
@@ -909,6 +956,15 @@ class MainWindow(Gtk.Window) :
 			else:
 				self.Button_shell_logo.set_filename(self.SHELL_LOGO)
 
+	def shell_logo_10_filechanged(self,e):
+		shell_logo = unicode(self.Button_shell_logo10.get_filename(),'UTF_8')
+		if self.SHELL_LOGO != shell_logo :
+			if self.set_gdm('SHELL_LOGO',shell_logo) :
+				self.SHELL_LOGO = shell_logo
+				print ("Shell Logo Changed : " + self.SHELL_LOGO)
+			else:
+				self.Button_shell_logo10.set_filename(self.SHELL_LOGO)
+
 	def banner_toggled(self,e):
 		banner = self.CheckButton_banner.get_active()
 		if banner!=self.BANNER :
@@ -953,34 +1009,34 @@ class MainWindow(Gtk.Window) :
 			else :
 				self.Entry_banner_text6.set_text(self.BANNER_TEXT)
 
-	def user_list_toggled(self,e):
-		user_list = self.CheckButton_user.get_active()
+	def user_list_toggled(self,e,state):
+		user_list = self.Switch_user.get_active()
 		if self.USER_LIST != user_list :
 			if self.set_gdm('USER_LIST',str(user_list).lower()) :
 				self.USER_LIST = user_list
 				print ("User List Changed : " + str(self.USER_LIST))
 			else:
-				self.CheckButton_user.set_active(self.USER_LIST)
+				self.Switch_user.set_active(self.USER_LIST)
 
 
-	def user_list_8_toggled(self,e):
-		user_list = self.CheckButton_user8.get_active()
+	def user_list_8_toggled(self,e,state):
+		user_list = self.Switch_user8.get_active()
 		if self.USER_LIST != user_list :
 			if self.set_gdm('USER_LIST',str(user_list).lower()) :
 				self.USER_LIST = user_list
 				print ("User List Changed : " + str(self.USER_LIST))
 			else:
-				self.CheckButton_user8.set_active(self.USER_LIST)
+				self.Switch_user8.set_active(self.USER_LIST)
 
 
-	def menu_btn_toggled(self,e):
-		menu_btn = self.CheckButton_restart.get_active()
+	def menu_btn_toggled(self,e,state):
+		menu_btn = self.Switch_restart.get_active()
 		if self.MENU_BTN != menu_btn :
 			if self.set_gdm('MENU_BTN',str(menu_btn).lower()) :
 				self.MENU_BTN = menu_btn
 				print ("Menu Btn Changed : " + str(self.MENU_BTN))
 			else:
-				self.CheckButton_restart.set_active(self.MENU_BTN)
+				self.Switch_restart.set_active(self.MENU_BTN)
 
 	def autologin_changed(self,e) :
 		autologin_enabled = self.Button_autologin.get_autologin()
@@ -1008,6 +1064,15 @@ class MainWindow(Gtk.Window) :
 			else:
 				self.Switch_clock_date.set_active(self.CLOCK_DATE)
 
+	def clock_date_10_toggled(self,e,state) :
+		clock_date = self.Switch_clock_date10.get_active()
+		if self.CLOCK_DATE != clock_date :
+			if self.set_gdm('CLOCK_DATE',str(clock_date).lower()) :
+				self.CLOCK_DATE = clock_date
+				print ("Clock Date toggled : " + str(self.CLOCK_DATE))
+			else:
+				self.Switch_clock_date10.set_active(self.CLOCK_DATE)
+
 	def clock_seconds_toggled(self,e,state) :
 		clock_seconds = self.Switch_clock_seconds.get_active()
 		if self.CLOCK_SECONDS != clock_seconds :
@@ -1016,6 +1081,15 @@ class MainWindow(Gtk.Window) :
 				print ("Clock Seconds toggled : " + str(self.CLOCK_SECONDS))
 			else:
 				self.Switch_clock_seconds.set_active(self.CLOCK_SECONDS)
+
+	def clock_seconds_10_toggled(self,e,state) :
+		clock_seconds = self.Switch_clock_seconds10.get_active()
+		if self.CLOCK_SECONDS != clock_seconds :
+			if self.set_gdm('CLOCK_SECONDS',str(clock_seconds).lower()) :
+				self.CLOCK_SECONDS = clock_seconds
+				print ("Clock Seconds toggled : " + str(self.CLOCK_SECONDS))
+			else:
+				self.Switch_clock_seconds10.set_active(self.CLOCK_SECONDS)
 
 	def allowed_failures_changed(self,e) :
 		allowed_failures = self.SpinButton_allowed_failures.get_value()
@@ -1026,6 +1100,15 @@ class MainWindow(Gtk.Window) :
 			else:
 				self.SpinButton_allowed_failures.set_value(self.ALLOWED_FAILURES)
 		
+	def allowed_failures_10_changed(self,e) :
+		allowed_failures = self.SpinButton_allowed_failures10.get_value()
+		if self.ALLOWED_FAILURES != allowed_failures :
+			if self.SetAllowedFailures(allowed_failures) :
+				self.ALLOWED_FAILURES = allowed_failures
+				print ("Allowed Failures Changed : " + str(self.ALLOWED_FAILURES))
+			else:
+				self.SpinButton_allowed_failures10.set_value(self.ALLOWED_FAILURES)
+
 
 #-----------------------------------------------
 
