@@ -129,7 +129,6 @@ class ImageChooserButton(Gtk.Button):
 			self.FileChooserDialog.set_preview_widget_active(False)
 
 GObject.signal_new("file-changed", ImageChooserButton, GObject.SIGNAL_RUN_FIRST,GObject.TYPE_NONE, ())
-GObject.type_register(ImageChooserButton)
 
 class WallpaperSelectorWidget(Gtk.Box) :
 	__gtype_name__ = 'WallpaperSelectorWidget'
@@ -281,7 +280,6 @@ class WallpaperSelectorWidget(Gtk.Box) :
 			self.ListStore.set_value(iter1,0,self.Pixbuf)
 
 GObject.signal_new("file-changed", WallpaperSelectorWidget, GObject.SIGNAL_RUN_FIRST,GObject.TYPE_NONE, ())
-GObject.type_register(WallpaperSelectorWidget)
 
 class WallpaperSelectorDialog(Gtk.Dialog) :
 	__gtype_name__ = 'WallpaperSelectorDialog'
@@ -301,8 +299,6 @@ class WallpaperSelectorDialog(Gtk.Dialog) :
 
 	def get_filename(self) :
 			return self.Widget.get_filename()
-
-GObject.type_register(WallpaperSelectorDialog)
 
 class WallpaperSelectorButton(Gtk.Button):
 	__gtype_name__ = 'WallpaperSelectorButton'
@@ -355,8 +351,6 @@ class WallpaperSelectorButton(Gtk.Button):
 		return self._filename
 
 GObject.signal_new("file-changed", WallpaperSelectorButton, GObject.SIGNAL_RUN_FIRST,GObject.TYPE_NONE, ())
-GObject.type_register(WallpaperSelectorButton)
-
 
 class AutologinButton (Gtk.Button) :
 	__gtype_name__ = 'AutologinButton'
@@ -468,7 +462,6 @@ class AutologinButton (Gtk.Button) :
 		self.Dialog = None
 
 GObject.signal_new("changed", AutologinButton, GObject.SIGNAL_RUN_FIRST,GObject.TYPE_NONE, ())
-GObject.type_register(AutologinButton)
 
 class AutoLoginDialog(Gtk.Dialog):
 	def __init__(self):
@@ -596,6 +589,86 @@ class EditButton(Gtk.HBox) :
 
 GObject.signal_new("changed", EditButton, GObject.SIGNAL_RUN_FIRST,GObject.TYPE_NONE, ())
 
+class BannerButton(Gtk.Button) :
+	__gtype_name__ = 'BannerButton'
+
+	def __init__(self):
+		Gtk.Button.__init__(self)
+		self.set_label(_("Disabled"))
+		self.connect("clicked",self._clicked)
+		self._Text=""
+		self._State=False
+
+	def get_text(self):
+		return self._Text
+
+	def set_text(self,text):
+		self._Text = text
+		if self._State == True :
+			self.set_label(text)
+
+	def get_state(self):
+		return self._State
+
+	def set_state(self,state):
+		self._State = state
+		if state == True :
+			self.set_label(self._Text)
+		else :
+			self.set_label(_("Disabled"))
+
+	def _clicked(self,e) :
+		self._Dialog = Gtk.Dialog()
+		self._Dialog.set_modal(True)
+		self._Dialog.set_resizable(False)
+		self._Dialog.set_title(_("Banner"))
+		self._Dialog.add_button(Gtk.STOCK_CANCEL,Gtk.ResponseType.CANCEL)
+		self._Dialog.add_button(Gtk.STOCK_OK,Gtk.ResponseType.OK)
+		self._Content_area = self._Dialog.get_content_area()
+		self._Box_Main = Gtk.VBox.new(False,12)
+		self._Box_Main.set_border_width(24)
+		self._Content_area.add(self._Box_Main)
+		self._Box_State = Gtk.HBox.new(False,12)
+		self._Box_Main.pack_start(self._Box_State,False,False,2)
+		self._Label_State = Gtk.Label(_("Enable Banner"))
+		self._Label_State.set_alignment(0,0.5)
+		self._Box_State.pack_start(self._Label_State,False,False,2)
+		self._Switch_State = Gtk.Switch()
+		self._Box_State.pack_end(self._Switch_State,False,False,2)
+		self._Box_Text = Gtk.HBox.new(False,12)
+		self._Box_Main.pack_start(self._Box_Text,False,False,2)
+		self._Entry_Text = Gtk.Entry()
+		self._Box_Text.pack_end(self._Entry_Text,True,False,2)
+		self._Content_area.show_all()
+
+		if self._State == True :
+			self._Switch_State.set_active(True)
+		else :
+			self._Box_Text.set_sensitive(False)
+		self._Entry_Text.set_text(self._Text)
+
+		self._Switch_State.connect("notify::active",self._sw_toggled)
+
+		result = self._Dialog.run()
+
+		if result == Gtk.ResponseType.OK :
+			self.set_text(self._Entry_Text.get_text())
+			self.set_state(self._Switch_State.get_active())
+			self._Dialog.destroy()
+			self.emit("changed")
+		else :
+			self._Dialog.destroy()
+
+	def _sw_toggled(self,e,s) :
+		state = self._Switch_State.get_active()
+
+		if state == True :
+			self._Box_Text.set_sensitive(True)
+		else :
+			self._Box_Text.set_sensitive(False)
+
+GObject.signal_new("changed", BannerButton, GObject.SIGNAL_RUN_FIRST,GObject.TYPE_NONE, ())
+
 class MainWindow(Gtk.Window) :
 	def __init__(self) :
 		Gtk.Window.__init__(self)
@@ -624,10 +697,8 @@ class MainWindow(Gtk.Window) :
 		self.Button_shell_logo = self.Builder.get_object("Button_shell_logo")
 		self.Button_shell_logo10 = self.Builder.get_object("Button_shell_logo10")
 		self.ComboBox_gtk = self.Builder.get_object("ComboBox_gtk")
-		self.CheckButton_banner = self.Builder.get_object("CheckButton_banner")
-		self.Entry_banner_text = self.Builder.get_object("Entry_banner_text")
-		self.CheckButton_banner6 = self.Builder.get_object("CheckButton_banner6")
-		self.Entry_banner_text6 = self.Builder.get_object("Entry_banner_text6")
+		self.Button_banner_text = self.Builder.get_object("Button_banner_text")
+		self.Button_banner_text6 = self.Builder.get_object("Button_banner_text6")
 		self.Switch_user = self.Builder.get_object("Switch_user")
 		self.Switch_user8 = self.Builder.get_object("Switch_user8")
 		self.Box_user = self.Builder.get_object("box_user")
@@ -680,10 +751,8 @@ class MainWindow(Gtk.Window) :
 		self.Button_shell_logo.connect("file-changed",self.shell_logo_filechanged)
 		self.Button_shell_logo10.connect("file-changed",self.shell_logo_10_filechanged)
 		self.ComboBox_gtk.connect("changed",self.gtk3_theme_changed)
-		self.CheckButton_banner.connect("toggled",self.banner_toggled)
-		self.Entry_banner_text.connect("changed",self.banner_text_changed)
-		self.CheckButton_banner6.connect("toggled",self.banner_6_toggled)
-		self.Entry_banner_text6.connect("changed",self.banner_text_6_changed)
+		self.Button_banner_text.connect("changed",self.banner_text_changed)
+		self.Button_banner_text6.connect("changed",self.banner_text_6_changed)
 		self.Switch_user.connect("notify::active",self.user_list_toggled)
 		self.Switch_user8.connect("notify::active",self.user_list_8_toggled)
 		self.Switch_restart.connect("notify::active",self.menu_btn_toggled)
@@ -786,15 +855,13 @@ class MainWindow(Gtk.Window) :
 		self.Button_fallback_logo.set_filename(self.FALLBACK_LOGO)
 		self.Button_shell_logo.set_filename(self.SHELL_LOGO)
 		self.Button_shell_logo10.set_filename(self.SHELL_LOGO)
-		self.CheckButton_banner.set_active(self.BANNER)
-		self.Entry_banner_text.set_text(self.BANNER_TEXT)
-		self.CheckButton_banner6.set_active(self.BANNER)
-		self.Entry_banner_text6.set_text(self.BANNER_TEXT)
+		self.Button_banner_text.set_text(self.BANNER_TEXT)
+		self.Button_banner_text.set_state(self.BANNER)
+		self.Button_banner_text6.set_text(self.BANNER_TEXT)
+		self.Button_banner_text6.set_state(self.BANNER)
 		self.Switch_user.set_active(self.USER_LIST)
 		self.Switch_user8.set_active(self.USER_LIST)
 		self.Switch_restart.set_active(self.MENU_BTN)
-		self.Entry_banner_text.set_sensitive(self.BANNER)
-		self.Entry_banner_text6.set_sensitive(self.BANNER)
 		self.Button_font.set_font_name(self.FONT_NAME)
 		self.Switch_clock_date.set_active(self.CLOCK_DATE)
 		self.Switch_clock_date10.set_active(self.CLOCK_DATE)
@@ -841,11 +908,11 @@ class MainWindow(Gtk.Window) :
 			self.Builder.get_object("notebook1").remove_page(1)
 
 		if self.GdmMinorVersion >= 5 :
-			self.CheckButton_banner.hide()
-			self.Entry_banner_text.hide()
+			self.Builder.get_object("Label_banner").hide()
+			self.Button_banner_text.hide()
 		else :
-			self.CheckButton_banner6.hide()
-			self.Entry_banner_text6.hide()
+			self.Builder.get_object("Label_banner6").hide()
+			self.Button_banner_text6.hide()
 			self.SpinButton_allowed_failures.hide()
 
 		if self.GdmMinorVersion >= 7 :
@@ -865,7 +932,7 @@ class MainWindow(Gtk.Window) :
 			self.SpinButton_allowed_failures10.hide()
 			self.Box_clock_date10.hide()
 			self.Box_clock_seconds10.hide()
-			print "..."
+
 	def gtk3_theme_changed(self,e):
 		gtk_theme = unicode(self.ComboBox_gtk.get_active_text(),'UTF_8')
 		if gtk_theme!=unquote(self.GTK3_THEME) :
@@ -965,49 +1032,31 @@ class MainWindow(Gtk.Window) :
 			else:
 				self.Button_shell_logo10.set_filename(self.SHELL_LOGO)
 
-	def banner_toggled(self,e):
-		banner = self.CheckButton_banner.get_active()
-		if banner!=self.BANNER :
-			if self.set_gdm('BANNER',str(banner).lower()) :
-				self.BANNER = banner
-				print ("Banner Changed : " + str(self.BANNER))
-				if self.BANNER :
-					self.Entry_banner_text.set_sensitive(True)
-				else:
-					self.Entry_banner_text.set_sensitive(False)
-			else:
-				self.CheckButton_banner.set_active(self.BANNER)
-
 	def banner_text_changed(self,e):
-		banner_text = unicode(self.Entry_banner_text.get_text(),'UTF_8')
-		if banner_text!=self.BANNER_TEXT :
+		banner_text = unicode(self.Button_banner_text.get_text(),'UTF_8')
+		banner = self.Button_banner_text.get_state()
+		if banner_text!=self.BANNER_TEXT or banner!=self.BANNER :
 			if self.set_gdm('BANNER_TEXT',banner_text) :
+				self.set_gdm('BANNER',str(banner).lower())
 				self.BANNER_TEXT = banner_text
-				print ("Banner Text Changed : " + self.BANNER_TEXT)
-			else :
-				self.Entry_banner_text.set_text(self.BANNER_TEXT)
-
-	def banner_6_toggled(self,e):
-		banner = self.CheckButton_banner6.get_active()
-		if banner!=self.BANNER :
-			if self.set_gdm('BANNER',str(banner).lower()) :
 				self.BANNER = banner
-				print ("Banner Changed : " + str(self.BANNER))
-				if self.BANNER :
-					self.Entry_banner_text6.set_sensitive(True)
-				else:
-					self.Entry_banner_text6.set_sensitive(False)
-			else:
-				self.CheckButton_banner6.set_active(self.BANNER)
+				print ("Banner Changed - Text : " + self.BANNER_TEXT) + " - State : " + str(self.BANNER)
+			else :
+				self.Button_banner_text.set_text(self.BANNER_TEXT)
+				self.Button_banner_text.set_state(self.BANNER)
 
 	def banner_text_6_changed(self,e):
-		banner_text = unicode(self.Entry_banner_text6.get_text(),'UTF_8')
-		if banner_text!=self.BANNER_TEXT :
+		banner_text = unicode(self.Button_banner_text6.get_text(),'UTF_8')
+		banner = self.Button_banner_text6.get_state()
+		if banner_text!=self.BANNER_TEXT or banner!=self.BANNER :
 			if self.set_gdm('BANNER_TEXT',banner_text) :
+				self.set_gdm('BANNER',str(banner).lower())
 				self.BANNER_TEXT = banner_text
-				print ("Banner Text Changed : " + self.BANNER_TEXT)
+				self.BANNER = banner
+				print ("Banner Changed - Text : " + self.BANNER_TEXT) + " - State : " + str(self.BANNER)
 			else :
-				self.Entry_banner_text6.set_text(self.BANNER_TEXT)
+				self.Button_banner_text6.set_text(self.BANNER_TEXT)
+				self.Button_banner_text6.set_state(self.BANNER)
 
 	def user_list_toggled(self,e,state):
 		user_list = self.Switch_user.get_active()
