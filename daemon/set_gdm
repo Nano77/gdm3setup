@@ -78,7 +78,7 @@ else
 				;;
 			WALLPAPER)
 				echo "$parameter_name = $parameter_value"
-				gsettings set org.gnome.desktop.background picture-uri "'file://"$parameter_value"'"
+				gsettings set org.gnome.desktop.background picture-uri "$parameter_value"
 				;;
 			LOGO_ICON)
 				echo "$parameter_name = $parameter_value"

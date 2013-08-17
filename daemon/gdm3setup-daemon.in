@@ -8,6 +8,7 @@ import subprocess
 import os
 import shutil
 from gi.repository import GObject
+from gi.repository import Gio
 
 subprocess.call("echo $LANG",shell=True)
 LANG = os.environ['LANG']
@@ -42,6 +43,11 @@ def str_to_bool(state) :
 		b_state = False
 
 	return b_state
+
+def unquote(value):
+	if value[0:1] == "'"  and value[len(value)-1:len(value)] == "'" :
+		value = value[1:len(value)-1]
+	return value
 
 def Get_Bus():
 	ps_name=""
@@ -109,6 +115,8 @@ class GDM3SetupDBusService(dbus.service.Object):
 	def SetUI(self,name,value,sender=None, connexion=None):
 		if self.policykit_test(sender,connexion,'apps.nano77.gdm3setup.set') :
 			if name!='SHELL_THEME':
+				if name == "WALLPAPER" :
+					value = "file://"+value
 				bus_adrress , bus_pid = Get_Bus()
 				subprocess.call('su - %GDM_USER% -s /bin/bash -c "LANG='+LANG+' DBUS_SESSION_BUS_ADDRESS='+bus_adrress+' DBUS_SESSION_BUS_PID='+bus_pid+' set_gdm -n '+name+' -v '+"'"+value+"'"+'"',shell=True)
 			else :
@@ -131,6 +139,250 @@ class GDM3SetupDBusService(dbus.service.Object):
 		shelltheme = p.stdout.read().strip()
 		settings.append("SHELL='"+shelltheme+"'\n")
 		return settings
+
+	@dbus.service.method('apps.nano77.gdm3setup','s','b',sender_keyword='sender', connection_keyword='connexion')
+	def SetShellTheme(self,SHELL_THEME,sender=None, connexion=None):
+		if self.policykit_test(sender,connexion,'apps.nano77.gdm3setup.set') :
+			if SHELL_THEME == "" or SHELL_THEME == "Adwaita" :
+				subprocess.call("gdmshelltheme -d",shell=True)
+			else :
+				subprocess.call("gdmshelltheme -n "+SHELL_THEME,shell=True)
+			return True
+		else :
+			return False
+
+	@dbus.service.method('apps.nano77.gdm3setup','','s',sender_keyword='sender', connection_keyword='connexion')
+	def GetShellTheme(self,sender=None, connexion=None):
+		p = subprocess.Popen("gdmshelltheme -g ",stdout=subprocess.PIPE,shell=True)
+		SHELL_THEME = p.stdout.read().strip()
+		return SHELL_THEME
+
+	@dbus.service.method('apps.nano77.gdm3setup','s','b',sender_keyword='sender', connection_keyword='connexion')
+	def SetGtkTheme(self,GTK_THEME,sender=None, connexion=None):
+		if self.policykit_test(sender,connexion,'apps.nano77.gdm3setup.set') :
+			bus_adrress , bus_pid = Get_Bus()
+			subprocess.call('su - %GDM_USER% -s /bin/bash -c "LANG='+LANG+' DBUS_SESSION_BUS_ADDRESS='+bus_adrress+' DBUS_SESSION_BUS_PID='+bus_pid+' set_gdm -n GTK_THEME -v '+"'"+GTK_THEME+"'"+'"',shell=True)
+			return True
+		else :
+			return False
+
+	@dbus.service.method('apps.nano77.gdm3setup','','s',sender_keyword='sender', connection_keyword='connexion')
+	def GetGtkTheme(self,sender=None, connexion=None):
+		subprocess.call("su - %GDM_USER% -s /bin/sh -c 'LANG="+LANG+" get_gdm'",shell=True)
+		GTK_THEME = unquote(GetValue("/tmp/GET_GDM","GTK","Adwaita"))
+		os.remove("/tmp/GET_GDM")
+		return GTK_THEME
+
+	@dbus.service.method('apps.nano77.gdm3setup','s','b',sender_keyword='sender', connection_keyword='connexion')
+	def SetIconTheme(self,ICON_THEME,sender=None, connexion=None):
+		if self.policykit_test(sender,connexion,'apps.nano77.gdm3setup.set') :
+			bus_adrress , bus_pid = Get_Bus()
+			subprocess.call('su - %GDM_USER% -s /bin/bash -c "LANG='+LANG+' DBUS_SESSION_BUS_ADDRESS='+bus_adrress+' DBUS_SESSION_BUS_PID='+bus_pid+' set_gdm -n ICON_THEME -v '+"'"+ICON_THEME+"'"+'"',shell=True)
+			return True
+		else :
+			return False
+
+	@dbus.service.method('apps.nano77.gdm3setup','','s',sender_keyword='sender', connection_keyword='connexion')
+	def GetIconTheme(self,sender=None, connexion=None):
+		subprocess.call("su - %GDM_USER% -s /bin/sh -c 'LANG="+LANG+" get_gdm'",shell=True)
+		ICON_THEME = unquote(GetValue("/tmp/GET_GDM","ICON","gnome"))
+		os.remove("/tmp/GET_GDM")
+		return ICON_THEME
+
+	@dbus.service.method('apps.nano77.gdm3setup','s','b',sender_keyword='sender', connection_keyword='connexion')
+	def SetFont(self,FONT,sender=None, connexion=None):
+		if self.policykit_test(sender,connexion,'apps.nano77.gdm3setup.set') :
+			bus_adrress , bus_pid = Get_Bus()
+			subprocess.call('su - %GDM_USER% -s /bin/bash -c "LANG='+LANG+' DBUS_SESSION_BUS_ADDRESS='+bus_adrress+' DBUS_SESSION_BUS_PID='+bus_pid+' set_gdm -n FONT -v '+"'"+FONT+"'"+'"',shell=True)
+			return True
+		else :
+			return False
+
+	@dbus.service.method('apps.nano77.gdm3setup','','s',sender_keyword='sender', connection_keyword='connexion')
+	def GetFont(self,sender=None, connexion=None):
+		subprocess.call("su - %GDM_USER% -s /bin/sh -c 'LANG="+LANG+" get_gdm'",shell=True)
+		FONT = unquote(GetValue("/tmp/GET_GDM","FONT","Cantarell 11"))
+		os.remove("/tmp/GET_GDM")
+		return FONT
+
+	@dbus.service.method('apps.nano77.gdm3setup','s','b',sender_keyword='sender', connection_keyword='connexion')
+	def SetCursorTheme(self,CURSOR,sender=None, connexion=None):
+		if self.policykit_test(sender,connexion,'apps.nano77.gdm3setup.set') :
+			bus_adrress , bus_pid = Get_Bus()
+			subprocess.call('su - %GDM_USER% -s /bin/bash -c "LANG='+LANG+' DBUS_SESSION_BUS_ADDRESS='+bus_adrress+' DBUS_SESSION_BUS_PID='+bus_pid+' set_gdm -n CURSOR_THEME -v '+"'"+CURSOR_THEME+"'"+'"',shell=True)
+			return True
+		else :
+			return False
+
+	@dbus.service.method('apps.nano77.gdm3setup','','s',sender_keyword='sender', connection_keyword='connexion')
+	def GetCursorTheme(self,sender=None, connexion=None):
+		subprocess.call("su - %GDM_USER% -s /bin/sh -c 'LANG="+LANG+" get_gdm'",shell=True)
+		CURSOR_THEME = unquote(GetValue("/tmp/GET_GDM","CURSOR","Adwaita"))
+		os.remove("/tmp/GET_GDM")
+		return CURSOR_THEME
+
+	@dbus.service.method('apps.nano77.gdm3setup','s','b',sender_keyword='sender', connection_keyword='connexion')
+	def SetLogoIcon(self,LOGO_ICON,sender=None, connexion=None):
+		if self.policykit_test(sender,connexion,'apps.nano77.gdm3setup.set') :
+			bus_adrress , bus_pid = Get_Bus()
+			subprocess.call('su - %GDM_USER% -s /bin/bash -c "LANG='+LANG+' DBUS_SESSION_BUS_ADDRESS='+bus_adrress+' DBUS_SESSION_BUS_PID='+bus_pid+' set_gdm -n LOGO_ICON -v '+"'"+LOGO_ICON+"'"+'"',shell=True)
+			return True
+		else :
+			return False
+
+	@dbus.service.method('apps.nano77.gdm3setup','','s',sender_keyword='sender', connection_keyword='connexion')
+	def GetLogoIcon(self,sender=None, connexion=None):
+		subprocess.call("su - %GDM_USER% -s /bin/sh -c 'LANG="+LANG+" get_gdm'",shell=True)
+		LOGO_ICON = GetValue("/tmp/GET_GDM","LOGO_ICON","distributor-logo")
+		os.remove("/tmp/GET_GDM")
+		return LOGO_ICON
+
+	@dbus.service.method('apps.nano77.gdm3setup','s','b',sender_keyword='sender', connection_keyword='connexion')
+	def SetFallbackLogo(self,FALLBACK_LOGO,sender=None, connexion=None):
+		if self.policykit_test(sender,connexion,'apps.nano77.gdm3setup.set') :
+			bus_adrress , bus_pid = Get_Bus()
+			subprocess.call('su - %GDM_USER% -s /bin/bash -c "LANG='+LANG+' DBUS_SESSION_BUS_ADDRESS='+bus_adrress+' DBUS_SESSION_BUS_PID='+bus_pid+' set_gdm -n FALLBACK_LOGO -v '+"'"+FALLBACK_LOGO+"'"+'"',shell=True)
+			return True
+		else :
+			return False
+
+	@dbus.service.method('apps.nano77.gdm3setup','','s',sender_keyword='sender', connection_keyword='connexion')
+	def GetFallbackLogo(self,sender=None, connexion=None):
+		subprocess.call("su - %GDM_USER% -s /bin/sh -c 'LANG="+LANG+" get_gdm'",shell=True)
+		FALLBACK_LOGO = unquote(GetValue("/tmp/GET_GDM","FALLBACK_LOGO",""))
+		os.remove("/tmp/GET_GDM")
+		return FALLBACK_LOGO
+
+	@dbus.service.method('apps.nano77.gdm3setup','s','b',sender_keyword='sender', connection_keyword='connexion')
+	def SetShellLogo(self,SHELL_LOGO,sender=None, connexion=None):
+		if self.policykit_test(sender,connexion,'apps.nano77.gdm3setup.set') :
+			bus_adrress , bus_pid = Get_Bus()
+			subprocess.call('su - %GDM_USER% -s /bin/bash -c "LANG='+LANG+' DBUS_SESSION_BUS_ADDRESS='+bus_adrress+' DBUS_SESSION_BUS_PID='+bus_pid+' set_gdm -n SHELL_LOGO -v '+"'"+SHELL_LOGO+"'"+'"',shell=True)
+			return True
+		else :
+			return False
+
+	@dbus.service.method('apps.nano77.gdm3setup','','s',sender_keyword='sender', connection_keyword='connexion')
+	def GetShellLogo(self,sender=None, connexion=None):
+		subprocess.call("su - %GDM_USER% -s /bin/sh -c 'LANG="+LANG+" get_gdm'",shell=True)
+		SHELL_LOGO = unquote(GetValue("/tmp/GET_GDM","SHELL_LOGO",""))
+		os.remove("/tmp/GET_GDM")
+		return SHELL_LOGO
+
+	@dbus.service.method('apps.nano77.gdm3setup','s','b',sender_keyword='sender', connection_keyword='connexion')
+	def SetWallpaper(self,WALLPAPER,sender=None, connexion=None):
+		if self.policykit_test(sender,connexion,'apps.nano77.gdm3setup.set') :
+			bus_adrress , bus_pid = Get_Bus()
+			WALLPAPER = Gio.File.new_for_path(WALLPAPER).get_uri()
+			subprocess.call('su - %GDM_USER% -s /bin/bash -c "LANG='+LANG+' DBUS_SESSION_BUS_ADDRESS='+bus_adrress+' DBUS_SESSION_BUS_PID='+bus_pid+' set_gdm -n WALLPAPER -v '+"'"+WALLPAPER+"'"+'"',shell=True)
+			return True
+		else :
+			return False
+
+	@dbus.service.method('apps.nano77.gdm3setup','','s',sender_keyword='sender', connection_keyword='connexion')
+	def GetWallpaper(self,sender=None, connexion=None):
+		subprocess.call("su - %GDM_USER% -s /bin/sh -c 'LANG="+LANG+" get_gdm'",shell=True)
+		WALLPAPER = unquote(GetValue("/tmp/GET_GDM","WALLPAPER",""))
+		os.remove("/tmp/GET_GDM")
+		print "WALLPAPER : "+WALLPAPER
+		WALLPAPER = Gio.File.new_for_uri(WALLPAPER).get_path()
+		return WALLPAPER
+
+	@dbus.service.method('apps.nano77.gdm3setup','','b',sender_keyword='sender', connection_keyword='connexion')
+	def GetUserListVisibility(self,sender=None, connexion=None):
+		subprocess.call("su - %GDM_USER% -s /bin/sh -c 'LANG="+LANG+" get_gdm'",shell=True)
+		USER_LIST = GetValue("/tmp/GET_GDM","USER_LIST","true")
+		os.remove("/tmp/GET_GDM")
+		return str_to_bool(USER_LIST)
+
+	@dbus.service.method('apps.nano77.gdm3setup','b','b',sender_keyword='sender', connection_keyword='connexion')
+	def SetUserListVisibility(self,USER_LIST,sender=None, connexion=None):
+		if self.policykit_test(sender,connexion,'apps.nano77.gdm3setup.set') :
+			bus_adrress , bus_pid = Get_Bus()
+			subprocess.call('su - %GDM_USER% -s /bin/bash -c "LANG='+LANG+' DBUS_SESSION_BUS_ADDRESS='+bus_adrress+' DBUS_SESSION_BUS_PID='+bus_pid+' set_gdm -n USER_LIST -v '+"'"+str(bool(USER_LIST)).lower()+"'"+'"',shell=True)
+			return True
+		else :
+			return False
+
+	@dbus.service.method('apps.nano77.gdm3setup','','b',sender_keyword='sender', connection_keyword='connexion')
+	def GetRestartMenuVisibility(self,sender=None, connexion=None):
+		subprocess.call("su - %GDM_USER% -s /bin/sh -c 'LANG="+LANG+" get_gdm'",shell=True)
+		MENU_BTN = GetValue("/tmp/GET_GDM","BTN","true")
+		os.remove("/tmp/GET_GDM")
+		return str_to_bool(MENU_BTN)
+
+	@dbus.service.method('apps.nano77.gdm3setup','b','b',sender_keyword='sender', connection_keyword='connexion')
+	def SetRestartMenuVisibility(self,MENU_BTN,sender=None, connexion=None):
+		if self.policykit_test(sender,connexion,'apps.nano77.gdm3setup.set') :
+			bus_adrress , bus_pid = Get_Bus()
+			subprocess.call('su - %GDM_USER% -s /bin/bash -c "LANG='+LANG+' DBUS_SESSION_BUS_ADDRESS='+bus_adrress+' DBUS_SESSION_BUS_PID='+bus_pid+' set_gdm -n MENU_BTN -v '+"'"+str(bool(MENU_BTN)).lower()+"'"+'"',shell=True)
+			return True
+		else :
+			return False
+
+	@dbus.service.method('apps.nano77.gdm3setup','','b',sender_keyword='sender', connection_keyword='connexion')
+	def GetBannerVisibility(self,sender=None, connexion=None):
+		subprocess.call("su - %GDM_USER% -s /bin/sh -c 'LANG="+LANG+" get_gdm'",shell=True)
+		BANNER = GetValue("/tmp/GET_GDM","BANNER","true")
+		os.remove("/tmp/GET_GDM")
+		return str_to_bool(BANNER)
+
+	@dbus.service.method('apps.nano77.gdm3setup','b','b',sender_keyword='sender', connection_keyword='connexion')
+	def SetBannerVisibility(self,BANNER,sender=None, connexion=None):
+		if self.policykit_test(sender,connexion,'apps.nano77.gdm3setup.set') :
+			bus_adrress , bus_pid = Get_Bus()
+			subprocess.call('su - %GDM_USER% -s /bin/bash -c "LANG='+LANG+' DBUS_SESSION_BUS_ADDRESS='+bus_adrress+' DBUS_SESSION_BUS_PID='+bus_pid+' set_gdm -n BANNER -v '+"'"+str(bool(BANNER)).lower()+"'"+'"',shell=True)
+			return True
+		else :
+			return False
+
+	@dbus.service.method('apps.nano77.gdm3setup','','s',sender_keyword='sender', connection_keyword='connexion')
+	def GetBannerText(self,sender=None, connexion=None):
+		subprocess.call("su - %GDM_USER% -s /bin/sh -c 'LANG="+LANG+" get_gdm'",shell=True)
+		BANNER_TEXT = unquote(GetValue("/tmp/GET_GDM","BANNER_TEXT",""))
+		os.remove("/tmp/GET_GDM")
+		return BANNER_TEXT
+
+	@dbus.service.method('apps.nano77.gdm3setup','s','b',sender_keyword='sender', connection_keyword='connexion')
+	def SetBannerText(self,BANNER_TEXT,sender=None, connexion=None):
+		if self.policykit_test(sender,connexion,'apps.nano77.gdm3setup.set') :
+			bus_adrress , bus_pid = Get_Bus()
+			subprocess.call('su - %GDM_USER% -s /bin/bash -c "LANG='+LANG+' DBUS_SESSION_BUS_ADDRESS='+bus_adrress+' DBUS_SESSION_BUS_PID='+bus_pid+' set_gdm -n BANNER_TEXT -v '+"'"+BANNER_TEXT+"'"+'"',shell=True)
+			return True
+		else :
+			return False
+
+	@dbus.service.method('apps.nano77.gdm3setup','','b',sender_keyword='sender', connection_keyword='connexion')
+	def GetClockDateVisibility(self,sender=None, connexion=None):
+		subprocess.call("su - %GDM_USER% -s /bin/sh -c 'LANG="+LANG+" get_gdm'",shell=True)
+		CLOCK_DATE = GetValue("/tmp/GET_GDM","CLOCK_DATE","true")
+		os.remove("/tmp/GET_GDM")
+		return str_to_bool(CLOCK_DATE)
+
+	@dbus.service.method('apps.nano77.gdm3setup','b','b',sender_keyword='sender', connection_keyword='connexion')
+	def SetClockDateVisibility(self,CLOCK_DATE,sender=None, connexion=None):
+		if self.policykit_test(sender,connexion,'apps.nano77.gdm3setup.set') :
+			bus_adrress , bus_pid = Get_Bus()
+			subprocess.call('su - %GDM_USER% -s /bin/bash -c "LANG='+LANG+' DBUS_SESSION_BUS_ADDRESS='+bus_adrress+' DBUS_SESSION_BUS_PID='+bus_pid+' set_gdm -n CLOCK_DATE -v '+"'"+str(bool(CLOCK_DATE)).lower()+"'"+'"',shell=True)
+			return True
+		else :
+			return False
+
+	@dbus.service.method('apps.nano77.gdm3setup','','b',sender_keyword='sender', connection_keyword='connexion')
+	def GetClockSecondsVisibility(self,sender=None, connexion=None):
+		subprocess.call("su - %GDM_USER% -s /bin/sh -c 'LANG="+LANG+" get_gdm'",shell=True)
+		CLOCK_SECONDS = GetValue("/tmp/GET_GDM","CLOCK_SECONDS","true")
+		os.remove("/tmp/GET_GDM")
+		return str_to_bool(CLOCK_SECONDS)
+
+	@dbus.service.method('apps.nano77.gdm3setup','b','b',sender_keyword='sender', connection_keyword='connexion')
+	def SetClockSecondsVisibility(self,CLOCK_SECONDS,sender=None, connexion=None):
+		if self.policykit_test(sender,connexion,'apps.nano77.gdm3setup.set') :
+			bus_adrress , bus_pid = Get_Bus()
+			subprocess.call('su - %GDM_USER% -s /bin/bash -c "LANG='+LANG+' DBUS_SESSION_BUS_ADDRESS='+bus_adrress+' DBUS_SESSION_BUS_PID='+bus_pid+' set_gdm -n CLOCK_SECONDS -v '+"'"+str(bool(CLOCK_SECONDS)).lower()+"'"+'"',shell=True)
+			return True
+		else :
+			return False
 
 	@dbus.service.method('apps.nano77.gdm3setup','bsbi','s',sender_keyword='sender', connection_keyword='connexion')
 	def SetAutoLogin(self,AUTOLOGIN,USERNAME,TIMED,TIME,sender=None, connexion=None):
