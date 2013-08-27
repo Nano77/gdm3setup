@@ -176,16 +176,19 @@ class WallpaperSelectorWidget(Gtk.Box) :
 			for i in range(len(nodeset)):
 				targetfile = nodeset[i].text
 				PreviewFile = Gio.File.new_for_path(targetfile)
-				PreviewFileInfo = PreviewFile.query_info("*",Gio.FileQueryInfoFlags.NONE,None)
-				mtime = PreviewFileInfo.get_modification_time().tv_sec;
-				mimetype = PreviewFileInfo.get_content_type();
-				name = PreviewFile.get_basename()
-				isXml = name[len(name)-3:len(name)].lower() == 'xml'
+				if PreviewFile.query_exists(None) :
+					PreviewFileInfo = PreviewFile.query_info("*",Gio.FileQueryInfoFlags.NONE,None)
+					mtime = PreviewFileInfo.get_modification_time().tv_sec;
+					mimetype = PreviewFileInfo.get_content_type();
+					name = PreviewFile.get_basename()
+					isXml = name[len(name)-3:len(name)].lower() == 'xml'
 
-				if isXml :
-					self.LoadInformations(targetfile)
-					self.UpdatePixbuf(datetime.datetime.now().hour)
+					if isXml :
+						self.LoadInformations(targetfile)
+						self.UpdatePixbuf(datetime.datetime.now().hour)
 
+					else :
+						self.Pixbuf = GetPixbufForPath(targetfile)
 				else :
 					self.Pixbuf = GetPixbufForPath(targetfile)
 
@@ -211,33 +214,39 @@ class WallpaperSelectorWidget(Gtk.Box) :
 		self.TbStartWallpaper[:] = []
 		self.TbEndWallpaper[:] = []
 
-		xml_data = file(xml_file_path,'r').read()
-		root = etree.fromstring(xml_data)
+		xmlfile = Gio.File.new_for_path(xml_file_path)
+		if xmlfile.query_exists(None) :
+			xml_data = file(xml_file_path,'r').read()
+			root = etree.fromstring(xml_data)
 
-		nodeset = root.xpath('/background/starttime/hour')
-		self.StartTime = int(nodeset[0].text)
+			nodeset = root.xpath('/background/starttime/hour')
+			self.StartTime = int(nodeset[0].text)
 
-		lasttime = self.StartTime
-		for child in root :
-			if child.tag == "static" :
-				duration = int(float(child.xpath('duration')[0].text))/3600
-				Wallpaper = child.xpath('file')[0].text
-				self.TbStartTime.append(lasttime)
-				self.TbEndTime.append(lasttime+duration)
-				self.TbStartWallpaper.append(GetPixbufForPath(Wallpaper)) 
-				self.TbEndWallpaper.append(GetPixbufForPath(Wallpaper))
-				lasttime = lasttime + duration
-			elif child.tag == "transition" :
-				duration = int(float(child.xpath('duration')[0].text))/3600
-				StartWallpaper = child.xpath('from')[0].text
-				EndWallpaper = child.xpath('to')[0].text
-				self.TbStartTime.append(lasttime)
-				self.TbEndTime.append(lasttime+duration)
-				self.TbStartWallpaper.append(GetPixbufForPath(StartWallpaper))
-				self.TbEndWallpaper.append(GetPixbufForPath(EndWallpaper))
-				lasttime = lasttime + duration
-
-		self.Pixbuf = self.TbStartWallpaper[0].copy()
+			lasttime = self.StartTime
+			for child in root :
+				if child.tag == "static" :
+					duration = int(float(child.xpath('duration')[0].text))/3600
+					Wallpaper = child.xpath('file')[0].text
+					self.TbStartTime.append(lasttime)
+					self.TbEndTime.append(lasttime+duration)
+					self.TbStartWallpaper.append(GetPixbufForPath(Wallpaper)) 
+					self.TbEndWallpaper.append(GetPixbufForPath(Wallpaper))
+					lasttime = lasttime + duration
+				elif child.tag == "transition" :
+					duration = int(float(child.xpath('duration')[0].text))/3600
+					StartWallpaper = child.xpath('from')[0].text
+					EndWallpaper = child.xpath('to')[0].text
+					self.TbStartTime.append(lasttime)
+					self.TbEndTime.append(lasttime+duration)
+					self.TbStartWallpaper.append(GetPixbufForPath(StartWallpaper))
+					self.TbEndWallpaper.append(GetPixbufForPath(EndWallpaper))
+					lasttime = lasttime + duration
+			if self.TbStartWallpaper[0] :
+				self.Pixbuf = self.TbStartWallpaper[0].copy()
+			else :
+				self.Pixbuf = None
+		else :
+			self.Pixbuf = None 
 
 	def WallpaperChanged(self,e) :
 		model = self.IconView.get_model()
@@ -264,10 +273,15 @@ class WallpaperSelectorWidget(Gtk.Box) :
 			value = value + 24
 
 		for i in range(len(self.TbStartTime)) :
-			if value>= self.TbStartTime[i] and value <= self.TbEndTime[i] : 
-				intensity = ( value - self.TbStartTime[i] ) * 255 / (self.TbEndTime[i] - self.TbStartTime[i] )
-				self.TbStartWallpaper[i].composite(self.Pixbuf,0,0,self.TbStartWallpaper[i].get_width(),self.TbStartWallpaper[i].get_height(),0,0,1,1,GdkPixbuf.InterpType.NEAREST,255)
-				self.TbEndWallpaper[i].composite(self.Pixbuf,0,0,self.TbEndWallpaper[i].get_width(),self.TbEndWallpaper[i].get_height(),0,0,1,1,GdkPixbuf.InterpType.NEAREST,intensity)
+			if value>= self.TbStartTime[i] and value <= self.TbEndTime[i] :
+				if self.TbStartWallpaper[i] and self.TbEndWallpaper[i] :
+					if not self.Pixbuf : 
+						self.Pixbuf = self.TbStartWallpaper[i].copy()
+					intensity = ( value - self.TbStartTime[i] ) * 255 / (self.TbEndTime[i] - self.TbStartTime[i] )
+					self.TbStartWallpaper[i].composite(self.Pixbuf,0,0,self.TbStartWallpaper[i].get_width(),self.TbStartWallpaper[i].get_height(),0,0,1,1,GdkPixbuf.InterpType.NEAREST,255)
+					self.TbEndWallpaper[i].composite(self.Pixbuf,0,0,self.TbEndWallpaper[i].get_width(),self.TbEndWallpaper[i].get_height(),0,0,1,1,GdkPixbuf.InterpType.NEAREST,intensity)
+				else :
+					self.Pixbuf = None
 				break
 
 	def ValueChanged(self,e) :
@@ -1195,16 +1209,21 @@ def get_iter(model,target):
 
 def GetPixbufForPath(targetfile) :
 	PreviewFile = Gio.File.new_for_path(targetfile)
-	PreviewFileInfo = PreviewFile.query_info("*",Gio.FileQueryInfoFlags.NONE,None)
-	mtime = PreviewFileInfo.get_modification_time().tv_sec;
-	mimetype = PreviewFileInfo.get_content_type();
-	ThumbnailFactory = GnomeDesktop.DesktopThumbnailFactory.new(GnomeDesktop.DesktopThumbnailSize.LARGE);
-	ThumbnailPath = ThumbnailFactory.lookup(PreviewFile.get_uri(),mtime);
-	if (ThumbnailPath != None) :
-		pixbuf = GdkPixbuf.Pixbuf.new_from_file(ThumbnailPath)
+	if PreviewFile.query_exists(None) :
+		PreviewFileInfo = PreviewFile.query_info("*",Gio.FileQueryInfoFlags.NONE,None)
+		mtime = PreviewFileInfo.get_modification_time().tv_sec;
+		mimetype = PreviewFileInfo.get_content_type();
+		ThumbnailFactory = GnomeDesktop.DesktopThumbnailFactory.new(GnomeDesktop.DesktopThumbnailSize.LARGE);
+		ThumbnailPath = ThumbnailFactory.lookup(PreviewFile.get_uri(),mtime);
+		if (ThumbnailPath != None) :
+			pixbuf = GdkPixbuf.Pixbuf.new_from_file(ThumbnailPath)
+		else :
+			pixbuf = ThumbnailFactory.generate_thumbnail(PreviewFile.get_uri(),mimetype)
+			ThumbnailFactory.save_thumbnail(pixbuf,PreviewFile.get_uri(),mtime)
 	else :
-		pixbuf = ThumbnailFactory.generate_thumbnail(PreviewFile.get_uri(),mimetype)
-		ThumbnailFactory.save_thumbnail(pixbuf,PreviewFile.get_uri(),mtime)
+		ThumbnailFactory = GnomeDesktop.DesktopThumbnailFactory.new(GnomeDesktop.DesktopThumbnailSize.LARGE);
+		pixbuf = ThumbnailFactory.generate_thumbnail(PreviewFile.get_uri(),"")
+		#pixbuf = new_pixbuf_for_icone()
 	return pixbuf
 
 #-----------------------------------------------

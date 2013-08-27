@@ -50,7 +50,7 @@ You can use DEB packages from : https://github.com/Nano77/various/tree/master/de
 
 Debian
 ------
-You can use "debian" DEB packages from : https://github.com/Nano77/various/tree/master/deb
+You can use _debian_ DEB packages from : https://github.com/Nano77/various/tree/master/deb
 
 Manual install
 --------------

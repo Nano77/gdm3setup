@@ -1,7 +1,7 @@
 Build
 -----
 
-Standard :  `make`
+Standard : `make`
 
 
 
@@ -17,7 +17,9 @@ Debian : `make debian`
 Install
 -------
 
-`make DESTDIR=`*'Your desired destination'* `install`
+`make DESTDIR=`
+*'Your desired destination'*
+`install`
 
 
 
@@ -25,7 +27,7 @@ Install
 Ubuntu post-install
 -------------------
 
-Ensure than `/var/lib/gdm/dconf` are writable by gdm :  
+Ensure than `/var/lib/gdm/dconf` are writable by gdm :
 `chown -R gdm:gdm /var/lib/gdm/`
 
 
