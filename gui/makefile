@@ -8,22 +8,22 @@ debian: mo
 	sed -e 's/%PYTHON%/python/;s/%GDM_BIN%/\/usr\/sbin\/gdm3/' gdm3setup.in > gdm3setup
 
 mo:
-	$(MAKE) -C ../po
+	$(MAKE) -C po
 
 clean:
 	rm gdm3setup
-	$(MAKE) -C ../po clean
+	$(MAKE) -C po clean
 install:
 	install --mode=755 -D gdm3setup $(DESTDIR)/usr/bin/gdm3setup
 	install -D gdm3setup.desktop $(DESTDIR)/usr/share/applications/gdm3setup.desktop
 	install -D gdm3setup.ui $(DESTDIR)/usr/share/gdm3setup/ui/gdm3setup.ui
-	$(MAKE) -C ../po install
+	$(MAKE) -C po install
 
 uninstall:
 	rm $(DESTDIR)/usr/bin/gdm3setup
 	rm $(DESTDIR)/usr/share/applications/gdm3setup.desktop 
 	rm $(DESTDIR)/usr/share/gdm3setup/ui/gdm3setup.ui
-	$(MAKE) -C ../po uninstall
+	$(MAKE) -C po uninstall
 
 
 

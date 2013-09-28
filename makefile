@@ -1,25 +1,25 @@
 
 all:
-	$(MAKE) -C src
-	$(MAKE) -C daemon
+	$(MAKE) -C gui
+	$(MAKE) -C utils
 
 ubuntu: 
-	$(MAKE) -C src ubuntu
-	$(MAKE) -C daemon ubuntu
+	$(MAKE) -C gui ubuntu
+	$(MAKE) -C utils ubuntu
 
 debian: 
-	$(MAKE) -C src debian
-	$(MAKE) -C daemon debian
+	$(MAKE) -C gui debian
+	$(MAKE) -C utils debian
 
 clean:
-	$(MAKE) -C src clean
-	$(MAKE) -C daemon clean
+	$(MAKE) -C gui clean
+	$(MAKE) -C utils clean
 
 install:
-	$(MAKE) -C src install
-	$(MAKE) -C daemon install
+	$(MAKE) -C gui install
+	$(MAKE) -C utils install
 
 uninstall:
-	$(MAKE) -C src uninstall
-	$(MAKE) -C daemon uninstall
+	$(MAKE) -C gui uninstall
+	$(MAKE) -C utils uninstall
 
