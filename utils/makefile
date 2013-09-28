@@ -33,6 +33,7 @@ install:
 	install -D apps.nano77.gdm3setup.service $(DESTDIR)/usr/share/dbus-1/services/apps.nano77.gdm3setup.service
 	install -D apps.nano77.gdm3setup.conf $(DESTDIR)/etc/dbus-1/system.d/apps.nano77.gdm3setup.conf
 	install -D apps.nano77.gdm3setup.policy $(DESTDIR)/usr/share/polkit-1/actions/apps.nano77.gdm3setup.policy
+	install -d $(DESTDIR)/usr/lib/python2.7/site-packages/
 	cp -r GdmSetup $(DESTDIR)/usr/lib/python2.7/site-packages/
 
 uninstall:
