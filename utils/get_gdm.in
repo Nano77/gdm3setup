@@ -52,6 +52,8 @@ gsettings get org.gnome.shell.clock show-seconds >> /tmp/GET_GDM
 fi
 echo -n "FINGERPRINT_AUTHENTICATION=" >> /tmp/GET_GDM 
 gsettings get org.gnome.login-screen enable-fingerprint-authentication >> /tmp/GET_GDM || echo >> /tmp/GET_GDM
+echo -n "PASSWORD_AUTHENTICATION=" >> /tmp/GET_GDM 
+gsettings get org.gnome.login-screen enable-password-authentication >> /tmp/GET_GDM || echo >> /tmp/GET_GDM
 echo -n "SMARTCARD_AUTHENTICATION=" >> /tmp/GET_GDM 
 gsettings get org.gnome.login-screen enable-smartcard-authentication >> /tmp/GET_GDM || echo >> /tmp/GET_GDM
 echo -n "ALLOWED_FAILURES=" >> /tmp/GET_GDM 
