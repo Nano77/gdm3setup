@@ -1063,6 +1063,8 @@ class MainWindow(Gtk.Window) :
 
 		if self.GdmMinorVersion >= 9 :
 			self.Notebook.set_show_tabs(False)
+			self.Builder.get_object("Label_wallpaper").hide()
+			self.Button_wallpaper.hide()
 		else :
 			self.Notebook.set_show_tabs(True)
 			self.Builder.get_object("Label_shell10").hide()
