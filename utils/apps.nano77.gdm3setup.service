@@ -1,5 +1,0 @@
-[D-BUS Service]
-Name=apps.nano77.gdm3setup
-Exec=/usr/bin/start-gdm3setup-daemon
-User=root
-

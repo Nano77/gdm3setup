@@ -1,25 +1,29 @@
+all: mo
+	sed -e 's/%PYTHON%/python2/;s/%GDM_BIN%/\/usr\/sbin\/gdm/' gdm3setup.in > gdm3setup
 
-all:
-	$(MAKE) -C gui
-	$(MAKE) -C utils
+ubuntu: mo
+	sed -e 's/%PYTHON%/python/;s/%GDM_BIN%/\/usr\/sbin\/gdm/' gdm3setup.in > gdm3setup
 
-ubuntu: 
-	$(MAKE) -C gui ubuntu
-	$(MAKE) -C utils ubuntu
+debian: mo
+	sed -e 's/%PYTHON%/python/;s/%GDM_BIN%/\/usr\/sbin\/gdm3/' gdm3setup.in > gdm3setup
 
-debian: 
-	$(MAKE) -C gui debian
-	$(MAKE) -C utils debian
+mo:
+	$(MAKE) -C po
 
 clean:
-	$(MAKE) -C gui clean
-	$(MAKE) -C utils clean
-
+	rm gdm3setup
+	$(MAKE) -C po clean
 install:
-	$(MAKE) -C gui install
-	$(MAKE) -C utils install
+	install --mode=755 -D gdm3setup $(DESTDIR)/usr/bin/gdm3setup
+	install -D gdm3setup.desktop $(DESTDIR)/usr/share/applications/gdm3setup.desktop
+	install -D gdm3setup.ui $(DESTDIR)/usr/share/gdm3setup/ui/gdm3setup.ui
+	$(MAKE) -C po install
 
 uninstall:
-	$(MAKE) -C gui uninstall
-	$(MAKE) -C utils uninstall
+	rm $(DESTDIR)/usr/bin/gdm3setup
+	rm $(DESTDIR)/usr/share/applications/gdm3setup.desktop 
+	rm $(DESTDIR)/usr/share/gdm3setup/ui/gdm3setup.ui
+	$(MAKE) -C po uninstall
+
+
 
