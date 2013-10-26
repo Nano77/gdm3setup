@@ -1,56 +1,49 @@
 GDM3setup
 =========
 
-Utilities to configure GDM3, autologin options and change Shell theme
+An interface to configure GDM3, autologin options and change Shell theme
 
 NanoArch <nanoarch77@gmail.com>
 
 
 
-About
-=====
+Dependencies
+============
 
-- gdmlogin : CLI tool to set autologin parameters
+- python2
 
-- gdmshelltheme : CLI tool to set, get and list Shell themes 
+- python2-dbus
 
-- gdm3setup-daemon : A D-Bus service to configure GDM3, autologin options and change Shell theme 
+- python2-lxml
 
-- gdm3setup : A GUI for the daemon
+- [GDM3setup Utilities](https://github.com/Nano77/gdm3setup-utils)
 
-
+Instalation
+===========
 
 Archlinux
 ---------
 
-GDM3setup is in AUR, you can install :
-
-- With an AUR helper like yaourt : `yaourt -S gdm3setup`
-
-- Or without an AUR Helper :
-
-	Get the PKGBUILD from AUR : `wget https://aur.archlinux.org/packages/gd/gdm3setup/PKGBUILD`
-
-	and run `makepkg -i`
+GDM3setup is in AUR, you can install with an AUR helper like yaourt : `yaourt -S gdm3setup`
 
 
 Fedora
 ------
-You can use RPM packages from : https://github.com/Nano77/various/tree/master/rpm
+You can use packages from : https://github.com/Nano77/various/tree/master/rpm/gdm3setup
 
 
 OpenSUSE
 --------
-You can use RPM packages from : https://github.com/Nano77/various/tree/master/rpm
+You can use packages from : https://github.com/Nano77/various/tree/master/rpm/gdm3setup
 
 
 Ubuntu
 ------
-You can use DEB packages from : https://github.com/Nano77/various/tree/master/deb
+You can use packages from : https://github.com/Nano77/various/tree/master/deb/gdm3setup/main
 
 Debian
 ------
-You can use _debian_ DEB packages from : https://github.com/Nano77/various/tree/master/deb
+You can use packages from : https://github.com/Nano77/various/tree/master/deb/gdm3setup/debian
 
 Manual install
 --------------
