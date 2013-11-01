@@ -1,8 +1,7 @@
 # A GUI to setting GDM3.
-# Copyright (C) 2011 Nano77 <nanoarch77@gmail.com>
+# Copyright (C) 2011 NanoArch <nanoarch77@gmail.com>
 # This file is distributed under the same license as the package.
-# Nano77 <nanoarch77@gmail.com>, 2011.
-# tuhaihe <1132321739qq@gmail.com>
+# tuhaihe <1132321739qq@gmail.com>, 2012.
 #
 msgid ""
 msgstr ""
@@ -12,7 +11,7 @@ msgstr ""
 "PO-Revision-Date: 2012-11-12 21:27+0800\n"
 "Last-Translator: tuhaihe <1132321739qq@gmail.com>\n"
 "Language-Team: \n"
-"Language: en_US\n"
+"Language: zh_CN\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -112,4 +111,8 @@ msgstr "禁用用户列表"
 #: gdm3setup.py:385
 msgid "Disable Restart Buttons"
 msgstr "禁用重启按钮"
+
+msgid "translator-credits"
+msgstr ""
+"tuhaihe <1132321739qq@gmail.com>"
 

@@ -1,5 +1,5 @@
 # A GUI to setting GDM3.
-# Copyright (C) 2011 Nano77 <nanoarch77@gmail.com>
+# Copyright (C) 2011 NanoArch <nanoarch77@gmail.com>
 # This file is distributed under the same license as the package.
 # Robert Wei <robert.wei@ossii.com.tw>, 2013.
 #
@@ -115,4 +115,8 @@ msgstr "停用重新啟動按鈕"
 #: gdm3setup.py:413
 msgid "Select Wallpaper"
 msgstr "選擇桌布"
+
+msgid "translator-credits"
+msgstr ""
+"Robert Wei <robert.wei@ossii.com.tw>"
 
