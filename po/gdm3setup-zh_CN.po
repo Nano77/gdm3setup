@@ -112,6 +112,14 @@ msgstr "禁用用户列表"
 msgid "Disable Restart Buttons"
 msgstr "禁用重启按钮"
 
+#: gdm3setup.in
+msgid "_About GDM3setup"
+msgstr "关于(_A)"
+
+#: gdm3setup.in
+msgid "_Quit"
+msgstr "退出(_Q)"
+
 msgid "translator-credits"
 msgstr ""
 "tuhaihe <1132321739qq@gmail.com>"

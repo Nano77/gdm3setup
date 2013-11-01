@@ -6,16 +6,11 @@ import gettext
 import dbus
 import subprocess
 import datetime
+import sys
 
 from lxml import etree
 
-from gi.repository import Gtk
-from gi.repository import Gdk
-from gi.repository import GdkPixbuf
-from gi.repository import GnomeDesktop
-from gi.repository import GObject
-from gi.repository import Gio
-from gi.repository import GLib
+from gi.repository import Gtk, Gdk, GdkPixbuf, GnomeDesktop, GObject, Gio, GLib
 
 from GdmSetup import GdmSetupClient
 
@@ -822,9 +817,9 @@ class AuthenticationButton(Gtk.Button) :
 GObject.signal_new("changed", AuthenticationButton, GObject.SIGNAL_RUN_FIRST,GObject.TYPE_NONE, ())
 
 
-class MainWindow(Gtk.Window) :
-	def __init__(self) :
-		Gtk.Window.__init__(self)
+class MainWindow(Gtk.ApplicationWindow) :
+	def __init__(self,app) :
+		Gtk.ApplicationWindow.__init__(self,application=app,title=_("GDM3 Setup"))
 		self.connect("destroy",self._close)
 		self.set_border_width(10)
 		self.set_position(Gtk.WindowPosition.CENTER)
@@ -964,7 +959,6 @@ class MainWindow(Gtk.Window) :
 			GdmSetupClient.StopDaemon()
 		except dbus.exceptions.DBusException :
 			pass
-		Gtk.main_quit()
 
 	def get_gdm(self):
 		self.GTK3_THEME = GdmSetupClient.GetGtkTheme()
@@ -1378,7 +1372,62 @@ def GetPixbufForPath(targetfile) :
 		#pixbuf = new_pixbuf_for_icone()
 	return pixbuf
 
-#-----------------------------------------------
-MainWindow().show()
+class Application(Gtk.Application):
+	def __init__(self):
+		Gtk.Application.__init__(self,application_id='nanoarch.gdm3setup')
+		GLib.set_application_name("GDM3setup")
+		GLib.set_prgname('gdm3setup')
 
-Gtk.main()
+
+		self._window = None
+	def do_activate(self):
+		if not self._window:
+			self._window = MainWindow(self)
+			self._window.show_all()
+		self._window.present()
+
+	def do_startup(self):
+		Gtk.Application.do_startup(self)
+		self.build_app_menu()
+		self.set_app_menu(self.app_menu)
+
+	def build_app_menu(self):
+		builder = Gtk.Builder ();
+		builder.set_translation_domain('gdm3setup')
+		builder.add_from_file ("/usr/share/gdm3setup/ui/app-menu.ui");
+		self.app_menu = builder.get_object("app-menu")
+
+		aboutAction = Gio.SimpleAction.new('about', None)
+		aboutAction.connect('activate', self.about)
+		self.add_action(aboutAction)
+
+		quitAction = Gio.SimpleAction.new('quit', None)
+		quitAction.connect('activate', self.quit)
+		self.add_action(quitAction)
+
+	def quit(self,action=None, param=None):
+		self._window.destroy()
+
+	def about(self,action=None, param=None):
+		aboutdialog = Gtk.AboutDialog()
+		aboutdialog.set_title(_("About GDM3setup"))
+		aboutdialog.set_program_name("GDM3setup")
+		aboutdialog.set_comments(_("An interface to configure GDM3"))
+		aboutdialog.set_copyright("Copyright \xc2\xa9 2011-2013 NanoArch")
+		aboutdialog.set_logo_icon_name("preferences-desktop-theme")
+		aboutdialog.set_website("https://github.com/Nano77/gdm3setup/")
+
+		AUTHORS = [
+				"NanoArch <nanoarch77@gmail.com>"
+				]
+		aboutdialog.set_authors(AUTHORS)
+		aboutdialog.set_translator_credits(_("translator-credits"))
+		aboutdialog.connect("response", lambda w, r: aboutdialog.destroy())
+		aboutdialog.show()
+
+if __name__ == "__main__":
+	gettext.install("gdm3setup")
+	app = Application()
+	exit_status = app.run(None)
+	sys.exit(exit_status)
+

@@ -117,6 +117,18 @@ msgstr "Désactiver 'Restart' boutons"
 msgid "Select Wallpaper"
 msgstr "Sélectionner un Arrière-plan"
 
+#: gdm3setup.in
+msgid "_About GDM3setup"
+msgstr "_À propos de GDM3setup"
+
+#: gdm3setup.in
+msgid "_Quit"
+msgstr "_Quitter"
+
+#: gdm3setup.in
+msgid "An interface to configure GDM3"
+msgstr "Une interface pour configurer GDM3"
+
 msgid "translator-credits"
 msgstr ""
 "NanoArch <nanoarch77@gmail.com>"

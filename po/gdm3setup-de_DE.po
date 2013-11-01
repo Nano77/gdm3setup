@@ -120,6 +120,14 @@ msgstr "Neustart-Knopf deaktivieren"
 msgid "Select Wallpaper"
 msgstr "Hintergrund auswählen"
 
+#: gdm3setup.in
+msgid "_About GDM3setup"
+msgstr "_Info zu GDM3setup"
+
+#: gdm3setup.in
+msgid "_Quit"
+msgstr "_Beenden"
+
 msgid "translator-credits"
 msgstr ""
 "NanoArch <nanoarch77@gmail.com>\n"

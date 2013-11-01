@@ -116,6 +116,14 @@ msgstr "停用重新啟動按鈕"
 msgid "Select Wallpaper"
 msgstr "選擇桌布"
 
+#: gdm3setup.in
+msgid "_About GDM3setup"
+msgstr "關於(_A)"
+
+#: gdm3setup.in
+msgid "_Quit"
+msgstr "結束(_Q)"
+
 msgid "translator-credits"
 msgstr ""
 "Robert Wei <robert.wei@ossii.com.tw>"

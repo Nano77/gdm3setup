@@ -118,6 +118,14 @@ msgstr "Nascondi il pulsante di riavvio"
 msgid "Select Wallpaper"
 msgstr "Seleziona un'Immagine di sfondo"
 
+#: gdm3setup.in
+msgid "_About GDM3setup"
+msgstr "I_nformazioni su GDM3setup"
+
+#: gdm3setup.in
+msgid "_Quit"
+msgstr "_Esci"
+
 msgid "translator-credits"
 msgstr ""
 "NanoArch <nanoarch77@gmail.com>\n"

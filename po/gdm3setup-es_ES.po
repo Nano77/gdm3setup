@@ -113,6 +113,14 @@ msgstr "Desactivar la lista de los usuarios"
 msgid "Disable Restart Buttons"
 msgstr "Desactivar 'Restart' botóns"
 
+#: gdm3setup.in
+msgid "_About GDM3setup"
+msgstr "Acerca _de GDM3setup"
+
+#: gdm3setup.in
+msgid "_Quit"
+msgstr "_Salir"
+
 #: gdm3setup.py:413
 msgid "Select Wallpaper"
 msgstr "Selectionnar un Papel pintado"

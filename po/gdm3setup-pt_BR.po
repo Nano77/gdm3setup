@@ -116,6 +116,13 @@ msgstr "Esconder a tecla de reinicio"
 msgid "Select Wallpaper"
 msgstr "Selecionar um Papel de parede"
 
+#: gdm3setup.in
+msgid "_About GDM3setup"
+msgstr "_Sobre GDM3setup"
+
+#: gdm3setup.in
+msgid "_Quit"
+msgstr "_Sair"
 
 msgid "translator-credits"
 msgstr ""
