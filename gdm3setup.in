@@ -824,8 +824,12 @@ class MainWindow(Gtk.ApplicationWindow) :
 		self.set_border_width(10)
 		self.set_position(Gtk.WindowPosition.CENTER)
 		self.set_resizable(False)
-		self.set_title(_("GDM3 Setup"))
-		self.set_icon_name("preferences-desktop-theme")
+		self.set_size_request(640,480)
+
+		self.titlebar = Gtk.HeaderBar()
+		self.titlebar.set_title(_("GDM3 Setup"))
+		self.titlebar.set_show_close_button(True)
+		self.set_titlebar(self.titlebar)
 
 		self.Builder = Gtk.Builder()
 		self.Builder.set_translation_domain("gdm3setup")
