@@ -1,6 +1,9 @@
 
+LOCALS := fr en_US es_ES de_DE it pt_BR zh_CN zh_TW
 all:
-	mkdir -p locale/{fr,en_US,es_ES,de_DE,it,pt_BR,zh_CN,zh_TW}/LC_MESSAGES/
+	@for local in $(LOCALS); do \
+        	mkdir -p locale/$$local/LC_MESSAGES/; \
+	done
 
 	msgfmt gdm3setup-fr.po -o locale/fr/LC_MESSAGES/gdm3setup.mo
 	msgfmt gdm3setup-en_US.po -o locale/en_US/LC_MESSAGES/gdm3setup.mo
