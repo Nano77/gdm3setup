@@ -652,7 +652,7 @@ class MainWindow(Gtk.ApplicationWindow) :
 				self.SMARTCARD_AUTHENTICATION=smartcard_authentication
 				print ("Authentication methods Changed")
 			else :
-				self.Button_authentication.set_methods(fingerprint_authentication,password_authentication,smartcard_authentication)
+				self.Button_authentication.set_methods(self.FINGERPRINT_AUTHENTICATION,self.PASSWORD_AUTHENTICATION,self.SMARTCARD_AUTHENTICATION)
 
 	def user_list_8_toggled(self,e,state):
 		user_list = self.Switch_user8.get_active()
