@@ -316,7 +316,7 @@ class WallpaperSelectorButton(Gtk.Button):
 
 	def __init__(self):
 		Gtk.Button.__init__(self)
-		self.Label = Gtk.Label(_('(None)'))
+		self.Label = Gtk.Label.new(_('(None)'))
 		self.ImageFileOpen = Gtk.Image()
 		self.ImageFileOpen.set_from_icon_name("fileopen",Gtk.IconSize.SMALL_TOOLBAR)
 		self.Separator = Gtk.Separator.new(Gtk.Orientation.VERTICAL)
@@ -535,7 +535,7 @@ class EditButton(Gtk.HBox) :
 
 	def __init__(self):
 		Gtk.HBox.__init__(self)
-		self.Button = Gtk.Button('text')
+		self.Button = Gtk.Button.new_with_label('text')
 		self.Button.connect("clicked",self.set_state_active)
 		self.add(self.Button)
 		self.Button.show()
