@@ -439,19 +439,39 @@ class AutologinButton (Gtk.Button) :
 
 	def _clicked(self,e) :
 		if self.Dialog == None :
-			self.Dialog = AutoLoginDialog()
+			self.Builder = Gtk.Builder()
+			self.Builder.set_translation_domain("gdm3setup")
+			self.Builder.add_from_file("/usr/share/gdm3setup/ui/gdm3setup.ui")
+			self.Dialog = self.Builder.get_object("autologin-dialog")
+			self.CheckButton_AutoLogin = self.Builder.get_object("state-checkbutton")
+			self.HBox_username = self.Builder.get_object("user-box")
+			self.Entry_username = self.Builder.get_object("user-entry")
+			self.HBox_Delay = self.Builder.get_object("time-box")
+			self.CheckButton_Delay = self.Builder.get_object("time-checkbutton")
+			self.SpinButton_Delay = self.Builder.get_object("time-spinbutton")
+			self.SpinButton_Delay.set_range(1,60)
+			self.SpinButton_Delay.set_increments(1,1)
+
+			self.CheckButton_AutoLogin.bind_property("active",self.HBox_username,"sensitive")
+			self.CheckButton_AutoLogin.bind_property("active",self.HBox_Delay,"sensitive")
+			self.CheckButton_Delay.bind_property("active",self.SpinButton_Delay,"sensitive")
+
 			self.Dialog.connect("response",self.response_cb)
 			self.Dialog.connect("destroy",self.dialog_destroy)
 			self.Dialog.set_transient_for(self.get_ancestor(Gtk.Window))
-		self.Dialog.CheckButton_AutoLogin.set_active(self.get_autologin())
-		self.Dialog.Entry_username.set_text(self.get_username())
-		self.Dialog.CheckButton_Delay.set_active(self.get_timed())
-		self.Dialog.SpinButton_Delay.set_value(self.get_time())
+
+		self.CheckButton_AutoLogin.set_active(self.get_autologin())
+		self.HBox_username.set_sensitive(self.get_autologin())
+		self.HBox_Delay.set_sensitive(self.get_autologin())
+		self.Entry_username.set_text(self.get_username())
+		self.CheckButton_Delay.set_active(self.get_timed())
+		self.SpinButton_Delay.set_sensitive(self.get_timed())
+		self.SpinButton_Delay.set_value(self.get_time())
 		self.Dialog.present()
 
 	def response_cb(self,dialog,response) :
 		if response == Gtk.ResponseType.OK :
-			if self.Dialog.CheckButton_AutoLogin.get_active() and self.Dialog.Entry_username.get_text()=="" :
+			if self.CheckButton_AutoLogin.get_active() and self.Entry_username.get_text()=="" :
 				MessageDialog = Gtk.MessageDialog(self.get_toplevel(),Gtk.DialogFlags.DESTROY_WITH_PARENT, 
 										Gtk.MessageType.ERROR,
 										Gtk.ButtonsType.CLOSE,
@@ -460,12 +480,16 @@ class AutologinButton (Gtk.Button) :
 				MessageDialog.destroy()
 
 			else :
-				self.set_autologin(self.Dialog.CheckButton_AutoLogin.get_active())
-				self.set_username(self.Dialog.Entry_username.get_text())
-				self.set_timed(self.Dialog.CheckButton_Delay.get_active())
-				self.set_time(self.Dialog.SpinButton_Delay.get_value_as_int())
+				if self.autologin != self.CheckButton_AutoLogin.get_active() or \
+				self.username != self.Entry_username.get_text() or \
+				self.timed != self.CheckButton_Delay.get_active() or \
+				self.time != self.SpinButton_Delay.get_value_as_int() :
+					self.set_autologin(self.CheckButton_AutoLogin.get_active())
+					self.set_username(self.Entry_username.get_text())
+					self.set_timed(self.CheckButton_Delay.get_active())
+					self.set_time(self.SpinButton_Delay.get_value_as_int())
+					self.emit("changed")
 				self.Dialog.hide()
-				self.emit("changed")
 		else :
 			self.Dialog.hide()
 
@@ -473,62 +497,6 @@ class AutologinButton (Gtk.Button) :
 		self.Dialog = None
 
 GObject.signal_new("changed", AutologinButton, GObject.SIGNAL_RUN_FIRST,GObject.TYPE_NONE, ())
-
-class AutoLoginDialog(Gtk.Dialog):
-	def __init__(self):
-		Gtk.Dialog.__init__(self)
-		self.set_resizable(False)
-		self.set_title(_("GDM AutoLogin Setup"))
-		self.add_button(Gtk.STOCK_CANCEL,Gtk.ResponseType.CANCEL)
-		self.add_button(Gtk.STOCK_OK,Gtk.ResponseType.OK)
-		self.content_area = self.get_content_area()
-		self.Box = Gtk.Box.new(Gtk.Orientation.VERTICAL,8)
-		self.Box.set_border_width(8)
-		self.content_area.add(self.Box)
-
-		self.CheckButton_AutoLogin = Gtk.CheckButton(label=_("Enable Automatic Login"),use_underline=True)
-		self.CheckButton_AutoLogin.connect("toggled",self.AutoLogin_toggled)
-		self.Box.pack_start(self.CheckButton_AutoLogin, False, False, 0)
-
-		self.HBox_username = Gtk.HBox.new(False, 0)
-		self.HBox_username.set_sensitive(False)
-		self.Box.pack_start(self.HBox_username, False, False, 0)
-
-		self.Label_username = Gtk.Label.new(_("User Name"))
-		self.Label_username.set_alignment(0,0.5)
-		self.HBox_username.pack_start(self.Label_username, False, False, 0)
-
-		self.Entry_username =  Gtk.Entry()
-		self.HBox_username.pack_end(self.Entry_username, False, False, 0)
-
-		self.HBox_Delay = Gtk.HBox.new(False, 8)
-		self.HBox_Delay.set_sensitive(False)
-		self.Box.pack_start(self.HBox_Delay, False, False, 0)
-
-		self.CheckButton_Delay = Gtk.CheckButton(label=_("Enable Delay before autologin"),use_underline=True)
-		self.CheckButton_Delay.connect("toggled",self.Delay_toggled)
-		self.HBox_Delay.pack_start(self.CheckButton_Delay, False, False, 0)
-
-		self.SpinButton_Delay = Gtk.SpinButton.new_with_range(1,60,1)
-		self.SpinButton_Delay.set_value(10)
-		self.SpinButton_Delay.set_sensitive(False)
-		self.HBox_Delay.pack_end(self.SpinButton_Delay, False, False, 0)
-
-		self.show_all()
-
-	def AutoLogin_toggled(self,e):
-		if self.CheckButton_AutoLogin.get_active():
-			self.HBox_username.set_sensitive(True)
-			self.HBox_Delay.set_sensitive(True)
-		else:
-			self.HBox_username.set_sensitive(False)
-			self.HBox_Delay.set_sensitive(False)
-
-	def Delay_toggled(self,e):
-		if self.CheckButton_Delay.get_active():
-			self.SpinButton_Delay.set_sensitive(True)
-		else:
-			self.SpinButton_Delay.set_sensitive(False)
 
 class EditButton(Gtk.HBox) :
 	__gtype_name__ = 'EditButton'
