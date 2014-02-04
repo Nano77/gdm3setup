@@ -597,54 +597,31 @@ class BannerButton(Gtk.Button) :
 			self.set_label(_("Disabled"))
 
 	def _clicked(self,e) :
-		self._Dialog = Gtk.Dialog()
-		self._Dialog.set_modal(True)
-		self._Dialog.set_resizable(False)
-		self._Dialog.set_title(_("Banner"))
-		self._Dialog.add_button(Gtk.STOCK_CANCEL,Gtk.ResponseType.CANCEL)
-		self._Dialog.add_button(Gtk.STOCK_OK,Gtk.ResponseType.OK)
-		self._Content_area = self._Dialog.get_content_area()
-		self._Box_Main = Gtk.VBox.new(False,12)
-		self._Box_Main.set_border_width(24)
-		self._Content_area.add(self._Box_Main)
-		self._Box_State = Gtk.HBox.new(False,12)
-		self._Box_Main.pack_start(self._Box_State,False,False,2)
-		self._Label_State = Gtk.Label.new(_("Enable Banner"))
-		self._Label_State.set_alignment(0,0.5)
-		self._Box_State.pack_start(self._Label_State,False,False,2)
-		self._Switch_State = Gtk.Switch()
-		self._Box_State.pack_end(self._Switch_State,False,False,2)
-		self._Box_Text = Gtk.HBox.new(False,12)
-		self._Box_Main.pack_start(self._Box_Text,False,False,2)
-		self._Entry_Text = Gtk.Entry()
-		self._Box_Text.pack_end(self._Entry_Text,True,False,2)
-		self._Content_area.show_all()
+		self._Builder = Gtk.Builder()
+		self._Builder.set_translation_domain("gdm3setup")
+		self._Builder.add_from_file("/usr/share/gdm3setup/ui/gdm3setup.ui")
+		self._Dialog = self._Builder.get_object("banner-dialog")
+		self._Dialog.set_transient_for(self.get_ancestor(Gtk.Window))
+		self._Switch_State = self._Builder.get_object("state-switch")
+		self._Entry_Text = self._Builder.get_object("banner-entry")
+
+		self._Switch_State.bind_property("active",self._Entry_Text,"sensitive")
 
 		if self._State == True :
 			self._Switch_State.set_active(True)
 		else :
-			self._Box_Text.set_sensitive(False)
+			self._Entry_Text.set_sensitive(False)
 		self._Entry_Text.set_text(self._Text)
-
-		self._Switch_State.connect("notify::active",self._sw_toggled)
 
 		result = self._Dialog.run()
 
 		if result == Gtk.ResponseType.OK :
-			self.set_text(self._Entry_Text.get_text())
-			self.set_state(self._Switch_State.get_active())
-			self._Dialog.destroy()
-			self.emit("changed")
-		else :
-			self._Dialog.destroy()
-
-	def _sw_toggled(self,e,s) :
-		state = self._Switch_State.get_active()
-
-		if state == True :
-			self._Box_Text.set_sensitive(True)
-		else :
-			self._Box_Text.set_sensitive(False)
+			if self._State != self._Switch_State.get_active() or \
+				self._Text != self._Entry_Text.get_text() :
+				self.set_text(self._Entry_Text.get_text())
+				self.set_state(self._Switch_State.get_active())
+				self.emit("changed")
+		self._Dialog.destroy()
 
 GObject.signal_new("changed", BannerButton, GObject.SIGNAL_RUN_FIRST,GObject.TYPE_NONE, ())
 
