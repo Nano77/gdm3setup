@@ -384,6 +384,7 @@ class AuthenticationButton(Gtk.Button) :
 		self._Builder.set_translation_domain("gdm3setup")
 		self._Builder.add_from_file("/usr/share/gdm3setup/ui/gdm3setup.ui")
 		self._Dialog = self._Builder.get_object("authentication-dialog")
+		self._Dialog.set_transient_for(self.get_ancestor(Gtk.Window))
 		self._Switch_Fingerprint = self._Builder.get_object("Switch_Fingerprint")
 		self._Switch_Password = self._Builder.get_object("Switch_Password")
 		self._Switch_Smartcard = self._Builder.get_object("Switch_Smartcard")
