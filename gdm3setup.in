@@ -17,26 +17,110 @@ from GdmSetup import GdmSetupClient
 gettext.install("gdm3setup")
 
 #-----------------------------------------------
-class ImageChooserButton(Gtk.Button):
-	__gtype_name__ = 'ImageChooserButton'
+class ListDialog(GObject.Object):
+    def __init__(self):
+        GObject.Object.__init__(self)
+        self.builder = Gtk.Builder()
+        self.builder.set_translation_domain("gdm3setup")
+        self.builder.add_from_file("/usr/share/gdm3setup/ui/gdm3setup.ui")
 
+        self.dialog = self.builder.get_object("list-dialog")
+        self.dialog.connect("delete-event",self._shell_dialog_delete_event)
+        self.dialog.connect("response",self._shell_dialog_response)
+        self.selectedrow  = None
+
+        self.listbox = self.builder.get_object("list-dialog-list")
+        self.listbox.connect("row-activated",self._row_activated)
+        self.listbox.selectedrow = None
+
+        self.scrolledwindow = self.builder.get_object("scrolledwindow")
+
+        self._row_count = 0
+
+    def _shell_dialog_response(self, dialog, response_id):
+        if response_id == Gtk.ResponseType.OK :
+            if self.listbox.selectedrow != self.selectedrow :
+                self.selectedrow = self.listbox.selectedrow
+                self.emit("changed")
+        dialog.hide()
+
+    def _shell_dialog_delete_event(self, widget, event):
+        self._list_row_select(self.selectedrow)
+        return widget.hide_on_delete()
+
+    def _row_activated(self,listbox,row):
+
+        if row != listbox.selectedrow :
+            if listbox.selectedrow != None :
+                listbox.selectedrow.indicator.hide()
+            listbox.selectedrow = row
+            row.indicator.show()
+
+    def _list_row_select(self,row):
+        if row != self.listbox.selectedrow :
+            if self.listbox.selectedrow != None :
+                self.listbox.selectedrow.indicator.hide()
+            self.listbox.selectedrow = row
+            row.indicator.show()
+
+    def _row_select(self,row):
+        self.selectedrow = row
+        self._list_row_select(self.selectedrow)
+
+    def run(self):
+        self.dialog.present()
+
+        if self._row_count >= 5 :
+			if self.selectedrow != None :
+				row_height = self.selectedrow.get_allocation().height
+			else :
+				row_height = self.listbox.get_children()[0].get_allocation().height
+			self.scrolledwindow.set_size_request(-1,row_height*5)
+
+    def add_row(self, text) :
+        row = Gtk.ListBoxRow.new()
+        self.listbox.add(row)
+        box = Gtk.HBox()
+        box.set_margin_left(16)
+        box.set_margin_right(16)
+        row.add(box)
+        label = Gtk.Label.new(text)
+        label.set_margin_top(6)
+        label.set_margin_bottom(6)
+        indicator = Gtk.Image.new_from_icon_name("emblem-ok-symbolic",Gtk.IconSize.BUTTON)
+        indicator.set_no_show_all(True)
+        box.pack_start(label,False,False,2)
+        box.pack_end(indicator,False,False,2)
+        row.theme_name = text
+        row.indicator = indicator
+        row.show_all()
+        self._row_count = self._row_count + 1
+        return row
+
+    def get_value(self):
+        if self.selectedrow != None :
+            return self.selectedrow.theme_name #need rename
+        else :
+            return ""
+
+    def set_value(self,theme):
+        rows = self.listbox.get_children ()
+        for row in rows :
+            if theme == row.theme_name : #need rename
+                self._row_select(row)
+                break
+
+    def set_transient_for(self,parent):
+        self.dialog.set_transient_for(parent)
+
+GObject.signal_new("changed", ListDialog, GObject.SIGNAL_RUN_FIRST,GObject.TYPE_NONE, ())
+
+class ImageChooserDialog(GObject.Object):
 	def __init__(self):
-		Gtk.Button.__init__(self)
-		self.Label = Gtk.Label.new(_('(None)'))
-		self.ImageBadPath = Gtk.Image()
-		self.ImageBadPath.set_from_icon_name("dialog-warning",Gtk.IconSize.SMALL_TOOLBAR)
-		self.ImageBadPath.set_no_show_all(True)
-		self.ImageBadPath.set_tooltip_text(_("Bad path :\nFile must be in /usr/share or /usr/local/share"))
-		self.ImageFileOpen = Gtk.Image()
-		self.ImageFileOpen.set_from_icon_name("fileopen",Gtk.IconSize.SMALL_TOOLBAR)
-		self.Separator = Gtk.Separator.new(Gtk.Orientation.VERTICAL)
-		self.Box = Gtk.HBox.new(False,0)
-		self.add(self.Box)
-		self.Box.pack_start(self.ImageBadPath,False,False,2)
-		self.Box.pack_start(self.Label,False,False,2)
-		self.Box.pack_end(self.ImageFileOpen,False,False,2)
-		self.Box.pack_end(self.Separator,False,False,2)
-		self.Box.show_all()
+		GObject.Object.__init__(self)
+		self._status = _('(None)')
+		self._warning = False
+		self._parent = None
 		self.filterImage = Gtk.FileFilter()
 		self.filterImage.add_pixbuf_formats()
 		self.filterImage.set_name(_('Image'))
@@ -51,22 +135,25 @@ class ImageChooserButton(Gtk.Button):
 		self.PreviewBox.pack_start(self.Label_Size, False, False, 0)
 		self.Label_Size.show()
 		self.Filename = ""
-		self.connect("clicked",self._Clicked)
 		self.FileChooserDialog = None
 
-	def _Clicked(self,e) :
+	def run(self) :
 		if self.FileChooserDialog == None :
 
-			self.FileChooserDialog = Gtk.FileChooserDialog(title=_("Select a File"),action=Gtk.FileChooserAction.OPEN,buttons=(Gtk.STOCK_CANCEL,Gtk.ResponseType.CANCEL,Gtk.STOCK_CLEAR,Gtk.ResponseType.NONE,Gtk.STOCK_OPEN,Gtk.ResponseType.ACCEPT))
+			self.FileChooserDialog = Gtk.FileChooserDialog(title=_("Select a File"),action=Gtk.FileChooserAction.OPEN)
+			self.FileChooserDialog.add_button(Gtk.STOCK_CANCEL,Gtk.ResponseType.CANCEL)
+			self.FileChooserDialog.add_button(Gtk.STOCK_CLEAR,Gtk.ResponseType.NONE)
+			self.FileChooserDialog.add_button(Gtk.STOCK_OPEN,Gtk.ResponseType.ACCEPT)
 			self.FileChooserDialog.add_filter(self.filterImage)
 			self.FileChooserDialog.set_filename(self.Filename)
 			self.FileChooserDialog.set_preview_widget(self.PreviewBox)
 			self.FileChooserDialog.set_preview_widget_active(False)
+			self.FileChooserDialog.set_modal(True)
 			self.PreviewBox.show_all()
 			self.FileChooserDialog.connect("update-preview",self._UpdatePreview)
 			self.FileChooserDialog.connect("response",self.response_cb)
 			self.FileChooserDialog.connect("destroy",self.dialog_destroy)
-			self.FileChooserDialog.set_transient_for(self.get_ancestor(Gtk.Window))
+			self.FileChooserDialog.set_transient_for(self._parent)
 		self.FileChooserDialog.present()
 
 	def response_cb(self,dialog,response) :
@@ -87,13 +174,19 @@ class ImageChooserButton(Gtk.Button):
 	def set_filename(self,filename=""):
 		self.Filename = filename
 		if filename[0:len("/home")] == "/home" :
-			self.ImageBadPath.show()
+			self._warning = True
 		else:
-			self.ImageBadPath.hide()
+			self._warning = False
 		if filename != "" :
-			self.Label.set_label(os.path.basename(filename))
+			self._status = os.path.basename(filename)
 		else :
-			self.Label.set_label(_("(None)"))
+			self._status = _('(None)')
+
+	def get_status_text(self):
+		return self._status
+
+	def get_warning(self):
+		return self._warning
 
 	def _UpdatePreview(self,e) :
 		PreviewURI = self.FileChooserDialog.get_preview_uri()
@@ -125,53 +218,30 @@ class ImageChooserButton(Gtk.Button):
 		else :
 			self.FileChooserDialog.set_preview_widget_active(False)
 
-GObject.signal_new("file-changed", ImageChooserButton, GObject.SIGNAL_RUN_FIRST,GObject.TYPE_NONE, ())
+	def set_transient_for(self,parent):
+		self._parent = parent
 
-class AutologinButton (Gtk.Button) :
-	__gtype_name__ = 'AutologinButton'
+GObject.signal_new("file-changed", ImageChooserDialog, GObject.SIGNAL_RUN_FIRST,GObject.TYPE_NONE, ())
 
+class AutologinDialog (GObject.Object) :
 	def __init__(self):
-		Gtk.Button.__init__(self)
+		GObject.Object.__init__(self)
 		self.autologin=False
 		self.username=""
 		self.timed=False
 		self.time=30
-		self.box=Gtk.HBox.new(False,0)
-		self.add(self.box)
-		self.box.show()
-		self.label_state=Gtk.Label.new(_("Disabled"))
-		self.label_state.set_no_show_all(True)
-		self.label_state.show()
-		self.box.pack_start(self.label_state,True,True,2)
-		self.label_user=Gtk.Label.new("USER")
-		self.label_user.set_no_show_all(True)
-		self.box.pack_start(self.label_user,False,False,2)
-		self.label_time=Gtk.Label.new("TIME")
-		self.label_time.set_no_show_all(True)
-		self.box.pack_end(self.label_time,False,False,2)
-		self.Separator = Gtk.Separator.new(Gtk.Orientation.VERTICAL)
-		self.Separator.set_no_show_all(True)
-		self.box.pack_end(self.Separator,False,False,2)
-		self.connect("clicked",self._clicked)
 		self.Dialog = None 
+		self._status = _("Disabled")
+		self._parent=None
 
 	def update(self) :
 		if self.autologin :
-			self.label_state.hide()
-			self.label_user.show()
 			if self.timed :
-				self.Separator.show()
-				self.label_time.show()
+				self._status = self.username + " " + _("after") + " " + str(self.time) + " second(s)"
 			else :
-				self.Separator.hide()
-				self.label_time.hide()
+				self._status = self.username
 		else :
-			self.label_state.show()
-			self.label_user.hide()
-			self.Separator.hide()
-			self.label_time.hide()
-		self.label_user.set_text(self.username)
-		self.label_time.set_text(str(self.time) + " s")
+			self._status = _("Disabled")
 
 	def set_autologin(self,b) :
 		self.autologin = b
@@ -201,7 +271,10 @@ class AutologinButton (Gtk.Button) :
 	def get_username(self):
 		return self.username
 
-	def _clicked(self,e) :
+	def get_status_text(self):
+		return self._status
+
+	def run(self) :
 		if self.Dialog == None :
 			self.Builder = Gtk.Builder()
 			self.Builder.set_translation_domain("gdm3setup")
@@ -222,7 +295,7 @@ class AutologinButton (Gtk.Button) :
 
 			self.Dialog.connect("response",self.response_cb)
 			self.Dialog.connect("destroy",self.dialog_destroy)
-			self.Dialog.set_transient_for(self.get_ancestor(Gtk.Window))
+			self.Dialog.set_transient_for(self._parent)
 
 		self.CheckButton_AutoLogin.set_active(self.get_autologin())
 		self.HBox_username.set_sensitive(self.get_autologin())
@@ -231,7 +304,7 @@ class AutologinButton (Gtk.Button) :
 		self.CheckButton_Delay.set_active(self.get_timed())
 		self.SpinButton_Delay.set_sensitive(self.get_timed())
 		self.SpinButton_Delay.set_value(self.get_time())
-		self.Dialog.present()
+		self.Dialog.run()
 
 	def response_cb(self,dialog,response) :
 		if response == Gtk.ResponseType.OK :
@@ -260,17 +333,18 @@ class AutologinButton (Gtk.Button) :
 	def dialog_destroy(self,data) :
 		self.Dialog = None
 
-GObject.signal_new("changed", AutologinButton, GObject.SIGNAL_RUN_FIRST,GObject.TYPE_NONE, ())
+	def set_transient_for(self,parent):
+		self._parent = parent
 
-class BannerButton(Gtk.Button) :
-	__gtype_name__ = 'BannerButton'
+GObject.signal_new("changed", AutologinDialog, GObject.SIGNAL_RUN_FIRST,GObject.TYPE_NONE, ())
 
+class BannerDialog(GObject.Object) :
 	def __init__(self):
-		Gtk.Button.__init__(self)
-		self.set_label(_("Disabled"))
-		self.connect("clicked",self._clicked)
-		self._Text=""
+		GObject.Object.__init__(self)
 		self._State=False
+		self._Text=""
+		self._Status=_("Disabled")
+		self._parent=None
 
 	def get_text(self):
 		return self._Text
@@ -278,7 +352,7 @@ class BannerButton(Gtk.Button) :
 	def set_text(self,text):
 		self._Text = text
 		if self._State == True :
-			self.set_label(text)
+			self._Status = text
 
 	def get_state(self):
 		return self._State
@@ -286,16 +360,19 @@ class BannerButton(Gtk.Button) :
 	def set_state(self,state):
 		self._State = state
 		if state == True :
-			self.set_label(self._Text)
+			self._Status = self._Text
 		else :
-			self.set_label(_("Disabled"))
+			self._Status = _("Disabled")
 
-	def _clicked(self,e) :
+	def get_status_text(self):
+		return self._Status
+
+	def run(self) :
 		self._Builder = Gtk.Builder()
 		self._Builder.set_translation_domain("gdm3setup")
 		self._Builder.add_from_file("/usr/share/gdm3setup/ui/gdm3setup.ui")
 		self._Dialog = self._Builder.get_object("banner-dialog")
-		self._Dialog.set_transient_for(self.get_ancestor(Gtk.Window))
+		self._Dialog.set_transient_for(self._parent)
 		self._Switch_State = self._Builder.get_object("state-switch")
 		self._Entry_Text = self._Builder.get_object("banner-entry")
 
@@ -317,18 +394,19 @@ class BannerButton(Gtk.Button) :
 				self.emit("changed")
 		self._Dialog.destroy()
 
-GObject.signal_new("changed", BannerButton, GObject.SIGNAL_RUN_FIRST,GObject.TYPE_NONE, ())
+	def set_transient_for(self,parent):
+		self._parent = parent
 
+GObject.signal_new("changed", BannerDialog, GObject.SIGNAL_RUN_FIRST,GObject.TYPE_NONE, ())
 
-class AuthenticationButton(Gtk.Button) :
-	__gtype_name__ = 'AuthenticationButton'
-
+class AuthenticationDialog(GObject.Object) :
 	def __init__(self):
-		Gtk.Button.__init__(self)
-		self.connect("clicked",self._clicked)
+		GObject.Object.__init__(self)
 		self._Fingerprint=False
 		self._Password=False
 		self._Smartcard=False
+		self._status=_("None")
+		self._parent=None
 
 	def get_fingerprint(self):
 		return self._Fingerprint
@@ -339,6 +417,9 @@ class AuthenticationButton(Gtk.Button) :
 	def get_smartcard(self):
 		return self._Smartcard
 
+	def get_status_text(self):
+		return self._status
+
 	def set_methods(self,fingerprint,password,smartcard):
 		self._Fingerprint = fingerprint
 		self._Password = password
@@ -348,21 +429,21 @@ class AuthenticationButton(Gtk.Button) :
 	def _UpdateText(self):
 		m = 1 * self._Fingerprint + 2 * self._Password + 4 * self._Smartcard  
 		if   m == 0 :
-			self.set_label( _("None") )
+			self._status= _("None")
 		elif m == 1 :
-			self.set_label( _("Fingerprint") )
+			self._status= _("Fingerprint")
 		elif m == 2 :
-			self.set_label( _("Password") )
+			self._status= _("Password")
 		elif m == 3 :
-			self.set_label( _("Fingerprint") + " | " + _("Password") )
+			self._status= _("Fingerprint") + " | " + _("Password")
 		elif m == 4 :
-			self.set_label( _("Smartcard") )
+			self._status= _("Smartcard")
 		elif m == 5 :
-			self.set_label( _("Fingerprint") + " | " + _("Smartcard") )
+			self._status= _("Fingerprint") + " | " + _("Smartcard")
 		elif m == 6 :
-			self.set_label( _("Password") + " | " + _("Smartcard") )
+			self._status= _("Password") + " | " + _("Smartcard")
 		else :
-			self.set_label( _("All") )
+			self._status= _("All")
 
 	def _UpdateInfo(self):
 		mode = 1 * self._Switch_Fingerprint.get_active() + 2 * self._Switch_Password.get_active() + 4 * self._Switch_Smartcard.get_active()
@@ -379,12 +460,12 @@ class AuthenticationButton(Gtk.Button) :
 		else :
 			self._Box_InfoBar_password.hide()
 
-	def _clicked(self,e) :
+	def run(self) :
 		self._Builder = Gtk.Builder()
 		self._Builder.set_translation_domain("gdm3setup")
 		self._Builder.add_from_file("/usr/share/gdm3setup/ui/gdm3setup.ui")
 		self._Dialog = self._Builder.get_object("authentication-dialog")
-		self._Dialog.set_transient_for(self.get_ancestor(Gtk.Window))
+		self._Dialog.set_transient_for(self._parent)
 		self._Switch_Fingerprint = self._Builder.get_object("Switch_Fingerprint")
 		self._Switch_Password = self._Builder.get_object("Switch_Password")
 		self._Switch_Smartcard = self._Builder.get_object("Switch_Smartcard")
@@ -411,14 +492,15 @@ class AuthenticationButton(Gtk.Button) :
 	def _sw_toggled(self,e,s):
 		self._UpdateInfo()
 
-GObject.signal_new("changed", AuthenticationButton, GObject.SIGNAL_RUN_FIRST,GObject.TYPE_NONE, ())
+	def set_transient_for(self,parent):
+		self._parent = parent
 
+GObject.signal_new("changed", AuthenticationDialog, GObject.SIGNAL_RUN_FIRST,GObject.TYPE_NONE, ())
 
 class MainWindow(Gtk.ApplicationWindow) :
 	def __init__(self,app) :
 		Gtk.ApplicationWindow.__init__(self,application=app,title=_("GDM3 Setup"))
 		self.connect("destroy",self._close)
-		self.set_border_width(20)
 		self.set_position(Gtk.WindowPosition.CENTER)
 		self.set_resizable(False)
 		self.set_size_request(640,480)
@@ -431,20 +513,37 @@ class MainWindow(Gtk.ApplicationWindow) :
 		self.Builder = Gtk.Builder()
 		self.Builder.set_translation_domain("gdm3setup")
 		self.Builder.add_from_file("/usr/share/gdm3setup/ui/gdm3setup.ui")
-		self.Box_Main = self.Builder.get_object("box_main")
+		self.Box_Main = self.Builder.get_object("vbox_gdm")
 		self.add(self.Box_Main)
 
-		self.ComboBox_shell10 = self.Builder.get_object("ComboBox_shell10")
-		self.ComboBox_icon = self.Builder.get_object("ComboBox_icon")
-		self.ComboBox_cursor = self.Builder.get_object("ComboBox_cursor")
-		self.Button_shell_logo10 = self.Builder.get_object("Button_shell_logo10")
-		self.Button_banner_text6 = self.Builder.get_object("Button_banner_text6")
-		self.Switch_user8 = self.Builder.get_object("Switch_user8")
-		self.Button_autologin = self.Builder.get_object("Button_autologin")
-		self.Switch_clock_date10 = self.Builder.get_object("Switch_clock_date10")
-		self.Switch_clock_seconds10 = self.Builder.get_object("Switch_clock_seconds10")
-		self.SpinButton_allowed_failures10 = self.Builder.get_object("SpinButton_allowed_failures10")
-		self.Button_authentication = self.Builder.get_object("Button_authentication")
+		self.ComboBox_shell10 = ListDialog()
+		self.ComboBox_shell10.set_transient_for(self)
+		self.ComboBox_icon = ListDialog()
+		self.ComboBox_icon.set_transient_for(self)
+		self.ComboBox_cursor = ListDialog()
+		self.ComboBox_cursor.set_transient_for(self)
+		self.Button_shell_logo10 = ImageChooserDialog()
+		self.Button_shell_logo10.set_transient_for(self)
+		self.Button_banner_text6 = BannerDialog()
+		self.Button_banner_text6.set_transient_for(self)
+		self.Switch_user8 = self.Builder.get_object("userlist-switch")
+		self.Button_autologin = AutologinDialog()
+		self.Button_autologin.set_transient_for(self)
+		self.Switch_clock_date10 = self.Builder.get_object("date-switch")
+		self.Switch_clock_seconds10 = self.Builder.get_object("seconds-switch")
+		self.SpinButton_allowed_failures10 = self.Builder.get_object("allowed-failures-spinbutton")
+		self.Button_authentication = AuthenticationDialog()
+		self.Button_authentication.set_transient_for(self)
+		self.listbox = self.Builder.get_object("listbox1")
+
+		self.authentication_status = self.Builder.get_object("authentication-status")
+		self.autologin_status = self.Builder.get_object("autologin-status")
+		self.banner_status = self.Builder.get_object("banner-status")
+		self.logo_status = self.Builder.get_object("logo-status")
+		self.logo_warning = self.Builder.get_object("logo-warning")
+		self.shell_status = self.Builder.get_object("shell-status")
+		self.icon_status = self.Builder.get_object("icon-status")
+		self.cursor_status = self.Builder.get_object("cursor-status")
 
 		self.SpinButton_allowed_failures10.set_range(1,9)
 		self.SpinButton_allowed_failures10.set_increments(1,1)
@@ -468,14 +567,16 @@ class MainWindow(Gtk.ApplicationWindow) :
 		self.SpinButton_allowed_failures10.connect("value-changed",self.allowed_failures_10_changed)
 		self.Button_authentication.connect("changed",self.authentication_changed)
 
+		self.listbox.connect("row-activated",self.row_activated)
+
 	def load_shell_list(self):
 
 		lst_shell_themes = os.listdir('/usr/share/themes')
-		self.ComboBox_shell10.append_text("Adwaita")
+		self.ComboBox_shell10.add_row("Adwaita")
 
 		for i in range(len(lst_shell_themes)):
 			if os.path.isdir('/usr/share/themes/'+lst_shell_themes[i]+'/gnome-shell') :
-				self.ComboBox_shell10.append_text(lst_shell_themes[i])
+				self.ComboBox_shell10.add_row(lst_shell_themes[i])
 
 	def load_icon_list(self):
 		lst_icons = os.listdir('/usr/share/icons')
@@ -483,9 +584,9 @@ class MainWindow(Gtk.ApplicationWindow) :
 		for i in range(len(lst_icons)):
 			if os.path.isdir('/usr/share/icons/'+lst_icons[i]+'/') :
 				if 	os.path.isdir('/usr/share/icons/'+lst_icons[i]+'/cursors/') :
-					self.ComboBox_cursor.append_text(lst_icons[i])
+					self.ComboBox_cursor.add_row(lst_icons[i])
 				else :
-					self.ComboBox_icon.append_text(lst_icons[i])
+					self.ComboBox_icon.add_row(lst_icons[i])
 
 	def _close(self,e):
 		try :
@@ -507,9 +608,9 @@ class MainWindow(Gtk.ApplicationWindow) :
 		self.FINGERPRINT_AUTHENTICATION = GdmSetupClient.GetFingerprintAuthentication()
 		self.PASSWORD_AUTHENTICATION = GdmSetupClient.GetPasswordAuthentication()
 		self.SMARTCARD_AUTHENTICATION = GdmSetupClient.GetSmartcardAuthentication()
-		self.ComboBox_shell10.set_active_iter(get_iter(self.ComboBox_shell10.get_model(),quote(self.SHELL_THEME)))
-		self.ComboBox_icon.set_active_iter(get_iter(self.ComboBox_icon.get_model(),quote(self.ICON_THEME)))
-		self.ComboBox_cursor.set_active_iter(get_iter(self.ComboBox_cursor.get_model(),quote(self.CURSOR_THEME)))
+		self.ComboBox_shell10.set_value(self.SHELL_THEME)
+		self.ComboBox_icon.set_value(self.ICON_THEME)
+		self.ComboBox_cursor.set_value(self.CURSOR_THEME)
 		self.Button_shell_logo10.set_filename(self.SHELL_LOGO)
 		self.Button_banner_text6.set_text(self.BANNER_TEXT)
 		self.Button_banner_text6.set_state(self.BANNER)
@@ -518,6 +619,14 @@ class MainWindow(Gtk.ApplicationWindow) :
 		self.Switch_clock_seconds10.set_active(self.CLOCK_SECONDS)
 		self.SpinButton_allowed_failures10.set_value(self.ALLOWED_FAILURES)
 		self.Button_authentication.set_methods(self.FINGERPRINT_AUTHENTICATION,self.PASSWORD_AUTHENTICATION,self.SMARTCARD_AUTHENTICATION)
+
+		self.banner_status.set_text(self.Button_banner_text6.get_status_text())
+		self.authentication_status.set_text(self.Button_authentication.get_status_text())
+		self.logo_status.set_text(self.Button_shell_logo10.get_status_text())
+		self.logo_warning.set_visible(self.Button_shell_logo10.get_warning())
+		self.shell_status.set_text(self.ComboBox_shell10.get_value())
+		self.icon_status.set_text(self.ComboBox_icon.get_value())
+		self.cursor_status.set_text(self.ComboBox_cursor.get_value())
 
 	def set_autologin(self,autologin,username,timed,time):
 		if self.SetAutoLogin(autologin,username,timed,time)=="OK" :
@@ -535,41 +644,49 @@ class MainWindow(Gtk.ApplicationWindow) :
 		self.Button_autologin.set_timed(self.AUTOLOGIN_TIMED) 
 		self.Button_autologin.set_time(self.AUTOLOGIN_TIME)
 
+		self.autologin_status.set_text(self.Button_autologin.get_status_text())
+
 	def shell_theme_10_changed(self,e):
-		shell_theme = unicode(self.ComboBox_shell10.get_active_text(),'UTF_8')
+		shell_theme = unicode(self.ComboBox_shell10.get_value(),'UTF_8')
 		if shell_theme!=self.SHELL_THEME :
 			if GdmSetupClient.SetShellTheme(shell_theme) :
 				self.SHELL_THEME = shell_theme
+				self.shell_status.set_text(e.get_value())
 				print("SHELL Theme Changed : " + self.SHELL_THEME)
 			else :
-				self.ComboBox_shell10.set_active_iter(get_iter(self.ComboBox_shell10.get_model(),quote(self.SHELL_THEME)))
+				self.ComboBox_shell10.set_value(self.SHELL_THEME)
 
 	def icon_theme_changed(self,e):
-		icon_theme = unicode(self.ComboBox_icon.get_active_text(),'UTF_8')
+		icon_theme = unicode(self.ComboBox_icon.get_value(),'UTF_8')
 		if self.ICON_THEME != icon_theme:
 			if GdmSetupClient.SetIconTheme(icon_theme) :
 				self.ICON_THEME = icon_theme
+				self.icon_status.set_text(e.get_value())
 				print ("Icon Theme Changed : " + self.ICON_THEME)
 			else :
-				self.ComboBox_icon.set_active_iter(get_iter(self.ComboBox_icon.get_model(),quote(self.ICON_THEME)))
+				self.ComboBox_icon.set_value(self.ICON_THEME)
 
 	def cursor_theme_changed(self,e):
-		cursor_theme = unicode(self.ComboBox_cursor.get_active_text(),'UTF_8')
+		cursor_theme = unicode(self.ComboBox_cursor.get_value(),'UTF_8')
 		if self.CURSOR_THEME != cursor_theme:
 			if GdmSetupClient.SetCursorTheme(cursor_theme) :
 				self.CURSOR_THEME = cursor_theme
+				self.cursor_status.set_text(e.get_value())
 				print ("Cursor Theme Changed : " + self.CURSOR_THEME)
 			else :
-				self.ComboBox_cursor.set_active_iter(get_iter(self.ComboBox_cursor.get_model(),quote(self.CURSOR_THEME)))
+				self.ComboBox_cursor.set_value(self.CURSOR_THEME)
 
 	def shell_logo_10_filechanged(self,e):
 		shell_logo = unicode(self.Button_shell_logo10.get_filename(),'UTF_8')
 		if self.SHELL_LOGO != shell_logo :
 			if GdmSetupClient.SetShellLogo(shell_logo) :
 				self.SHELL_LOGO = shell_logo
+				self.logo_status.set_text(e.get_status_text())
+				self.logo_warning.set_visible(self.Button_shell_logo10.get_warning())
 				print ("Shell Logo Changed : " + self.SHELL_LOGO)
 			else:
 				self.Button_shell_logo10.set_filename(self.SHELL_LOGO)
+				self.logo_warning.set_visible(self.Button_shell_logo10.get_warning())
 
 	def banner_text_6_changed(self,e):
 		banner_text = unicode(self.Button_banner_text6.get_text(),'UTF_8')
@@ -579,6 +696,7 @@ class MainWindow(Gtk.ApplicationWindow) :
 				GdmSetupClient.SetBannerVisibility(banner)
 				self.BANNER_TEXT = banner_text
 				self.BANNER = banner
+				self.banner_status.set_text(e.get_status_text())
 				print ("Banner Changed - Text : " + self.BANNER_TEXT) + " - State : " + str(self.BANNER)
 			else :
 				self.Button_banner_text6.set_text(self.BANNER_TEXT)
@@ -595,6 +713,7 @@ class MainWindow(Gtk.ApplicationWindow) :
 				self.FINGERPRINT_AUTHENTICATION=fingerprint_authentication
 				self.PASSWORD_AUTHENTICATION=password_authentication
 				self.SMARTCARD_AUTHENTICATION=smartcard_authentication
+				self.authentication_status.set_text(e.get_status_text())
 				print ("Authentication methods Changed")
 			else :
 				self.Button_authentication.set_methods(self.FINGERPRINT_AUTHENTICATION,self.PASSWORD_AUTHENTICATION,self.SMARTCARD_AUTHENTICATION)
@@ -622,6 +741,7 @@ class MainWindow(Gtk.ApplicationWindow) :
 			self.AUTOLOGIN_USERNAME = autologin_username
 			self.AUTOLOGIN_TIMED = autologin_timed
 			self.AUTOLOGIN_TIME = autologin_time
+			self.autologin_status.set_text(e.get_status_text())
 		else :
 			self.Button_autologin.set_autologin(self.AUTOLOGIN_ENABLED)
 			self.Button_autologin.set_username(self.AUTOLOGIN_USERNAME)
@@ -655,6 +775,33 @@ class MainWindow(Gtk.ApplicationWindow) :
 			else:
 				self.SpinButton_allowed_failures10.set_value(self.ALLOWED_FAILURES)
 
+	def row_activated(self,listbox,row):
+		row_name = Gtk.Buildable.get_name(row)
+
+		if row_name == "shell-row":
+			self.ComboBox_shell10.run()
+		elif row_name == "icon-row":
+			self.ComboBox_icon.run()
+		elif row_name == "cursor-row":
+			self.ComboBox_cursor.run()
+		elif row_name == "logo-row":
+			self.Button_shell_logo10.run()
+		elif row_name == "banner-row":
+			self.Button_banner_text6.run()
+		elif row_name == "autologin-row":
+			self.Button_autologin.run()
+		elif row_name == "authentication-row":
+			self.Button_authentication.run()
+		elif row_name == "userlist-row":
+			active = self.Switch_user8.get_active()
+			self.Switch_user8.set_active( not active )
+		elif row_name == "date-row":
+			active = self.Switch_clock_date10.get_active()
+			self.Switch_clock_date10.set_active( not active )
+		elif row_name == "seconds-row":
+			active = self.Switch_clock_seconds10.get_active()
+			self.Switch_clock_seconds10.set_active( not active )
+
 #-----------------------------------------------
 
 def get_setting(name,data):
@@ -665,15 +812,6 @@ def get_setting(name,data):
 			break
 	return value
 
-def unquote(value):
-	if value[0:1] == "'"  and value[len(value)-1:len(value)] == "'" :
-		value = value[1:len(value)-1]
-	return value
-
-def quote(value):
-	value = "'"+value+"'"
-	return value
-
 def str_to_bool(state) :
 	if state.capitalize()=="True" :
 		b_state = True
@@ -681,17 +819,6 @@ def str_to_bool(state) :
 		b_state = False
 
 	return b_state
-
-def get_iter(model,target):
-	target_iter = None
-	iter_test = model.get_iter_first()
-	while iter_test!=None:
-		name = model.get_value(iter_test,0)
-		if "'"+name+"'" == target:
-			target_iter = iter_test
-			break 
-		iter_test = model.iter_next(iter_test)
-	return target_iter
 
 def GetPixbufForPath(targetfile) :
 	PreviewFile = Gio.File.new_for_path(targetfile)
