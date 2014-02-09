@@ -1317,6 +1317,7 @@ class Application(Gtk.Application):
 		aboutdialog.set_program_name("GDM3setup")
 		aboutdialog.set_comments(_("An interface to configure GDM3"))
 		aboutdialog.set_copyright("Copyright \xc2\xa9 2011-2013 NanoArch")
+		aboutdialog.set_license_type(Gtk.License.GPL_2_0)
 		aboutdialog.set_logo_icon_name("preferences-desktop-theme")
 		aboutdialog.set_website("https://github.com/Nano77/gdm3setup/")
 
