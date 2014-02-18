@@ -2,115 +2,118 @@
 # Copyright (C) 2011 Nano77 <nanoarch77@gmail.com>
 # This file is distributed under the same license as the PACKAGE package.
 # Nano77 <nanoarch77@gmail.com>, 2011.
+# Pamela Rojek <rojekpamela@gmail.com>, 2014.
 #
-#
+
 msgid ""
 msgstr ""
 "Project-Id-Version: gdm3setup\n"
 "Report-Msgid-Bugs-To: https://github.com/Nano77/gdm3setup/issues\n"
 "POT-Creation-Date: 2011-12-22 19:35+0100\n"
-"Last-Translator: Nano77 <nanoarch77@gmail.com>\n"
+"PO-Revision-Date: 2014-02-18 16:00+0100\n"
+"Last-Translator: Pamela Rojek <rojekpamela@gmail.com>\n"
+"Language: pl_PL\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
 #: gdm3setup.py:22
 msgid "(None)"
-msgstr ""
+msgstr "(Brak)"
 
 #: gdm3setup.py:47
 msgid "Select a File"
-msgstr ""
+msgstr "Wybierz plik"
 
 #: gdm3setup.py:97
 msgid "Disabled"
-msgstr ""
+msgstr "Wyłączone"
 
 #: gdm3setup.py:187
 msgid "GDM AutoLogin Setup"
-msgstr ""
+msgstr "Ustawienia autologowania GDM"
 
 #: gdm3setup.py:192
 msgid "Enable Automatic Login"
-msgstr ""
+msgstr "Włącz automatyczne logowanie"
 
 #: gdm3setup.py:200
 msgid "User Name"
-msgstr ""
+msgstr "Nazwa użytkownika"
 
 #: gdm3setup.py:212
 msgid "Enable Delay before autologin"
-msgstr ""
+msgstr "Włącz opóźnienie przed autologowaniem"
 
 #: gdm3setup.py:224
 msgid "Apply"
-msgstr ""
+msgstr "Zastosuj"
 
 #: gdm3setup.py:272
 msgid "GDM3 Setup"
-msgstr ""
+msgstr "Ustawienia GDM3"
 
 #: gdm3setup.py:282
 msgid "General"
-msgstr ""
+msgstr "Ogólne"
 
 #: gdm3setup.py:317
 msgid "Wallpaper"
-msgstr ""
+msgstr "Tło"
 
 #: gdm3setup.py:322
 msgid "Icon theme"
-msgstr ""
+msgstr "Motyw ikon"
 
 #: gdm3setup.py:327
 msgid "Cursor theme"
-msgstr ""
+msgstr "Motyw kursora"
 
 #: gdm3setup.py:332
 msgid "AutoLogin"
-msgstr ""
+msgstr "Autologowanie"
 
 #: gdm3setup.py:338
 msgid "Shell theme"
-msgstr ""
+msgstr "Motyw Gnome Shell"
 
 #: gdm3setup.py:343
 msgid "Shell Logo"
-msgstr ""
+msgstr "Logo Gnome Shell"
 
 #: gdm3setup.py:348
 msgid "Show Date in Clock"
-msgstr ""
+msgstr "Wyświetl datę w Zegarze"
 
 #: gdm3setup.py:353
 msgid "Show Seconds in Clock"
-msgstr ""
+msgstr "Wyświetl sekundy w Zegarze"
 
 #: gdm3setup.py:359
 msgid "GTK3 theme"
-msgstr ""
+msgstr "Motyw GTK3"
 
 #: gdm3setup.py:364
 msgid "Font"
-msgstr ""
+msgstr "Czcionka"
 
 #: gdm3setup.py:369
 msgid "Logo Icon"
-msgstr ""
+msgstr "Ikona Logo"
 
 #: gdm3setup.py:374
 msgid "Enable Banner"
-msgstr ""
+msgstr "Włącz baner"
 
 #: gdm3setup.py:381
 msgid "Disable User List"
-msgstr ""
+msgstr "Wyłącz listę użytkowników"
 
 #: gdm3setup.py:385
 msgid "Disable Restart Buttons"
-msgstr ""
+msgstr "Wyłącz przyciski restartowania"
 
 #: gdm3setup.py:413
 msgid "Select Wallpaper"
-msgstr ""
+msgstr "Wybierz tło"
 
