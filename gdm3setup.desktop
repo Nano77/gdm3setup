@@ -2,7 +2,7 @@
 Name=GDM3 Settings
 Name[de_DE]=Einstellungen der GDM3
 Name[es_ES]=Configuratión de GDM3
-Name[fr]=Paramètres de GDM3
+Name[fr]=Paramètres de l'écran de connexion
 Name[it]=Impostazioni di GNOME Display Manager 3
 Name[pt_BR]=Configurações do Gnome Display Manager 3
 Name[zh_CN]=GDM3设置工具
@@ -10,7 +10,7 @@ Name[zh_TW]=GDM3 設定
 Comment=Change GDM3 settings
 Comment[de_DE]=Einstellungen ändern für GDM3
 Comment[es_ES]=Cambiar la configuración de GDM3
-Comment[fr]=Modifier les paramètres de GDM3
+Comment[fr]=Modifier les paramètres de l'écran de connexion
 Comment[it]=Modifica le impostazioni di GNOME Display Manager 3
 Comment[pt_BR]=Mudar as configurações de GNOME Display Manager 3
 Comment[zh_CN]=更改GDM3设置
@@ -22,5 +22,5 @@ Type=Application
 StartupNotify=true
 Categories=GNOME;GTK;Settings;X-GNOME-SystemSettings;
 OnlyShowIn=GNOME;Unity;
-
+X-GNOME-Keywords=GDM,gnome,display,manager,login,screen;
 
