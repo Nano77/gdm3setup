@@ -18,13 +18,14 @@ gettext.install("gdm3setup")
 
 #-----------------------------------------------
 class ListDialog(GObject.Object):
-    def __init__(self):
+    def __init__(self,title):
         GObject.Object.__init__(self)
         self.builder = Gtk.Builder()
         self.builder.set_translation_domain("gdm3setup")
         self.builder.add_from_file("/usr/share/gdm3setup/ui/gdm3setup.ui")
 
         self.dialog = self.builder.get_object("list-dialog")
+        self.dialog.set_title(title)
         self.dialog.connect("delete-event",self._shell_dialog_delete_event)
         self.dialog.connect("response",self._shell_dialog_response)
         self.selectedrow  = None
@@ -91,7 +92,7 @@ class ListDialog(GObject.Object):
         indicator.set_no_show_all(True)
         box.pack_start(label,False,False,2)
         box.pack_end(indicator,False,False,2)
-        row.theme_name = text
+        row.row_name = text
         row.indicator = indicator
         row.show_all()
         self._row_count = self._row_count + 1
@@ -99,14 +100,14 @@ class ListDialog(GObject.Object):
 
     def get_value(self):
         if self.selectedrow != None :
-            return self.selectedrow.theme_name #need rename
+            return self.selectedrow.row_name
         else :
             return ""
 
-    def set_value(self,theme):
+    def set_value(self,name):
         rows = self.listbox.get_children ()
         for row in rows :
-            if theme == row.theme_name : #need rename
+            if name == row.row_name :
                 self._row_select(row)
                 break
 
@@ -516,11 +517,11 @@ class MainWindow(Gtk.ApplicationWindow) :
 		self.Box_Main = self.Builder.get_object("vbox_gdm")
 		self.add(self.Box_Main)
 
-		self.ComboBox_shell10 = ListDialog()
+		self.ComboBox_shell10 = ListDialog(_("Shell theme"))
 		self.ComboBox_shell10.set_transient_for(self)
-		self.ComboBox_icon = ListDialog()
+		self.ComboBox_icon = ListDialog(_("Icon theme"))
 		self.ComboBox_icon.set_transient_for(self)
-		self.ComboBox_cursor = ListDialog()
+		self.ComboBox_cursor = ListDialog(_("Cursor theme"))
 		self.ComboBox_cursor.set_transient_for(self)
 		self.Button_shell_logo10 = ImageChooserDialog()
 		self.Button_shell_logo10.set_transient_for(self)
