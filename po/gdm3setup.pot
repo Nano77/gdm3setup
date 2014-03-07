@@ -1,116 +1,185 @@
-# A GUI to setting GDM3.
+# An interface to configure GDM3.
 # Copyright (C) 2011 Nano77 <nanoarch77@gmail.com>
-# This file is distributed under the same license as the PACKAGE package.
-# Nano77 <nanoarch77@gmail.com>, 2011.
+# This file is distributed under the same license as the GDM3setup package.
+# NanoArch <nanoarch77@gmail.com>, 2011, 2014.
 #
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: gdm3setup\n"
 "Report-Msgid-Bugs-To: https://github.com/Nano77/gdm3setup/issues\n"
-"POT-Creation-Date: 2011-12-22 19:35+0100\n"
-"Last-Translator: Nano77 <nanoarch77@gmail.com>\n"
+"POT-Creation-Date: 2014-02-08 20:06+0100\n"
+"Last-Translator: NanoArch <nanoarch77@gmail.com>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: gdm3setup.py:22
+#: gdm3setup.in.py:121
+#: gdm3setup.in.py:183
+#: gdm3setup.ui:819
 msgid "(None)"
 msgstr ""
 
-#: gdm3setup.py:47
+#: gdm3setup.in.py:126
+msgid "Image"
+msgstr ""
+
+#: gdm3setup.in.py:143
 msgid "Select a File"
 msgstr ""
 
-#: gdm3setup.py:97
+#: gdm3setup.in.py:234
+#: gdm3setup.in.py:244
+#: gdm3setup.in.py:346
+#: gdm3setup.in.py:365
+#: gdm3setup.ui:894
+#: gdm3setup.ui:938
 msgid "Disabled"
 msgstr ""
 
-#: gdm3setup.py:187
-msgid "GDM AutoLogin Setup"
+#: gdm3setup.in.py:240
+msgid "after"
 msgstr ""
 
-#: gdm3setup.py:192
-msgid "Enable Automatic Login"
+#: gdm3setup.in.py:315
+msgid "User Name can't be empty !"
 msgstr ""
 
-#: gdm3setup.py:200
-msgid "User Name"
+#: gdm3setup.in.py:408
+#: gdm3setup.in.py:432
+msgid "None"
 msgstr ""
 
-#: gdm3setup.py:212
-msgid "Enable Delay before autologin"
+#: gdm3setup.in.py:434
+#: gdm3setup.in.py:438
+#: gdm3setup.in.py:442
+#: gdm3setup.ui:174
+msgid "Fingerprint"
 msgstr ""
 
-#: gdm3setup.py:224
-msgid "Apply"
+#: gdm3setup.in.py:436
+#: gdm3setup.in.py:438
+#: gdm3setup.in.py:444
+#: gdm3setup.ui:216
+msgid "Password"
 msgstr ""
 
-#: gdm3setup.py:272
+#: gdm3setup.in.py:440
+#: gdm3setup.in.py:442
+#: gdm3setup.in.py:444
+#: gdm3setup.ui:258
+msgid "Smartcard"
+msgstr ""
+
+#: gdm3setup.in.py:446
+#: gdm3setup.ui:982
+msgid "All"
+msgstr ""
+
+#: gdm3setup.in.py:502
+#: gdm3setup.in.py:509
 msgid "GDM3 Setup"
 msgstr ""
 
-#: gdm3setup.py:282
-msgid "General"
+#: gdm3setup.in.py:879
+msgid "About GDM3setup"
 msgstr ""
 
-#: gdm3setup.py:317
-msgid "Wallpaper"
+#: gdm3setup.in.py:881
+msgid "An interface to configure GDM3"
 msgstr ""
 
-#: gdm3setup.py:322
-msgid "Icon theme"
+#: gdm3setup.in.py:890
+msgid "translator-credits"
 msgstr ""
 
-#: gdm3setup.py:327
-msgid "Cursor theme"
+#: gdm3setup.ui:7
+msgid "Authentication"
 msgstr ""
 
-#: gdm3setup.py:332
-msgid "AutoLogin"
+#: gdm3setup.ui:82
+msgid "Disabling Password Authentication is discouraged"
 msgstr ""
 
-#: gdm3setup.py:338
-msgid "Shell theme"
+#: gdm3setup.ui:137
+msgid "You must enable at least one method"
 msgstr ""
 
-#: gdm3setup.py:343
-msgid "Shell Logo"
+#: gdm3setup.ui:303
+msgid "GDM AutoLogin Setup"
 msgstr ""
 
-#: gdm3setup.py:348
-msgid "Show Date in Clock"
+#: gdm3setup.ui:359
+msgid "Enable Automatic Login"
 msgstr ""
 
-#: gdm3setup.py:353
-msgid "Show Seconds in Clock"
+#: gdm3setup.ui:389
+msgid "User Name"
 msgstr ""
 
-#: gdm3setup.py:359
-msgid "GTK3 theme"
+#: gdm3setup.ui:425
+msgid "Enable Delay before autologin"
 msgstr ""
 
-#: gdm3setup.py:364
-msgid "Font"
+#: gdm3setup.ui:474
+#: gdm3setup.ui:879
+msgid "Banner"
 msgstr ""
 
-#: gdm3setup.py:369
-msgid "Logo Icon"
-msgstr ""
-
-#: gdm3setup.py:374
+#: gdm3setup.ui:535
 msgid "Enable Banner"
 msgstr ""
 
-#: gdm3setup.py:381
+#: gdm3setup.ui:687
+msgid "Shell theme"
+msgstr ""
+
+#: gdm3setup.ui:731
+msgid "Icon theme"
+msgstr ""
+
+#: gdm3setup.ui:775
+msgid "Cursor theme"
+msgstr ""
+
+#: gdm3setup.ui:832
+msgid ""
+"Bad path :\n"
+"File must be in /usr/share or /usr/local/share"
+msgstr ""
+
+#: gdm3setup.ui:850
+msgid "Shell Logo"
+msgstr ""
+
+#: gdm3setup.ui:923
+msgid "AutoLogin"
+msgstr ""
+
+#: gdm3setup.ui:967
+msgid "Authentication methods"
+msgstr ""
+
+#: gdm3setup.ui:1011
+msgid "Allowed failures"
+msgstr ""
+
+#: gdm3setup.ui:1053
 msgid "Disable User List"
 msgstr ""
 
-#: gdm3setup.py:385
-msgid "Disable Restart Buttons"
+#: gdm3setup.ui:1095
+msgid "Show Date in Clock"
 msgstr ""
 
-#: gdm3setup.py:413
-msgid "Select Wallpaper"
+#: gdm3setup.ui:1137
+msgid "Show Seconds in Clock"
 msgstr ""
 
+#: app-menu.ui:6
+msgid "_About GDM3setup"
+msgstr ""
+
+#: app-menu.ui:11
+msgid "_Quit"
+msgstr ""
