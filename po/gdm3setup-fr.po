@@ -1,135 +1,229 @@
-# A GUI to setting GDM3.
-# Copyright (C) 2011 NanoArch <nanoarch77@gmail.com>
-# This file is distributed under the same license as the package.
-# NanoArch <nanoarch77@gmail.com>, 2011.
+# An interface to configure GDM3.
+# Copyright (C) 2011 Nano77 <nanoarch77@gmail.com>
+# This file is distributed under the same license as the GDM3setup package.
+# NanoArch <nanoarch77@gmail.com>, 2011, 2014.
 #
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: gdm3setup\n"
 "Report-Msgid-Bugs-To: https://github.com/Nano77/gdm3setup/issues\n"
-"POT-Creation-Date: 2011-12-22 19:35+0100\n"
-"PO-Revision-Date: 2011-12-22 20:05+0100\n"
+"POT-Creation-Date: 2014-03-09 13:52+0100\n"
+"PO-Revision-Date: 2014-03-09 13:50+0100\n"
 "Last-Translator: NanoArch <nanoarch77@gmail.com>\n"
-"Language-Team: \n"
 "Language: fr_FR\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: gdm3setup.py:22
+#: gdm3setup.in:30
+#: gdm3setup.in:101
+#: gdm3setup.in:324
+#: gdm3setup.in:353
+#: gdm3setup.in:364
 msgid "(None)"
 msgstr "(Aucun)"
 
-#: gdm3setup.py:47
+#: gdm3setup.in:34
+msgid ""
+"Bad path :\n"
+"File must be in /usr/share or /usr/local/share"
+msgstr ""
+"Mauvais chemin :\n"
+"Le fichier doit être situé dans /usr/share ou /usr/local/share"
+
+#: gdm3setup.in:47
+msgid "Image"
+msgstr "Image"
+
+#: gdm3setup.in:65
 msgid "Select a File"
 msgstr "Sélectionner un fichier"
 
-#: gdm3setup.py:97
-msgid "Disabled"
-msgstr "Désactivé"
-
-#: gdm3setup.py:187
-msgid "GDM AutoLogin Setup"
-msgstr "GDM Connexion Automatique"
-
-#: gdm3setup.py:192
-msgid "Enable Automatic Login"
-msgstr "Activer la Connexion Automatique"
-
-#: gdm3setup.py:200
-msgid "User Name"
-msgstr "Nom de l'utilisateur"
-
-#: gdm3setup.py:212
-msgid "Enable Delay before autologin"
-msgstr "Activer le délai avant connexion automatique"
-
-#: gdm3setup.py:224
-msgid "Apply"
-msgstr "Appliquer"
-
-#: gdm3setup.py:272
-msgid "GDM3 Setup"
-msgstr "Paramètres de GDM3"
-
-#: gdm3setup.py:282
-msgid "General"
-msgstr "Générals"
-
-#: gdm3setup.py:317
-msgid "Wallpaper"
-msgstr "Arrière-plan"
-
-#: gdm3setup.py:322
-msgid "Icon theme"
-msgstr "Thème d'Icône"
-
-#: gdm3setup.py:327
-msgid "Cursor theme"
-msgstr "Thème de Curseur"
-
-#: gdm3setup.py:332
-msgid "AutoLogin"
-msgstr "Connexion Automatique"
-
-#: gdm3setup.py:338
-msgid "Shell theme"
-msgstr "Thème du Shell"
-
-#: gdm3setup.py:343
-msgid "Shell Logo"
-msgstr "Logo du Shell"
-
-#: gdm3setup.py:348
-msgid "Show Date in Clock"
-msgstr "Afficher la date sur l'horloge"
-
-#: gdm3setup.py:353
-msgid "Show Seconds in Clock"
-msgstr "Afficher les secondes sur l'horloge"
-
-#: gdm3setup.py:359
-msgid "GTK3 theme"
-msgstr "Thème GTK3"
-
-#: gdm3setup.py:364
-msgid "Font"
-msgstr "Police"
-
-#: gdm3setup.py:369
-msgid "Logo Icon"
-msgstr "Icône du Logo"
-
-#: gdm3setup.py:374
-msgid "Enable Banner"
-msgstr "Activer la Bannière"
-
-#: gdm3setup.py:381
-msgid "Disable User List"
-msgstr "Désactiver la liste des utilisateurs"
-
-#: gdm3setup.py:385
-msgid "Disable Restart Buttons"
-msgstr "Désactiver 'Restart' boutons"
-
-#: gdm3setup.py:413
+#: gdm3setup.in:305
 msgid "Select Wallpaper"
 msgstr "Sélectionner un Arrière-plan"
 
-#: gdm3setup.in
+#: gdm3setup.in:383
+#: gdm3setup.in:581
+#: gdm3setup.in:602
+msgid "Disabled"
+msgstr "Désactivé"
+
+#: gdm3setup.in:483
+msgid "User Name can't be empty !"
+msgstr "Le nom d'utilisateur ne peut pas être vide !"
+
+#: gdm3setup.in:662
+msgid "None"
+msgstr "Aucun"
+
+#: gdm3setup.in:664
+#: gdm3setup.in:668
+#: gdm3setup.in:672
+#: gdm3setup.ui:1071
+msgid "Fingerprint"
+msgstr "Empreintes digitales"
+
+#: gdm3setup.in:666
+#: gdm3setup.in:668
+#: gdm3setup.in:674
+#: gdm3setup.ui:1113
+msgid "Password"
+msgstr "Mot de passe"
+
+#: gdm3setup.in:670
+#: gdm3setup.in:672
+#: gdm3setup.in:674
+#: gdm3setup.ui:1155
+msgid "Smartcard"
+msgstr "Carte à puce"
+
+#: gdm3setup.in:676
+msgid "All"
+msgstr "Toutes"
+
+#: gdm3setup.in:735
+msgid "GDM3 Setup"
+msgstr "Paramètres de l'écran de connexion"
+
+#: gdm3setup.in:1316
+msgid "About GDM3setup"
+msgstr "À propos de GDM3setup"
+
+#: gdm3setup.in:1318
+msgid "An interface to configure GDM3"
+msgstr "Une interface pour configurer l'écran de connexion"
+
+#: gdm3setup.in:1328
+msgid "translator-credits"
+msgstr "NanoArch <nanoarch77@gmail.com>"
+
+#: gdm3setup.ui:34
+#: gdm3setup.ui:433
+msgid "Shell theme"
+msgstr "Thème du Shell"
+
+#: gdm3setup.ui:47
+msgid "Icon theme"
+msgstr "Thème d'icône"
+
+#: gdm3setup.ui:60
+msgid "Cursor theme"
+msgstr "Thème de curseur"
+
+#: gdm3setup.ui:73
+#: gdm3setup.ui:446
+msgid "Shell Logo"
+msgstr "Logo du Shell"
+
+#: gdm3setup.ui:86
+msgid "Wallpaper"
+msgstr "Arrière-plan"
+
+#: gdm3setup.ui:99
+#: gdm3setup.ui:700
+#: gdm3setup.ui:1371
+msgid "Banner"
+msgstr "Bannière"
+
+#: gdm3setup.ui:112
+msgid "AutoLogin"
+msgstr "Connexion Automatique"
+
+#: gdm3setup.ui:125
+msgid "Authentication methods"
+msgstr "Méthodes d'authentification"
+
+#: gdm3setup.ui:138
+#: gdm3setup.ui:459
+msgid "Allowed failures"
+msgstr "Tentatives de connexion"
+
+#: gdm3setup.ui:288
+#: gdm3setup.ui:806
+msgid "Disable User List"
+msgstr "Masquer la liste des utilisateurs"
+
+#: gdm3setup.ui:328
+#: gdm3setup.ui:540
+msgid "Show Date in Clock"
+msgstr "Afficher la date sur l'horloge"
+
+#: gdm3setup.ui:368
+#: gdm3setup.ui:580
+msgid "Show Seconds in Clock"
+msgstr "Afficher les secondes sur l'horloge"
+
+#: gdm3setup.ui:406
+msgid "General"
+msgstr "Générals"
+
+#: gdm3setup.ui:620
+msgid "GnomeShell"
+msgstr "GnomeShell"
+
+#: gdm3setup.ui:648
+msgid "GTK Theme"
+msgstr "Thème GTK3"
+
+#: gdm3setup.ui:661
+msgid "Font"
+msgstr "Police"
+
+#: gdm3setup.ui:674
+msgid "Logo Icon"
+msgstr "Icône du Logo"
+
+#: gdm3setup.ui:687
+msgid "Fallback Logo"
+msgstr "Logo de l'interface GTK"
+
+#: gdm3setup.ui:846
+msgid "Disable Restart Buttons"
+msgstr "Désactiver 'Restart' boutons"
+
+#: gdm3setup.ui:886
+msgid "GTK"
+msgstr "GTK"
+
+#: gdm3setup.ui:904
+msgid "Authentication"
+msgstr "Authentification"
+
+#: gdm3setup.ui:979
+msgid "Disabling Password Authentication is discouraged"
+msgstr "La désactication de l'authentification par mot de passe est déconseillée"
+
+#: gdm3setup.ui:1034
+msgid "You must enable at least one method"
+msgstr "Vous devez activer au moins une méthode"
+
+#: gdm3setup.ui:1200
+msgid "GDM AutoLogin Setup"
+msgstr "Connexion Automatique"
+
+#: gdm3setup.ui:1256
+msgid "Enable Automatic Login"
+msgstr "Activer la connexion automatique"
+
+#: gdm3setup.ui:1286
+msgid "User Name"
+msgstr "Nom de l'utilisateur"
+
+#: gdm3setup.ui:1322
+msgid "Enable Delay before autologin"
+msgstr "Activer le délai avant connexion automatique"
+
+#: gdm3setup.ui:1432
+msgid "Enable Banner"
+msgstr "Activer la bannière"
+
+#: app-menu.ui:6
 msgid "_About GDM3setup"
 msgstr "_À propos de GDM3setup"
 
-#: gdm3setup.in
+#: app-menu.ui:11
 msgid "_Quit"
 msgstr "_Quitter"
-
-#: gdm3setup.in
-msgid "An interface to configure GDM3"
-msgstr "Une interface pour configurer GDM3"
-
-msgid "translator-credits"
-msgstr ""
-"NanoArch <nanoarch77@gmail.com>"
 
