@@ -1,116 +1,225 @@
-# A GUI to setting GDM3.
+# An interface to configure GDM3.
 # Copyright (C) 2011 Nano77 <nanoarch77@gmail.com>
-# This file is distributed under the same license as the PACKAGE package.
-# Nano77 <nanoarch77@gmail.com>, 2011.
+# This file is distributed under the same license as the GDM3setup package.
+# NanoArch <nanoarch77@gmail.com>, 2011, 2014.
 #
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: gdm3setup\n"
 "Report-Msgid-Bugs-To: https://github.com/Nano77/gdm3setup/issues\n"
-"POT-Creation-Date: 2011-12-22 19:35+0100\n"
-"Last-Translator: Nano77 <nanoarch77@gmail.com>\n"
+"POT-Creation-Date: 2014-02-08 20:06+0100\n"
+"Last-Translator: NanoArch <nanoarch77@gmail.com>\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: gdm3setup.py:22
+#: gdm3setup.in:25
+#: gdm3setup.in:96
+#: gdm3setup.in:319
+#: gdm3setup.in:348
+#: gdm3setup.in:359
 msgid "(None)"
 msgstr ""
 
-#: gdm3setup.py:47
+#: gdm3setup.in:29
+msgid ""
+"Bad path :\n"
+"File must be in /usr/share or /usr/local/share"
+msgstr ""
+
+#: gdm3setup.in:42
+msgid "Image"
+msgstr ""
+
+#: gdm3setup.in:60
 msgid "Select a File"
 msgstr ""
 
-#: gdm3setup.py:97
-msgid "Disabled"
-msgstr ""
-
-#: gdm3setup.py:187
-msgid "GDM AutoLogin Setup"
-msgstr ""
-
-#: gdm3setup.py:192
-msgid "Enable Automatic Login"
-msgstr ""
-
-#: gdm3setup.py:200
-msgid "User Name"
-msgstr ""
-
-#: gdm3setup.py:212
-msgid "Enable Delay before autologin"
-msgstr ""
-
-#: gdm3setup.py:224
-msgid "Apply"
-msgstr ""
-
-#: gdm3setup.py:272
-msgid "GDM3 Setup"
-msgstr ""
-
-#: gdm3setup.py:282
-msgid "General"
-msgstr ""
-
-#: gdm3setup.py:317
-msgid "Wallpaper"
-msgstr ""
-
-#: gdm3setup.py:322
-msgid "Icon theme"
-msgstr ""
-
-#: gdm3setup.py:327
-msgid "Cursor theme"
-msgstr ""
-
-#: gdm3setup.py:332
-msgid "AutoLogin"
-msgstr ""
-
-#: gdm3setup.py:338
-msgid "Shell theme"
-msgstr ""
-
-#: gdm3setup.py:343
-msgid "Shell Logo"
-msgstr ""
-
-#: gdm3setup.py:348
-msgid "Show Date in Clock"
-msgstr ""
-
-#: gdm3setup.py:353
-msgid "Show Seconds in Clock"
-msgstr ""
-
-#: gdm3setup.py:359
-msgid "GTK3 theme"
-msgstr ""
-
-#: gdm3setup.py:364
-msgid "Font"
-msgstr ""
-
-#: gdm3setup.py:369
-msgid "Logo Icon"
-msgstr ""
-
-#: gdm3setup.py:374
-msgid "Enable Banner"
-msgstr ""
-
-#: gdm3setup.py:381
-msgid "Disable User List"
-msgstr ""
-
-#: gdm3setup.py:385
-msgid "Disable Restart Buttons"
-msgstr ""
-
-#: gdm3setup.py:413
+#: gdm3setup.in:300
 msgid "Select Wallpaper"
 msgstr ""
 
+#: gdm3setup.in:378
+#: gdm3setup.in:576
+#: gdm3setup.in:597
+msgid "Disabled"
+msgstr ""
+
+#: gdm3setup.in:478
+msgid "User Name can't be empty !"
+msgstr ""
+
+#: gdm3setup.in:657
+msgid "None"
+msgstr ""
+
+#: gdm3setup.in:659
+#: gdm3setup.in:663
+#: gdm3setup.in:667
+#: gdm3setup.ui:1071
+msgid "Fingerprint"
+msgstr ""
+
+#: gdm3setup.in:665
+#: gdm3setup.in:667
+#: gdm3setup.in:669
+#: gdm3setup.ui:1115
+msgid "Password"
+msgstr ""
+
+#: gdm3setup.in:670
+#: gdm3setup.in:672
+#: gdm3setup.in:674
+#: gdm3setup.ui:1155
+msgid "Smartcard"
+msgstr ""
+
+#: gdm3setup.in:671
+msgid "All"
+msgstr ""
+
+#: gdm3setup.in:725
+#: gdm3setup.in:730
+msgid "GDM3 Setup"
+msgstr ""
+
+#: gdm3setup.in:1316
+msgid "About GDM3setup"
+msgstr ""
+
+#: gdm3setup.in:1318
+msgid "An interface to configure GDM3"
+msgstr ""
+
+#: gdm3setup.in:1328
+msgid "translator-credits"
+msgstr ""
+
+#: gdm3setup.ui:34
+#: gdm3setup.ui:433
+msgid "Shell theme"
+msgstr ""
+
+#: gdm3setup.ui:47
+msgid "Icon theme"
+msgstr ""
+
+#: gdm3setup.ui:60
+msgid "Cursor theme"
+msgstr ""
+
+#: gdm3setup.ui:73
+#: gdm3setup.ui:446
+msgid "Shell Logo"
+msgstr ""
+
+#: gdm3setup.ui:86
+msgid "Wallpaper"
+msgstr ""
+
+#: gdm3setup.ui:99
+#: gdm3setup.ui:700
+#: gdm3setup.ui:1371
+msgid "Banner"
+msgstr ""
+
+#: gdm3setup.ui:112
+msgid "AutoLogin"
+msgstr ""
+
+#: gdm3setup.ui:125
+msgid "Authentication methods"
+msgstr ""
+
+#: gdm3setup.ui:138
+#: gdm3setup.ui:459
+msgid "Allowed failures"
+msgstr ""
+
+#: gdm3setup.ui:288
+#: gdm3setup.ui:806
+msgid "Disable User List"
+msgstr ""
+
+#: gdm3setup.ui:328
+#: gdm3setup.ui:540
+msgid "Show Date in Clock"
+msgstr ""
+
+#: gdm3setup.ui:368
+#: gdm3setup.ui:580
+msgid "Show Seconds in Clock"
+msgstr ""
+
+#: gdm3setup.ui:406
+msgid "General"
+msgstr ""
+
+#: gdm3setup.ui:620
+msgid "GnomeShell"
+msgstr ""
+
+#: gdm3setup.ui:648
+msgid "GTK Theme"
+msgstr ""
+
+#: gdm3setup.ui:661
+msgid "Font"
+msgstr ""
+
+#: gdm3setup.ui:674
+msgid "Logo Icon"
+msgstr ""
+
+#: gdm3setup.ui:687
+msgid "Fallback Logo"
+msgstr ""
+
+#: gdm3setup.ui:846
+msgid "Disable Restart Buttons"
+msgstr ""
+
+#: gdm3setup.ui:886
+msgid "GTK"
+msgstr ""
+
+#: gdm3setup.ui:904
+msgid "Authentication"
+msgstr ""
+
+#: gdm3setup.ui:979
+msgid "Disabling Password Authentication is discouraged"
+msgstr ""
+
+#: gdm3setup.ui:1034
+msgid "You must enable at least one method"
+msgstr ""
+
+#: gdm3setup.ui:1200
+msgid "GDM AutoLogin Setup"
+msgstr ""
+
+#: gdm3setup.ui:1256
+msgid "Enable Automatic Login"
+msgstr ""
+
+#: gdm3setup.ui:1286
+msgid "User Name"
+msgstr ""
+
+#: gdm3setup.ui:1322
+msgid "Enable Delay before autologin"
+msgstr ""
+
+#: gdm3setup.ui:1432
+msgid "Enable Banner"
+msgstr ""
+
+#: app-menu.ui:6
+msgid "_About GDM3setup"
+msgstr ""
+
+#: app-menu.ui:11
+msgid "_Quit"
+msgstr ""
