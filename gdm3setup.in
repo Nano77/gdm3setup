@@ -142,7 +142,7 @@ class ImageChooserDialog(GObject.Object):
 	def run(self) :
 		if self.FileChooserDialog == None :
 
-			self.FileChooserDialog = Gtk.FileChooserDialog(title=_("Select a File"),action=Gtk.FileChooserAction.OPEN)
+			self.FileChooserDialog = Gtk.FileChooserDialog(title=_("Select a file"),action=Gtk.FileChooserAction.OPEN)
 			self.FileChooserDialog.add_button(Gtk.STOCK_CANCEL,Gtk.ResponseType.CANCEL)
 			self.FileChooserDialog.add_button(Gtk.STOCK_CLEAR,Gtk.ResponseType.NONE)
 			self.FileChooserDialog.add_button(Gtk.STOCK_OPEN,Gtk.ResponseType.ACCEPT)
@@ -505,14 +505,14 @@ GObject.signal_new("changed", AuthenticationDialog, GObject.SIGNAL_RUN_FIRST,GOb
 
 class MainWindow(Gtk.ApplicationWindow) :
 	def __init__(self,app) :
-		Gtk.ApplicationWindow.__init__(self,application=app,title=_("GDM3 Setup"))
+		Gtk.ApplicationWindow.__init__(self,application=app,title=_("Login screen settings"))
 		self.connect("destroy",self._close)
 		self.set_position(Gtk.WindowPosition.CENTER)
 		self.set_resizable(False)
 		self.set_size_request(640,480)
 
 		self.titlebar = Gtk.HeaderBar()
-		self.titlebar.set_title(_("GDM3 Setup"))
+		self.titlebar.set_title(_("Login screen settings"))
 		self.titlebar.set_show_close_button(True)
 		self.set_titlebar(self.titlebar)
 
@@ -882,10 +882,10 @@ class Application(Gtk.Application):
 
 	def about(self,action=None, param=None):
 		aboutdialog = Gtk.AboutDialog()
-		aboutdialog.set_title(_("About GDM3setup"))
+		aboutdialog.set_title(_("About"))
 		aboutdialog.set_program_name("GDM3setup")
-		aboutdialog.set_comments(_("An interface to configure GDM3"))
-		aboutdialog.set_copyright("Copyright \xc2\xa9 2011-2013 NanoArch")
+		aboutdialog.set_comments(_("An interface to configure the login screen"))
+		aboutdialog.set_copyright("Copyright \xc2\xa9 2011-2014 NanoArch")
 		aboutdialog.set_license_type(Gtk.License.GPL_2_0)
 		aboutdialog.set_logo_icon_name("preferences-desktop-theme")
 		aboutdialog.set_website("https://github.com/Nano77/gdm3setup/")

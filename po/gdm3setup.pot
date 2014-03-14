@@ -1,4 +1,4 @@
-# An interface to configure GDM3.
+# An interface to configure the login screen.
 # Copyright (C) 2011 Nano77 <nanoarch77@gmail.com>
 # This file is distributed under the same license as the GDM3setup package.
 # NanoArch <nanoarch77@gmail.com>, 2011, 2014.
@@ -25,7 +25,7 @@ msgid "Image"
 msgstr ""
 
 #: gdm3setup.in.py:143
-msgid "Select a File"
+msgid "Select a file"
 msgstr ""
 
 #: gdm3setup.in.py:234
@@ -78,15 +78,15 @@ msgstr ""
 
 #: gdm3setup.in.py:502
 #: gdm3setup.in.py:509
-msgid "GDM3 Setup"
+msgid "Login screen settings"
 msgstr ""
 
 #: gdm3setup.in.py:879
-msgid "About GDM3setup"
+msgid "About"
 msgstr ""
 
 #: gdm3setup.in.py:881
-msgid "An interface to configure GDM3"
+msgid "An interface to configure the login screen"
 msgstr ""
 
 #: gdm3setup.in.py:890
@@ -106,11 +106,12 @@ msgid "You must enable at least one method"
 msgstr ""
 
 #: gdm3setup.ui:303
-msgid "GDM AutoLogin Setup"
+#: gdm3setup.ui:923
+msgid "Automatic login"
 msgstr ""
 
 #: gdm3setup.ui:359
-msgid "Enable Automatic Login"
+msgid "Enable automatic login"
 msgstr ""
 
 #: gdm3setup.ui:389
@@ -118,7 +119,7 @@ msgid "User Name"
 msgstr ""
 
 #: gdm3setup.ui:425
-msgid "Enable Delay before autologin"
+msgid "Enable delay before automatic login"
 msgstr ""
 
 #: gdm3setup.ui:474
@@ -152,10 +153,6 @@ msgstr ""
 msgid "Shell Logo"
 msgstr ""
 
-#: gdm3setup.ui:923
-msgid "AutoLogin"
-msgstr ""
-
 #: gdm3setup.ui:967
 msgid "Authentication methods"
 msgstr ""
@@ -177,7 +174,7 @@ msgid "Show Seconds in Clock"
 msgstr ""
 
 #: app-menu.ui:6
-msgid "_About GDM3setup"
+msgid "_About"
 msgstr ""
 
 #: app-menu.ui:11

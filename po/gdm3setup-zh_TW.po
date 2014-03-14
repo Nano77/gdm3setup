@@ -1,4 +1,4 @@
-# A GUI to setting GDM3.
+# An interface to configure the login screen.
 # Copyright (C) 2011 NanoArch <nanoarch77@gmail.com>
 # This file is distributed under the same license as the package.
 # Robert Wei <robert.wei@ossii.com.tw>, 2013.
@@ -21,7 +21,7 @@ msgid "(None)"
 msgstr "（無）"
 
 #: gdm3setup.py:47
-msgid "Select a File"
+msgid "Select a file"
 msgstr "選擇檔案"
 
 #: gdm3setup.py:97
@@ -29,11 +29,12 @@ msgid "Disabled"
 msgstr "停用"
 
 #: gdm3setup.py:187
-msgid "GDM AutoLogin Setup"
-msgstr "GDM 自動登入設定"
+#: gdm3setup.py:332
+msgid "Automatic login"
+msgstr "自動登入"
 
 #: gdm3setup.py:192
-msgid "Enable Automatic Login"
+msgid "Enable automatic login"
 msgstr "啟用自動登入"
 
 #: gdm3setup.py:200
@@ -41,7 +42,7 @@ msgid "User Name"
 msgstr "使用者名稱"
 
 #: gdm3setup.py:212
-msgid "Enable Delay before autologin"
+msgid "Enable delay before automatic login"
 msgstr "自動登入前先等待"
 
 #: gdm3setup.py:224
@@ -49,7 +50,7 @@ msgid "Apply"
 msgstr "應用"
 
 #: gdm3setup.py:272
-msgid "GDM3 Setup"
+msgid "Login screen settings"
 msgstr "GDM3 設定"
 
 #: gdm3setup.py:282
@@ -67,10 +68,6 @@ msgstr "圖示主題"
 #: gdm3setup.py:327
 msgid "Cursor theme"
 msgstr "滑鼠指標主題"
-
-#: gdm3setup.py:332
-msgid "AutoLogin"
-msgstr "自動登入"
 
 #: gdm3setup.py:338
 msgid "Shell theme"
@@ -117,7 +114,7 @@ msgid "Select Wallpaper"
 msgstr "選擇桌布"
 
 #: gdm3setup.in
-msgid "_About GDM3setup"
+msgid "_About"
 msgstr "關於(_A)"
 
 #: gdm3setup.in

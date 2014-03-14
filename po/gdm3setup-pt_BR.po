@@ -1,4 +1,4 @@
-# A GUI to setting GDM3.
+# An interface to configure the login screen.
 # Copyright (C) 2011 NanoArch <nanoarch77@gmail.com>
 # This file is distributed under the same license as the package.
 # b34tslack <b34tslack@gmail.com>, 2012.
@@ -21,7 +21,7 @@ msgid "(None)"
 msgstr "(Nenhum)"
 
 #: gdm3setup.py:47
-msgid "Select a File"
+msgid "Select a file"
 msgstr "Selecionar um arquivo"
 
 #: gdm3setup.py:97
@@ -29,11 +29,12 @@ msgid "Disabled"
 msgstr "Desativado"
 
 #: gdm3setup.py:187
-msgid "GDM AutoLogin Setup"
-msgstr "Configurações de accesso automático"
+#: gdm3setup.py:332
+msgid "Automatic login"
+msgstr "Accesso automático"
 
 #: gdm3setup.py:192
-msgid "Enable Automatic Login"
+msgid "Enable automatic login"
 msgstr "Permitir o accesso automático"
 
 #: gdm3setup.py:200
@@ -41,7 +42,7 @@ msgid "User Name"
 msgstr "Nome usuário"
 
 #: gdm3setup.py:212
-msgid "Enable Delay before autologin"
+msgid "Enable delay before automatic login"
 msgstr "Espera (em segundos) antes do accesso automático"
 
 #: gdm3setup.py:224
@@ -49,7 +50,7 @@ msgid "Apply"
 msgstr "Aplicar"
 
 #: gdm3setup.py:272
-msgid "GDM3 Setup"
+msgid "Login screen settings"
 msgstr "Configurações do GNOME Display Manager 3"
 
 #: gdm3setup.py:282
@@ -67,10 +68,6 @@ msgstr "Tema de ícones"
 #: gdm3setup.py:327
 msgid "Cursor theme"
 msgstr "Tema do cursor"
-
-#: gdm3setup.py:332
-msgid "AutoLogin"
-msgstr "Accesso automático"
 
 #: gdm3setup.py:338
 msgid "Shell theme"
@@ -117,8 +114,8 @@ msgid "Select Wallpaper"
 msgstr "Selecionar um Papel de parede"
 
 #: gdm3setup.in
-msgid "_About GDM3setup"
-msgstr "_Sobre GDM3setup"
+msgid "_About"
+msgstr "_Sobre"
 
 #: gdm3setup.in
 msgid "_Quit"
