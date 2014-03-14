@@ -1,4 +1,4 @@
-# An interface to configure GDM3.
+# An interface to configure the login screen.
 # Copyright (C) 2011 NanoArch <nanoarch77@gmail.com>
 # This file is distributed under the same license as the gdm3setup package.
 # NanoArch <nanoarch77@gmail.com>, 2011, 2014.
@@ -27,7 +27,7 @@ msgid "Image"
 msgstr "Image"
 
 #: gdm3setup.in:143
-msgid "Select a File"
+msgid "Select a file"
 msgstr "Sélectionner le logo du Shell"
 
 #: gdm3setup.in:234
@@ -80,15 +80,15 @@ msgstr "Toutes"
 
 #: gdm3setup.in:502
 #: gdm3setup.in:509
-msgid "GDM3 Setup"
+msgid "Login screen settings"
 msgstr "Paramètres de l'écran de connexion"
 
 #: gdm3setup.in:879
-msgid "About GDM3setup"
-msgstr "À propos de GDM3setup"
+msgid "About"
+msgstr "À propos"
 
 #: gdm3setup.in:881
-msgid "An interface to configure GDM3"
+msgid "An interface to configure the login screen"
 msgstr "Une interface pour configurer l'écran de connexion"
 
 #: gdm3setup.in:890
@@ -108,11 +108,12 @@ msgid "You must enable at least one method"
 msgstr "Vous devez activer au moins une méthode"
 
 #: gdm3setup.ui:303
-msgid "GDM AutoLogin Setup"
-msgstr "Connexion Automatique"
+#: gdm3setup.ui:923
+msgid "Automatic login"
+msgstr "Connexion automatique"
 
 #: gdm3setup.ui:359
-msgid "Enable Automatic Login"
+msgid "Enable automatic login"
 msgstr "Activer la connexion automatique"
 
 #: gdm3setup.ui:389
@@ -120,7 +121,7 @@ msgid "User Name"
 msgstr "Nom de l'utilisateur"
 
 #: gdm3setup.ui:425
-msgid "Enable Delay before autologin"
+msgid "Enable delay before automatic login"
 msgstr "Activer le délai avant connexion automatique"
 
 #: gdm3setup.ui:474
@@ -156,10 +157,6 @@ msgstr ""
 msgid "Shell Logo"
 msgstr "Logo du Shell"
 
-#: gdm3setup.ui:923
-msgid "AutoLogin"
-msgstr "Connexion Automatique"
-
 #: gdm3setup.ui:967
 msgid "Authentication methods"
 msgstr "Méthodes d'authentification"
@@ -181,8 +178,8 @@ msgid "Show Seconds in Clock"
 msgstr "Afficher les secondes sur l'horloge"
 
 #: app-menu.ui:6
-msgid "_About GDM3setup"
-msgstr "_À propos de GDM3setup"
+msgid "_About"
+msgstr "_À propos"
 
 #: app-menu.ui:11
 msgid "_Quit"

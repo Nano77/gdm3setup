@@ -301,7 +301,7 @@
   </object>
   <object class="GtkDialog" id="autologin-dialog">
     <property name="can_focus">False</property>
-    <property name="title" translatable="yes">GDM AutoLogin Setup</property>
+    <property name="title" translatable="yes">Automatic login</property>
     <property name="resizable">False</property>
     <property name="modal">True</property>
     <property name="type_hint">dialog</property>
@@ -358,7 +358,7 @@
                 <property name="margin_right">4</property>
                 <child>
                   <object class="GtkCheckButton" id="state-checkbutton">
-                    <property name="label" translatable="yes">Enable Automatic Login</property>
+                    <property name="label" translatable="yes">Enable automatic login</property>
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="receives_default">False</property>
@@ -424,7 +424,7 @@
                 <property name="spacing">8</property>
                 <child>
                   <object class="GtkCheckButton" id="time-checkbutton">
-                    <property name="label" translatable="yes">Enable Delay before autologin</property>
+                    <property name="label" translatable="yes">Enable delay before automatic login</property>
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="receives_default">False</property>
@@ -923,7 +923,7 @@ File must be in /usr/share or /usr/local/share</property>
                     <property name="can_focus">False</property>
                     <property name="margin_top">6</property>
                     <property name="margin_bottom">6</property>
-                    <property name="label" translatable="yes">AutoLogin</property>
+                    <property name="label" translatable="yes">Automatic login</property>
                     <property name="ellipsize">start</property>
                   </object>
                   <packing>
