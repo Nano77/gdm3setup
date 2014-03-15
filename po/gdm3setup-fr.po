@@ -169,11 +169,15 @@ msgstr "Tentatives de connexion"
 msgid "Disable User List"
 msgstr "Masquer la liste des utilisateurs"
 
-#: gdm3setup.ui:1095
+#: gdm3setup.ui:1098
+msgid "Hide the Power Off button"
+msgstr "Masquer le bouton d'arrêt"
+
+#: gdm3setup.ui:1140
 msgid "Show Date in Clock"
 msgstr "Afficher la date sur l'horloge"
 
-#: gdm3setup.ui:1137
+#: gdm3setup.ui:1182
 msgid "Show Seconds in Clock"
 msgstr "Afficher les secondes sur l'horloge"
 

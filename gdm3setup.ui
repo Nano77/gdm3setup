@@ -1080,6 +1080,48 @@ File must be in /usr/share or /usr/local/share</property>
           </object>
         </child>
         <child>
+          <object class="GtkListBoxRow" id="restart-row">
+            <property name="visible">True</property>
+            <property name="can_focus">True</property>
+            <child>
+              <object class="GtkBox" id="box_shell11">
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="margin_left">16</property>
+                <property name="margin_right">16</property>
+                <child>
+                  <object class="GtkLabel" id="label_restart">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="margin_top">6</property>
+                    <property name="margin_bottom">6</property>
+                    <property name="label" translatable="yes">Hide the Power Off button</property>
+                    <property name="ellipsize">end</property>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">True</property>
+                    <property name="position">0</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkSwitch" id="restart-switch">
+                    <property name="visible">True</property>
+                    <property name="can_focus">True</property>
+                    <property name="valign">center</property>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">True</property>
+                    <property name="pack_type">end</property>
+                    <property name="position">1</property>
+                  </packing>
+                </child>
+              </object>
+            </child>
+          </object>
+        </child>
+        <child>
           <object class="GtkListBoxRow" id="date-row">
             <property name="visible">True</property>
             <property name="can_focus">True</property>

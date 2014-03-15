@@ -535,6 +535,7 @@ class MainWindow(Gtk.ApplicationWindow) :
 		self.Switch_user8 = self.Builder.get_object("userlist-switch")
 		self.Button_autologin = AutologinDialog()
 		self.Button_autologin.set_transient_for(self)
+		self.Switch_restart = self.Builder.get_object("restart-switch")
 		self.Switch_clock_date10 = self.Builder.get_object("date-switch")
 		self.Switch_clock_seconds10 = self.Builder.get_object("seconds-switch")
 		self.SpinButton_allowed_failures10 = self.Builder.get_object("allowed-failures-spinbutton")
@@ -567,6 +568,7 @@ class MainWindow(Gtk.ApplicationWindow) :
 		self.Button_shell_logo10.connect("file-changed",self.shell_logo_10_filechanged)
 		self.Button_banner_text6.connect("changed",self.banner_text_6_changed)
 		self.Switch_user8.connect("notify::active",self.user_list_8_toggled)
+		self.Switch_restart.connect("notify::active",self.restart_toggled)
 		self.Button_autologin.connect("changed",self.autologin_changed)
 		self.Switch_clock_date10.connect("notify::active",self.clock_date_10_toggled)
 		self.Switch_clock_seconds10.connect("notify::active",self.clock_seconds_10_toggled)
@@ -606,6 +608,7 @@ class MainWindow(Gtk.ApplicationWindow) :
 		self.CURSOR_THEME = GdmSetupClient.GetCursorTheme()
 		self.SHELL_LOGO = GdmSetupClient.GetShellLogo()
 		self.USER_LIST = GdmSetupClient.GetUserListVisibility() 
+		self.RESTART = GdmSetupClient.GetRestartMenuVisibility()
 		self.BANNER = GdmSetupClient.GetBannerVisibility() 
 		self.BANNER_TEXT = GdmSetupClient.GetBannerText()
 		self.CLOCK_DATE = GdmSetupClient.GetClockDateVisibility() 
@@ -621,6 +624,7 @@ class MainWindow(Gtk.ApplicationWindow) :
 		self.Button_banner_text6.set_text(self.BANNER_TEXT)
 		self.Button_banner_text6.set_state(self.BANNER)
 		self.Switch_user8.set_active(self.USER_LIST)
+		self.Switch_restart.set_active(self.RESTART)
 		self.Switch_clock_date10.set_active(self.CLOCK_DATE)
 		self.Switch_clock_seconds10.set_active(self.CLOCK_SECONDS)
 		self.SpinButton_allowed_failures10.set_value(self.ALLOWED_FAILURES)
@@ -732,6 +736,15 @@ class MainWindow(Gtk.ApplicationWindow) :
 				print ("User List Changed : " + str(self.USER_LIST))
 			else:
 				self.Switch_user8.set_active(self.USER_LIST)
+
+	def restart_toggled(self,e,state):
+		restart = self.Switch_restart.get_active()
+		if self.RESTART != restart :
+			if GdmSetupClient.SetRestartMenuVisibility(restart) :
+				self.RESTART = restart
+				print ("Restart Button Changed : " + str(self.RESTART))
+			else:
+				self.Switch_restart.set_active(self.RESTART)
 
 	def autologin_changed(self,e) :
 		autologin_enabled = self.Button_autologin.get_autologin()
