@@ -1021,16 +1021,21 @@ File must be in /usr/share or /usr/local/share</property>
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkSpinButton" id="allowed-failures-spinbutton">
+                  <placeholder/>
+                </child>
+                <child>
+                  <object class="GtkLabel" id="allowed-failures-status">
                     <property name="visible">True</property>
-                    <property name="can_focus">True</property>
-                    <property name="valign">center</property>
+                    <property name="can_focus">False</property>
+                    <property name="margin_left">32</property>
+                    <property name="margin_right">32</property>
+                    <property name="label" translatable="yes">0</property>
                   </object>
                   <packing>
                     <property name="expand">False</property>
                     <property name="fill">True</property>
                     <property name="pack_type">end</property>
-                    <property name="position">1</property>
+                    <property name="position">2</property>
                   </packing>
                 </child>
               </object>
@@ -1213,4 +1218,43 @@ File must be in /usr/share or /usr/local/share</property>
       </packing>
     </child>
   </object>
+  <menu id='allowed-failures-menu'>
+    <section>
+      <item>
+        <attribute name="label" translatable="yes">1</attribute>
+        <attribute name="action">app.allowed-failures</attribute>
+        <attribute name="target" type="i">1</attribute>
+      </item>
+      <item>
+        <attribute name='label' translatable='yes'>2</attribute>
+        <attribute name="action">app.allowed-failures</attribute>
+        <attribute name="target" type="i">2</attribute>
+      </item>
+      <item>
+        <attribute name='label' translatable='yes'>3</attribute>
+        <attribute name="action">app.allowed-failures</attribute>
+        <attribute name="target" type="i">3</attribute>
+      </item>
+      <item>
+        <attribute name='label' translatable='yes'>4</attribute>
+        <attribute name="action">app.allowed-failures</attribute>
+        <attribute name="target" type="i">4</attribute>
+      </item>
+      <item>
+        <attribute name='label' translatable='yes'>5</attribute>
+        <attribute name="action">app.allowed-failures</attribute>
+        <attribute name="target" type="i">5</attribute>
+      </item>
+      <item>
+        <attribute name='label' translatable='yes'>6</attribute>
+        <attribute name="action">app.allowed-failures</attribute>
+        <attribute name="target" type="i">6</attribute>
+      </item>
+      <item>
+        <attribute name='label' translatable='yes'>7</attribute>
+        <attribute name="action">app.allowed-failures</attribute>
+        <attribute name="target" type="i">7</attribute>
+      </item>
+    </section>
+   </menu>
 </interface>
