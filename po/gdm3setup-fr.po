@@ -43,6 +43,10 @@ msgstr "Désactivé"
 msgid "after"
 msgstr "après"
 
+#: gdm3setup.in:240
+msgid "second(s)"
+msgstr "second(s)"
+
 #: gdm3setup.in:315
 msgid "User Name can't be empty !"
 msgstr "Le nom d'utilisateur ne peut pas être vide !"

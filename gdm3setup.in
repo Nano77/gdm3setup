@@ -240,7 +240,7 @@ class AutologinDialog (GObject.Object) :
 	def update(self) :
 		if self.autologin :
 			if self.timed :
-				self._status = self.username + " " + _("after") + " " + str(self.time) + " second(s)"
+				self._status = self.username + ' ' + unicode(_('after'),'UTF_8') + ' ' + str(self.time) + ' ' + unicode(_('second(s)'),'UTF_8')
 			else :
 				self._status = self.username
 		else :
