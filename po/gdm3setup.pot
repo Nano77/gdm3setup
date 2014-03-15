@@ -41,6 +41,10 @@ msgstr ""
 msgid "after"
 msgstr ""
 
+#: gdm3setup.in.py:240
+msgid "second(s)"
+msgstr ""
+
 #: gdm3setup.in.py:315
 msgid "User Name can't be empty !"
 msgstr ""
