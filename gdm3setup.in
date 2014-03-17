@@ -404,105 +404,6 @@ class BannerDialog(GObject.Object) :
 
 GObject.signal_new("changed", BannerDialog, GObject.SIGNAL_RUN_FIRST,GObject.TYPE_NONE, ())
 
-class AuthenticationDialog(GObject.Object) :
-	def __init__(self):
-		GObject.Object.__init__(self)
-		self._Fingerprint=False
-		self._Password=False
-		self._Smartcard=False
-		self._status=_("None")
-		self._parent=None
-
-	def get_fingerprint(self):
-		return self._Fingerprint
-
-	def get_password(self):
-		return self._Password
-
-	def get_smartcard(self):
-		return self._Smartcard
-
-	def get_status_text(self):
-		return self._status
-
-	def set_methods(self,fingerprint,password,smartcard):
-		self._Fingerprint = fingerprint
-		self._Password = password
-		self._Smartcard = smartcard
-		self._UpdateText()
-
-	def _UpdateText(self):
-		m = 1 * self._Fingerprint + 2 * self._Password + 4 * self._Smartcard  
-		if   m == 0 :
-			self._status= _("None")
-		elif m == 1 :
-			self._status= _("Fingerprint")
-		elif m == 2 :
-			self._status= _("Password")
-		elif m == 3 :
-			self._status= _("Fingerprint") + " | " + _("Password")
-		elif m == 4 :
-			self._status= _("Smartcard")
-		elif m == 5 :
-			self._status= _("Fingerprint") + " | " + _("Smartcard")
-		elif m == 6 :
-			self._status= _("Password") + " | " + _("Smartcard")
-		else :
-			self._status= _("All")
-
-	def _UpdateInfo(self):
-		mode = 1 * self._Switch_Fingerprint.get_active() + 2 * self._Switch_Password.get_active() + 4 * self._Switch_Smartcard.get_active()
-
-		if mode == 0 :
-			self._Button.set_sensitive(False)
-			self._Box_InfoBar_none.show()
-		else :
-			self._Button.set_sensitive(True)
-			self._Box_InfoBar_none.hide()
-
-		if not mode & 2 and mode > 0 :
-			self._Box_InfoBar_password.show_all()
-		else :
-			self._Box_InfoBar_password.hide()
-
-	def run(self) :
-		self._Builder = Gtk.Builder()
-		self._Builder.set_translation_domain("gdm3setup")
-		self._Builder.add_from_file("/usr/share/gdm3setup/ui/gdm3setup.ui")
-		self._Dialog = self._Builder.get_object("authentication-dialog")
-		self._Dialog.set_transient_for(self._parent)
-		self._Dialog.set_default_response(Gtk.ResponseType.OK)
-		self._Switch_Fingerprint = self._Builder.get_object("Switch_Fingerprint")
-		self._Switch_Password = self._Builder.get_object("Switch_Password")
-		self._Switch_Smartcard = self._Builder.get_object("Switch_Smartcard")
-		self._Button = self._Builder.get_object("authentication-button")
-		self._Box_InfoBar_none = self._Builder.get_object("InfoBar_none")
-		self._Box_InfoBar_password = self._Builder.get_object("InfoBar_password")	 
-		self._Switch_Fingerprint.set_active(self._Fingerprint)
-		self._Switch_Password.set_active(self._Password)
-		self._Switch_Smartcard.set_active(self._Smartcard)
-		self._Switch_Fingerprint.connect("notify::active",self._sw_toggled)
-		self._Switch_Password.connect("notify::active",self._sw_toggled)
-		self._Switch_Smartcard.connect("notify::active",self._sw_toggled)
-		self._UpdateInfo()
-
-		result = self._Dialog.run()
-
-		if result == Gtk.ResponseType.OK :
-			self.set_methods(self._Switch_Fingerprint.get_active(),self._Switch_Password.get_active(),self._Switch_Smartcard.get_active())
-			self._Dialog.destroy()
-			self.emit("changed")
-		else :
-			self._Dialog.destroy()
-
-	def _sw_toggled(self,e,s):
-		self._UpdateInfo()
-
-	def set_transient_for(self,parent):
-		self._parent = parent
-
-GObject.signal_new("changed", AuthenticationDialog, GObject.SIGNAL_RUN_FIRST,GObject.TYPE_NONE, ())
-
 class MainWindow(Gtk.ApplicationWindow) :
 	def __init__(self,app) :
 		Gtk.ApplicationWindow.__init__(self,application=app,title=_("Login screen settings"))
@@ -539,8 +440,10 @@ class MainWindow(Gtk.ApplicationWindow) :
 		self.Switch_restart = self.Builder.get_object("restart-switch")
 		self.Switch_clock_date10 = self.Builder.get_object("date-switch")
 		self.Switch_clock_seconds10 = self.Builder.get_object("seconds-switch")
-		self.Button_authentication = AuthenticationDialog()
-		self.Button_authentication.set_transient_for(self)
+		self.Action_fingerprint_authentication = Gio.SimpleAction.new_stateful('authentication-fingerprint', None, GLib.Variant('b', False))
+		self.Action_password_authentication = Gio.SimpleAction.new_stateful('authentication-password', None, GLib.Variant('b', False))
+		self.Action_smartcard_authentication = Gio.SimpleAction.new_stateful('authentication-smartcard', None, GLib.Variant('b', False))
+
 		self.listbox = self.Builder.get_object("listbox1")
 
 		self.authentication_status = self.Builder.get_object("authentication-status")
@@ -554,7 +457,9 @@ class MainWindow(Gtk.ApplicationWindow) :
 		self.allowed_failures_status = self.Builder.get_object("allowed-failures-status")
 
 		self.allowed_failures_menu = self.Builder.get_object("allowed-failures-menu")
+		self.authentication_menu = self.Builder.get_object("authentication-menu")
 		self.Popover_allowed_failure = Gtk.Popover.new_from_model(self.allowed_failures_status,self.allowed_failures_menu)
+		self.Popover_authentication = Gtk.Popover.new_from_model(self.authentication_status,self.authentication_menu)
 
 		self.load_shell_list()
 		self.load_icon_list()
@@ -572,10 +477,16 @@ class MainWindow(Gtk.ApplicationWindow) :
 		self.Switch_clock_date10.connect("notify::active",self.clock_date_10_toggled)
 		self.Switch_clock_seconds10.connect("notify::active",self.clock_seconds_10_toggled)
 		self.Action_allowed_failures.connect('activate', self.allowed_failures_10_changed)
-		self.Button_authentication.connect("changed",self.authentication_changed)
+		self.Action_fingerprint_authentication.connect('activate', self.fingerprint_authentication_changed)
+		self.Action_password_authentication.connect('activate', self.password_authentication_changed)
+		self.Action_smartcard_authentication.connect('activate', self.smartcard_authentication_changed)
 		self.listbox.connect("row-activated",self.row_activated)
 
 		app.add_action(self.Action_allowed_failures)
+		app.add_action(self.Action_fingerprint_authentication)
+		app.add_action(self.Action_password_authentication)
+		app.add_action(self.Action_smartcard_authentication)
+
 
 	def load_shell_list(self):
 
@@ -628,9 +539,11 @@ class MainWindow(Gtk.ApplicationWindow) :
 		self.Switch_clock_date10.set_active(self.CLOCK_DATE)
 		self.Switch_clock_seconds10.set_active(self.CLOCK_SECONDS)
 		self.Action_allowed_failures.set_state(GLib.Variant('i',self.ALLOWED_FAILURES))
-		self.Button_authentication.set_methods(self.FINGERPRINT_AUTHENTICATION,self.PASSWORD_AUTHENTICATION,self.SMARTCARD_AUTHENTICATION)
+		self.Action_fingerprint_authentication.set_state(GLib.Variant('b',self.FINGERPRINT_AUTHENTICATION))
+		self.Action_password_authentication.set_state(GLib.Variant('b',self.PASSWORD_AUTHENTICATION))
+		self.Action_smartcard_authentication.set_state(GLib.Variant('b',self.SMARTCARD_AUTHENTICATION))
 		self.banner_status.set_text(self.Button_banner_text6.get_status_text())
-		self.authentication_status.set_text(self.Button_authentication.get_status_text())
+		self.update_authentication_status()
 		self.logo_status.set_text(self.Button_shell_logo10.get_status_text())
 		self.logo_warning.set_visible(self.Button_shell_logo10.get_warning())
 		self.shell_status.set_text(self.ComboBox_shell10.get_value())
@@ -655,6 +568,35 @@ class MainWindow(Gtk.ApplicationWindow) :
 		self.Button_autologin.set_time(self.AUTOLOGIN_TIME)
 
 		self.autologin_status.set_text(self.Button_autologin.get_status_text())
+
+	def update_authentication_status(self):
+		m = 1 * self.FINGERPRINT_AUTHENTICATION + 2 * self.PASSWORD_AUTHENTICATION + 4 * self.SMARTCARD_AUTHENTICATION
+		if   m == 0 :
+			self.authentication_status.set_text(_("None"))
+		elif m == 1 :
+			self.authentication_status.set_text(_("Fingerprint"))
+			self.Action_fingerprint_authentication.set_enabled(False)
+		elif m == 2 :
+			self.authentication_status.set_text(_("Password"))
+			self.Action_password_authentication.set_enabled(False)
+		elif m == 3 :
+			self.authentication_status.set_text(_("Fingerprint") + " | " + _("Password"))
+		elif m == 4 :
+			self.authentication_status.set_text(_("Smartcard"))
+			self.Action_smartcard_authentication.set_enabled(False)
+		elif m == 5 :
+			self.authentication_status.set_text(_("Fingerprint") + " | " + _("Smartcard"))
+		elif m == 6 :
+			self.authentication_status.set_text(_("Password") + " | " + _("Smartcard"))
+		else :
+			self.authentication_status.set_text(_("All"))
+
+		if m > 1 :
+			self.Action_fingerprint_authentication.set_enabled(True)
+		if m > 2 :
+			self.Action_password_authentication.set_enabled(True)
+		if m > 4 :
+			self.Action_smartcard_authentication.set_enabled(True)
 
 	def shell_theme_10_changed(self,e):
 		shell_theme = unicode(self.ComboBox_shell10.get_value(),'UTF_8')
@@ -712,21 +654,35 @@ class MainWindow(Gtk.ApplicationWindow) :
 				self.Button_banner_text6.set_text(self.BANNER_TEXT)
 				self.Button_banner_text6.set_state(self.BANNER)
 
-	def authentication_changed(self,e):
-		fingerprint_authentication = self.Button_authentication.get_fingerprint()
-		password_authentication = self.Button_authentication.get_password()
-		smartcard_authentication = self.Button_authentication.get_smartcard()
-		if fingerprint_authentication!=self.FINGERPRINT_AUTHENTICATION or password_authentication!=self.PASSWORD_AUTHENTICATION or smartcard_authentication!=self.SMARTCARD_AUTHENTICATION :
+	def fingerprint_authentication_changed(self,action,e):
+		fingerprint_authentication = not action.get_state()
+		if fingerprint_authentication!=self.FINGERPRINT_AUTHENTICATION :
 			if GdmSetupClient.SetFingerprintAuthentication(fingerprint_authentication) :
-				GdmSetupClient.SetPasswordAuthentication(password_authentication)
-				GdmSetupClient.SetSmartcardAuthentication(smartcard_authentication)
 				self.FINGERPRINT_AUTHENTICATION=fingerprint_authentication
+				self.update_authentication_status()
+				print ("Authentication by fingerprint Changed : " + str(self.FINGERPRINT_AUTHENTICATION ))
+			action.change_state(GLib.Variant('b',self.FINGERPRINT_AUTHENTICATION))
+		self.Popover_authentication.hide()
+
+	def password_authentication_changed(self,action,e):
+		password_authentication = not action.get_state()
+		if password_authentication!=self.PASSWORD_AUTHENTICATION :
+			if GdmSetupClient.SetPasswordAuthentication(password_authentication) :
 				self.PASSWORD_AUTHENTICATION=password_authentication
+				self.update_authentication_status()
+				print ("Authentication by password Changed : " + str(self.PASSWORD_AUTHENTICATION))
+			action.set_state(GLib.Variant('b',self.PASSWORD_AUTHENTICATION))
+		self.Popover_authentication.hide()
+
+	def smartcard_authentication_changed(self,action,e):
+		smartcard_authentication = not action.get_state()
+		if smartcard_authentication!=self.SMARTCARD_AUTHENTICATION :
+			if GdmSetupClient.SetSmartcardAuthentication(smartcard_authentication) :
 				self.SMARTCARD_AUTHENTICATION=smartcard_authentication
-				self.authentication_status.set_text(e.get_status_text())
-				print ("Authentication methods Changed")
-			else :
-				self.Button_authentication.set_methods(self.FINGERPRINT_AUTHENTICATION,self.PASSWORD_AUTHENTICATION,self.SMARTCARD_AUTHENTICATION)
+				self.update_authentication_status()
+				print ("Authentication by smartcard Changed : " + str(self.SMARTCARD_AUTHENTICATION))
+			action.set_state(GLib.Variant('b',self.SMARTCARD_AUTHENTICATION))
+		self.Popover_authentication.hide()
 
 	def user_list_8_toggled(self,e,state):
 		user_list = self.Switch_user8.get_active()
@@ -811,7 +767,7 @@ class MainWindow(Gtk.ApplicationWindow) :
 		elif row_name == "autologin-row":
 			self.Button_autologin.run()
 		elif row_name == "authentication-row":
-			self.Button_authentication.run()
+			self.Popover_authentication.show()
 		elif row_name == "allowed-failure-row":
 			self.Popover_allowed_failure.show()
 		elif row_name == "userlist-row":

@@ -1257,4 +1257,20 @@ File must be in /usr/share or /usr/local/share</property>
       </item>
     </section>
    </menu>
+  <menu id='authentication-menu'>
+    <section>
+      <item>
+        <attribute name="label" translatable="yes">Fingerprint</attribute>
+        <attribute name="action">app.authentication-fingerprint</attribute>
+      </item>
+      <item>
+        <attribute name='label' translatable='yes'>Password</attribute>
+        <attribute name="action">app.authentication-password</attribute>
+      </item>
+      <item>
+        <attribute name='label' translatable='yes'>Smartcard</attribute>
+        <attribute name="action">app.authentication-smartcard</attribute>
+      </item>
+    </section>
+   </menu>
 </interface>

@@ -54,7 +54,7 @@ msgstr "Le nom d'utilisateur ne peut pas être vide !"
 #: gdm3setup.in:408
 #: gdm3setup.in:432
 msgid "None"
-msgstr "Aucun"
+msgstr "Aucune"
 
 #: gdm3setup.in:434
 #: gdm3setup.in:438
