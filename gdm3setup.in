@@ -17,82 +17,69 @@ from GdmSetup import GdmSetupClient
 gettext.install("gdm3setup")
 
 #-----------------------------------------------
-class ListDialog(GObject.Object):
-    def __init__(self,title):
-        GObject.Object.__init__(self)
-        self.builder = Gtk.Builder()
-        self.builder.set_translation_domain("gdm3setup")
-        self.builder.add_from_file("/usr/share/gdm3setup/ui/gdm3setup.ui")
-
-        self.dialog = self.builder.get_object("list-dialog")
-        self.dialog.set_title(title)
-        self.dialog.set_default_response(Gtk.ResponseType.OK)
-        self.dialog.connect("delete-event",self._shell_dialog_delete_event)
-        self.dialog.connect("response",self._shell_dialog_response)
-        self.selectedrow  = None
-
-        self.listbox = self.builder.get_object("list-dialog-list")
-        self.listbox.connect("row-activated",self._row_activated)
-        self.listbox.selectedrow = None
-
-        self.scrolledwindow = self.builder.get_object("scrolledwindow")
-
-        self._row_count = 0
-
-    def _shell_dialog_response(self, dialog, response_id):
-        if response_id == Gtk.ResponseType.OK :
-            if self.listbox.selectedrow != self.selectedrow :
-                self.selectedrow = self.listbox.selectedrow
-                self.emit("changed")
-        dialog.hide()
-
-    def _shell_dialog_delete_event(self, widget, event):
-        self._list_row_select(self.selectedrow)
-        return widget.hide_on_delete()
+class ListPopover(GObject.Object):
+    def __init__(self,relative_to):
+		GObject.Object.__init__(self)
+		self.popover = Gtk.Popover()
+		self.popover.set_relative_to(relative_to)
+		self.scrolledwindow = Gtk.ScrolledWindow()
+		self.scrolledwindow.set_policy(Gtk.PolicyType.NEVER,Gtk.PolicyType.AUTOMATIC)
+		self.scrolledwindow.get_style_context().add_class("sidebar")
+		self.popover.add(self.scrolledwindow)
+		self.scrolledwindow.show()
+		self.listbox = Gtk.ListBox()
+		self.listbox.set_selection_mode(Gtk.SelectionMode.NONE)
+		self.scrolledwindow.add(self.listbox)
+		self.listbox.show()
+		self.listbox.connect("row-activated",self._row_activated)
+		self.selectedrow  = None
+		self._row_count = 0
 
     def _row_activated(self,listbox,row):
-
-        if row != listbox.selectedrow :
-            if listbox.selectedrow != None :
-                listbox.selectedrow.indicator.hide()
-            listbox.selectedrow = row
-            row.indicator.show()
-
-    def _list_row_select(self,row):
-        if row != self.listbox.selectedrow :
-            if self.listbox.selectedrow != None :
-                self.listbox.selectedrow.indicator.hide()
-            self.listbox.selectedrow = row
-            row.indicator.show()
+        if row != self.selectedrow :
+            if self.selectedrow != None :
+                self.selectedrow.indicator.set_opacity(0.0);
+            self.selectedrow = row
+            row.indicator.set_opacity(1.0);
+            self.emit("changed")
+        self.popover.hide()
 
     def _row_select(self,row):
+        if row != self.selectedrow :
+            if self.selectedrow != None :
+                self.selectedrow.indicator.set_opacity(0.0);
         self.selectedrow = row
-        self._list_row_select(self.selectedrow)
+        row.indicator.set_opacity(1.0);
 
     def run(self):
-        self.dialog.present()
+        self.popover.show()
 
-        if self._row_count >= 5 :
-			if self.selectedrow != None :
-				row_height = self.selectedrow.get_allocation().height
-			else :
-				row_height = self.listbox.get_children()[0].get_allocation().height
-			self.scrolledwindow.set_size_request(-1,row_height*5)
+        if self._row_count > 5 :
+            minimum_height,natural_height = self.listbox.get_children()[0].get_preferred_height()
+            self.scrolledwindow.set_size_request(-1,natural_height*5)
+        if self._row_count > 0 and self._row_count <= 5 :
+            minimum_height,natural_height = self.listbox.get_children()[0].get_preferred_height()
+            self.scrolledwindow.set_size_request(-1,natural_height * self._row_count)
+        self.popover.hide()
+        self.popover.show_all()
 
     def add_row(self, text) :
         row = Gtk.ListBoxRow.new()
+        row.get_style_context().add_class("background")
         self.listbox.add(row)
         box = Gtk.HBox()
-        box.set_margin_left(64)
-        box.set_margin_right(64)
+        box.set_margin_left(16)
+        box.set_margin_right(32)
         row.add(box)
         label = Gtk.Label.new(text)
         label.set_margin_top(6)
         label.set_margin_bottom(6)
         indicator = Gtk.Image.new_from_icon_name("emblem-ok-symbolic",Gtk.IconSize.BUTTON)
-        indicator.set_no_show_all(True)
-        box.pack_start(label,False,False,2)
-        box.pack_end(indicator,False,False,2)
+        indicator.set_margin_left(16)
+        indicator.set_margin_right(16)
+        indicator.set_opacity(0.0);
+        box.pack_end(label,True,True,2)
+        box.pack_start(indicator,False,False,2)
         row.row_name = text
         row.indicator = indicator
         row.show_all()
@@ -112,10 +99,7 @@ class ListDialog(GObject.Object):
                 self._row_select(row)
                 break
 
-    def set_transient_for(self,parent):
-        self.dialog.set_transient_for(parent)
-
-GObject.signal_new("changed", ListDialog, GObject.SIGNAL_RUN_FIRST,GObject.TYPE_NONE, ())
+GObject.signal_new("changed", ListPopover, GObject.SIGNAL_RUN_FIRST,GObject.TYPE_NONE, ())
 
 class ImageChooserDialog(GObject.Object):
 	def __init__(self):
@@ -423,12 +407,6 @@ class MainWindow(Gtk.ApplicationWindow) :
 		self.Box_Main = self.Builder.get_object("vbox_gdm")
 		self.add(self.Box_Main)
 
-		self.ComboBox_shell10 = ListDialog(_("Shell theme"))
-		self.ComboBox_shell10.set_transient_for(self)
-		self.ComboBox_icon = ListDialog(_("Icon theme"))
-		self.ComboBox_icon.set_transient_for(self)
-		self.ComboBox_cursor = ListDialog(_("Cursor theme"))
-		self.ComboBox_cursor.set_transient_for(self)
 		self.Button_shell_logo10 = ImageChooserDialog()
 		self.Button_shell_logo10.set_transient_for(self)
 		self.Button_banner_text6 = BannerDialog()
@@ -455,6 +433,10 @@ class MainWindow(Gtk.ApplicationWindow) :
 		self.icon_status = self.Builder.get_object("icon-status")
 		self.cursor_status = self.Builder.get_object("cursor-status")
 		self.allowed_failures_status = self.Builder.get_object("allowed-failures-status")
+
+		self.ComboBox_shell10 = ListPopover(self.shell_status)
+		self.ComboBox_icon = ListPopover(self.icon_status)
+		self.ComboBox_cursor =	ListPopover(self.cursor_status)
 
 		self.allowed_failures_menu = self.Builder.get_object("allowed-failures-menu")
 		self.authentication_menu = self.Builder.get_object("authentication-menu")
