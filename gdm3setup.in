@@ -54,16 +54,16 @@ class ListDialog(GObject.Object):
 
         if row != listbox.selectedrow :
             if listbox.selectedrow != None :
-                listbox.selectedrow.indicator.hide()
+                listbox.selectedrow.indicator.set_opacity(0.0);
             listbox.selectedrow = row
-            row.indicator.show()
+            row.indicator.set_opacity(1.0);
 
     def _list_row_select(self,row):
         if row != self.listbox.selectedrow :
             if self.listbox.selectedrow != None :
-                self.listbox.selectedrow.indicator.hide()
+                self.listbox.selectedrow.indicator.set_opacity(0.0);
             self.listbox.selectedrow = row
-            row.indicator.show()
+            row.indicator.set_opacity(1.0);
 
     def _row_select(self,row):
         self.selectedrow = row
@@ -83,15 +83,16 @@ class ListDialog(GObject.Object):
         row = Gtk.ListBoxRow.new()
         self.listbox.add(row)
         box = Gtk.HBox()
-        box.set_margin_left(64)
-        box.set_margin_right(64)
+        box.set_margin_left(32)
         row.add(box)
         label = Gtk.Label.new(text)
         label.set_margin_top(6)
         label.set_margin_bottom(6)
         indicator = Gtk.Image.new_from_icon_name("emblem-ok-symbolic",Gtk.IconSize.BUTTON)
-        indicator.set_no_show_all(True)
-        box.pack_start(label,False,False,2)
+        indicator.set_margin_left(16)
+        indicator.set_margin_right(16)
+        indicator.set_opacity(0.0);
+        box.pack_start(label,True,True,2)
         box.pack_end(indicator,False,False,2)
         row.row_name = text
         row.indicator = indicator
