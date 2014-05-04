@@ -70,14 +70,15 @@ class ListDialog(GObject.Object):
         self._list_row_select(self.selectedrow)
 
     def run(self):
-        self.dialog.present()
 
-        if self._row_count >= 5 :
-			if self.selectedrow != None :
-				row_height = self.selectedrow.get_allocation().height
-			else :
-				row_height = self.listbox.get_children()[0].get_allocation().height
-			self.scrolledwindow.set_size_request(-1,row_height*5)
+        if self._row_count > 5 :
+            minimum_height,natural_height = self.listbox.get_children()[0].get_preferred_height()
+            self.scrolledwindow.set_size_request(-1,natural_height*5)
+        if self._row_count > 0 and self._row_count <= 5 :
+            minimum_height,natural_height = self.listbox.get_children()[0].get_preferred_height()
+            self.scrolledwindow.set_size_request(-1,natural_height * self._row_count)
+
+        self.dialog.present()
 
     def add_row(self, text) :
         row = Gtk.ListBoxRow.new()
