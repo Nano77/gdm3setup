@@ -1,5 +1,5 @@
 # An interface to configure the login screen.
-# Copyright (C) 2011 Nano77 <nanoarch77@gmail.com>
+# Copyright (C) 2011 NanoArch <nanoarch77@gmail.com>
 # This file is distributed under the same license as the GDM3setup package.
 # NanoArch <nanoarch77@gmail.com>, 2011, 2014.
 #
@@ -114,16 +114,28 @@ msgstr ""
 msgid "Automatic login"
 msgstr ""
 
-#: gdm3setup.ui:359
-msgid "Enable automatic login"
+#: gdm3setup.ui:373
+msgid "Login mode"
+msgstr ""
+
+#: gdm3setup.ui:387
+msgid "Manual"
+msgstr ""
+
+#: gdm3setup.ui:388
+msgid "Automatic"
 msgstr ""
 
 #: gdm3setup.ui:389
-msgid "User Name"
+msgid "Automatic after a delay"
 msgstr ""
 
-#: gdm3setup.ui:425
-msgid "Enable delay before automatic login"
+#: gdm3setup.ui:414
+msgid "Select an user"
+msgstr ""
+
+#: gdm3setup.ui:474
+msgid "Select the delay before automatic login"
 msgstr ""
 
 #: gdm3setup.ui:474
