@@ -116,17 +116,29 @@ msgstr "Vous devez activer au moins une méthode"
 msgid "Automatic login"
 msgstr "Connexion automatique"
 
-#: gdm3setup.ui:359
-msgid "Enable automatic login"
-msgstr "Activer la connexion automatique"
+#: gdm3setup.ui:373
+msgid "Login mode"
+msgstr "Mode de connexion"
+
+#: gdm3setup.ui:387
+msgid "Manual"
+msgstr "Manuel"
+
+#: gdm3setup.ui:388
+msgid "Automatic"
+msgstr "Automatique"
 
 #: gdm3setup.ui:389
-msgid "User Name"
-msgstr "Nom de l'utilisateur"
+msgid "Automatic after a delay"
+msgstr "Automatique après un delai"
 
-#: gdm3setup.ui:425
-msgid "Enable delay before automatic login"
-msgstr "Activer le délai avant connexion automatique"
+#: gdm3setup.ui:414
+msgid "Select an user"
+msgstr "Sélectionner un utilisateur"
+
+#: gdm3setup.ui:474
+msgid "Select the delay before automatic login"
+msgstr "Sélectionner le delai avant connexion automatique"
 
 #: gdm3setup.ui:474
 #: gdm3setup.ui:879

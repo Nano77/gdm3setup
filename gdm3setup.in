@@ -232,21 +232,80 @@ class AutologinDialog (GObject.Object) :
 	def __init__(self):
 		GObject.Object.__init__(self)
 		self.autologin=False
-		self.username=""
 		self.timed=False
 		self.time=30
-		self.Dialog = None 
 		self._status = _("Disabled")
-		self._parent=None
+		self.mode=0
+
+		self._row_count = 0
+
+		AccountsProxy = dbus.SystemBus().get_object('org.freedesktop.Accounts','/org/freedesktop/Accounts')
+		self.GetListUsers = AccountsProxy.get_dbus_method('ListCachedUsers','org.freedesktop.Accounts')
+
+		self.Builder = Gtk.Builder()
+		self.Builder.set_translation_domain("gdm3setup")
+		self.Builder.add_from_file("/usr/share/gdm3setup/ui/gdm3setup.ui")
+		self.Dialog = self.Builder.get_object("autologin-dialog")
+		self.Dialog.set_default_response(Gtk.ResponseType.OK)
+		self.scrolledwindow = self.Builder.get_object("scrolledwindow1")
+		self.selectedrow  = None
+
+		self.listbox = self.Builder.get_object("autologin-listbox")
+		self.listbox.connect("row-activated",self._row_activated)
+		self.listbox.selectedrow = None
+
+		self.SpinButton_Delay = self.Builder.get_object("time-spinbutton")
+
+		self.ComboBox_Mode = self.Builder.get_object("mode-combobox")
+		self.ComboBox_Mode.connect("changed",self.combobox_mode_changed)
+
+		self.Box_Username = self.Builder.get_object("autologin-dialog-username-box")
+		self.Box_Delay = self.Builder.get_object("autologin-dialog-delay-box")
+		self.Box_Autologin = self.Builder.get_object("autologin-dialog-box")
+
+		for user_path in self.GetListUsers()  :
+			user_proxy = dbus.SystemBus().get_object('org.freedesktop.Accounts',user_path)
+
+			GetProp = user_proxy.get_dbus_method('Get','org.freedesktop.DBus.Properties')
+			RealName = GetProp('org.freedesktop.Accounts.User','RealName')
+			UserName = GetProp('org.freedesktop.Accounts.User','UserName')
+			LocalAccount = GetProp('org.freedesktop.Accounts.User','LocalAccount')
+
+			if LocalAccount :
+				self.add_row(UserName,RealName)
+
+		self.Dialog.connect("response",self.response_cb)
+		self.Dialog.connect("delete-event",self._delete_event)
 
 	def update(self) :
 		if self.autologin :
+			self.Box_Autologin.show()
 			if self.timed :
-				self._status = self.username + ' ' + unicode(_('after'),'UTF_8') + ' ' + str(self.time) + ' ' + unicode(_('second(s)'),'UTF_8')
+				self.mode = 2
+				self._status = self.get_realname() + ' ' + unicode(_('after'),'UTF_8') + ' ' + str(self.time) + ' ' + unicode(_('second(s)'),'UTF_8')
+				self.Box_Delay.show()
+				self.Box_Autologin.set_spacing(16)
 			else :
-				self._status = self.username
+				self.mode = 1
+				self._status = self.get_realname()
+				self.Box_Delay.hide()
+				self.Box_Autologin.set_spacing(0)
 		else :
+			self.mode = 0
 			self._status = _("Disabled")
+			self.Box_Autologin.hide()
+
+	def set_mode(self,mode) :
+		if mode == 2 :
+			self.autologin = True
+			self.timed = True
+		elif mode == 1 :
+			self.autologin = True
+			self.timed = False
+		else :
+			self.autologin = False
+			self.timed = False
+		self.update()
 
 	def set_autologin(self,b) :
 		self.autologin = b
@@ -269,78 +328,124 @@ class AutologinDialog (GObject.Object) :
 	def get_time(self):
 		return self.time
 
-	def set_username(self,username):
-		self.username=username
-		self.update()
-
 	def get_username(self):
-		return self.username
+		if self.selectedrow != None :
+			return self.selectedrow.row_username
+		else :
+			return ""
+
+	def get_realname(self):
+		if self.selectedrow != None :
+			return self.selectedrow.row_realname
+		else :
+			return ""
+
+	def set_username(self,username):
+		rows = self.listbox.get_children ()
+
+		for row in rows :
+			if username == row.row_username :
+				self._row_select(row)
+				break
 
 	def get_status_text(self):
 		return self._status
 
+	def _row_activated(self,listbox,row):
+
+		if row != listbox.selectedrow :
+			if listbox.selectedrow != None :
+				listbox.selectedrow.indicator.set_opacity(0.0);
+			listbox.selectedrow = row
+			row.indicator.set_opacity(1.0);
+
+	def _list_row_select(self,row):
+		if row != self.listbox.selectedrow :
+			if self.listbox.selectedrow != None :
+				self.listbox.selectedrow.indicator.set_opacity(0.0);
+			self.listbox.selectedrow = row
+			row.indicator.set_opacity(1.0);
+
+	def _row_select(self,row):
+		self.selectedrow = row
+		self._list_row_select(self.selectedrow)
+
+	def add_row(self,UserName,RealName):
+		row = Gtk.ListBoxRow.new()
+		self.listbox.add(row)
+		box = Gtk.HBox()
+		box.set_margin_left(32)
+		row.add(box)
+		label = Gtk.Label.new(RealName)
+		label.set_margin_top(6)
+		label.set_margin_bottom(6)
+		indicator = Gtk.Image.new_from_icon_name("emblem-ok-symbolic",Gtk.IconSize.BUTTON)
+		indicator.set_margin_left(16)
+		indicator.set_margin_right(16)
+		indicator.set_opacity(0.0);
+		box.pack_start(label,True,True,2)
+		box.pack_end(indicator,False,False,2)
+		row.row_username = UserName
+		row.row_realname = RealName
+		row.indicator = indicator
+		row.show_all()
+		self._row_count = self._row_count + 1
+		return row
+
 	def run(self) :
-		if self.Dialog == None :
-			self.Builder = Gtk.Builder()
-			self.Builder.set_translation_domain("gdm3setup")
-			self.Builder.add_from_file("/usr/share/gdm3setup/ui/gdm3setup.ui")
-			self.Dialog = self.Builder.get_object("autologin-dialog")
-			self.Dialog.set_default_response(Gtk.ResponseType.OK)
-			self.CheckButton_AutoLogin = self.Builder.get_object("state-checkbutton")
-			self.HBox_username = self.Builder.get_object("user-box")
-			self.Entry_username = self.Builder.get_object("user-entry")
-			self.HBox_Delay = self.Builder.get_object("time-box")
-			self.CheckButton_Delay = self.Builder.get_object("time-checkbutton")
-			self.SpinButton_Delay = self.Builder.get_object("time-spinbutton")
-			self.SpinButton_Delay.set_range(1,60)
-			self.SpinButton_Delay.set_increments(1,1)
-
-			self.CheckButton_AutoLogin.bind_property("active",self.HBox_username,"sensitive")
-			self.CheckButton_AutoLogin.bind_property("active",self.HBox_Delay,"sensitive")
-			self.CheckButton_Delay.bind_property("active",self.SpinButton_Delay,"sensitive")
-
-			self.Dialog.connect("response",self.response_cb)
-			self.Dialog.connect("destroy",self.dialog_destroy)
-			self.Dialog.set_transient_for(self._parent)
-
-		self.CheckButton_AutoLogin.set_active(self.get_autologin())
-		self.HBox_username.set_sensitive(self.get_autologin())
-		self.HBox_Delay.set_sensitive(self.get_autologin())
-		self.Entry_username.set_text(self.get_username())
-		self.CheckButton_Delay.set_active(self.get_timed())
-		self.SpinButton_Delay.set_sensitive(self.get_timed())
+		self.Dialog.present()
 		self.SpinButton_Delay.set_value(self.get_time())
-		self.Dialog.run()
+		self.ComboBox_Mode.set_active(self.mode)
+		if self._row_count >= 3 :
+			if self.selectedrow != None :
+				row_height = self.selectedrow.get_allocation().height
+			else :
+				row_height = self.listbox.get_children()[0].get_allocation().height
+			self.scrolledwindow.set_size_request(-1,row_height*3)
 
 	def response_cb(self,dialog,response) :
 		if response == Gtk.ResponseType.OK :
-			if self.CheckButton_AutoLogin.get_active() and self.Entry_username.get_text()=="" :
-				MessageDialog = Gtk.MessageDialog(self.get_toplevel(),Gtk.DialogFlags.DESTROY_WITH_PARENT, 
-										Gtk.MessageType.ERROR,
-										Gtk.ButtonsType.CLOSE,
-										_("User Name can't be empty !"));
-				MessageDialog.run()
-				MessageDialog.destroy()
 
-			else :
-				if self.autologin != self.CheckButton_AutoLogin.get_active() or \
-				self.username != self.Entry_username.get_text() or \
-				self.timed != self.CheckButton_Delay.get_active() or \
-				self.time != self.SpinButton_Delay.get_value_as_int() :
-					self.set_autologin(self.CheckButton_AutoLogin.get_active())
-					self.set_username(self.Entry_username.get_text())
-					self.set_timed(self.CheckButton_Delay.get_active())
-					self.set_time(self.SpinButton_Delay.get_value_as_int())
-					self.emit("changed")
-				self.Dialog.hide()
+			if self.mode != self.ComboBox_Mode.get_active() or \
+			self.listbox.selectedrow != self.selectedrow or \
+			self.time != self.SpinButton_Delay.get_value_as_int() :
+				self.set_mode(self.ComboBox_Mode.get_active())
+				self.selectedrow = self.listbox.selectedrow
+				self.set_time(self.SpinButton_Delay.get_value_as_int())
+				self.emit("changed")
+
+			self.Dialog.hide()
 		else :
 			self.Dialog.hide()
 
-	def dialog_destroy(self,data) :
-		self.Dialog = None
+	def combobox_mode_changed(self,combobox):
+
+		if self._row_count > 0 :
+			minimum_height,natural_height = self.listbox.get_children()[0].get_preferred_height()
+			self.scrolledwindow.set_size_request(-1,natural_height*3)
+
+		mode = combobox.get_active()
+		if mode == 2 :
+			self.Box_Autologin.show()
+			self.Box_Username.set_hexpand(False)
+			self.Box_Autologin.set_spacing(8)
+			self.Box_Delay.show()
+
+		elif mode == 1 :
+			self.Box_Autologin.show()
+			self.Box_Username.set_hexpand(True)
+			self.Box_Delay.hide()
+			self.Box_Autologin.set_spacing(0)
+
+		else :
+			self.Box_Autologin.hide()
+
+	def _delete_event(self, widget, event):
+		self._list_row_select(self.selectedrow)
+		return widget.hide_on_delete()
 
 	def set_transient_for(self,parent):
-		self._parent = parent
+		self.Dialog.set_transient_for(parent)
 
 GObject.signal_new("changed", AutologinDialog, GObject.SIGNAL_RUN_FIRST,GObject.TYPE_NONE, ())
 
