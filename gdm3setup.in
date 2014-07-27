@@ -22,6 +22,7 @@ class ListPopover(GObject.Object):
 		GObject.Object.__init__(self)
 		self.popover = Gtk.Popover()
 		self.popover.set_relative_to(relative_to)
+		self.popover.set_position(Gtk.PositionType(3))
 		self.scrolledwindow = Gtk.ScrolledWindow()
 		self.scrolledwindow.set_policy(Gtk.PolicyType.NEVER,Gtk.PolicyType.AUTOMATIC)
 		self.scrolledwindow.get_style_context().add_class("sidebar")
@@ -605,12 +606,12 @@ class MainWindow(Gtk.ApplicationWindow) :
 		self.ICON_THEME = GdmSetupClient.GetIconTheme()
 		self.CURSOR_THEME = GdmSetupClient.GetCursorTheme()
 		self.SHELL_LOGO = GdmSetupClient.GetShellLogo()
-		self.USER_LIST = GdmSetupClient.GetUserListVisibility() 
+		self.USER_LIST = GdmSetupClient.GetUserListVisibility()
 		self.RESTART = GdmSetupClient.GetRestartMenuVisibility()
-		self.BANNER = GdmSetupClient.GetBannerVisibility() 
+		self.BANNER = GdmSetupClient.GetBannerVisibility()
 		self.BANNER_TEXT = GdmSetupClient.GetBannerText()
-		self.CLOCK_DATE = GdmSetupClient.GetClockDateVisibility() 
-		self.CLOCK_SECONDS = GdmSetupClient.GetClockSecondsVisibility() 
+		self.CLOCK_DATE = GdmSetupClient.GetClockDateVisibility()
+		self.CLOCK_SECONDS = GdmSetupClient.GetClockSecondsVisibility()
 		self.ALLOWED_FAILURES = GdmSetupClient.GetAllowedFailures()
 		self.FINGERPRINT_AUTHENTICATION = GdmSetupClient.GetFingerprintAuthentication()
 		self.PASSWORD_AUTHENTICATION = GdmSetupClient.GetPasswordAuthentication()
@@ -649,9 +650,9 @@ class MainWindow(Gtk.ApplicationWindow) :
 		self.AUTOLOGIN_USERNAME = GdmSetupClient.GetAutoLoginUserName()
 		self.AUTOLOGIN_TIMED = GdmSetupClient.GetAutoLoginTimed()
 		self.AUTOLOGIN_TIME = GdmSetupClient.GetAutoLoginTime()
-		self.Button_autologin.set_autologin(self.AUTOLOGIN_ENABLED) 
+		self.Button_autologin.set_autologin(self.AUTOLOGIN_ENABLED)
 		self.Button_autologin.set_username(self.AUTOLOGIN_USERNAME)
-		self.Button_autologin.set_timed(self.AUTOLOGIN_TIMED) 
+		self.Button_autologin.set_timed(self.AUTOLOGIN_TIMED)
 		self.Button_autologin.set_time(self.AUTOLOGIN_TIME)
 
 		self.autologin_status.set_text(self.Button_autologin.get_status_text())
@@ -827,7 +828,7 @@ class MainWindow(Gtk.ApplicationWindow) :
 				print ("Clock Seconds toggled : " + str(self.CLOCK_SECONDS))
 			else:
 				self.Switch_clock_seconds10.set_active(self.CLOCK_SECONDS)
-		
+
 	def allowed_failures_10_changed(self,action, value) :
 		allowed_failures = value.get_int32()
 		if self.ALLOWED_FAILURES != allowed_failures :
