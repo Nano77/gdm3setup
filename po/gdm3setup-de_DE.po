@@ -20,6 +20,16 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
+#: gdm3setup.ui:22
+#: gdm3setup.ui:272
+msgid "_Cancel"
+msgstr "_Abbrechen"
+
+#: gdm3setup.ui:37
+#: gdm3setup.ui:287
+msgid "_Apply"
+msgstr "An_wenden"
+
 #: gdm3setup.py:22
 msgid "(None)"
 msgstr "(Keine)"

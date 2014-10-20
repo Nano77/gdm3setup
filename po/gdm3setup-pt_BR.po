@@ -16,6 +16,16 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
+#: gdm3setup.ui:22
+#: gdm3setup.ui:272
+msgid "_Cancel"
+msgstr "_Cancelar"
+
+#: gdm3setup.ui:37
+#: gdm3setup.ui:287
+msgid "_Apply"
+msgstr "_Aplicar"
+
 #: gdm3setup.py:22
 msgid "(None)"
 msgstr "(Nenhum)"
