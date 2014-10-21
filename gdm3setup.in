@@ -559,11 +559,11 @@ class MainWindow(Gtk.ApplicationWindow) :
 		self.ComboBox_cursor.connect("changed",self.cursor_theme_changed)
 		self.Button_shell_logo10.connect("file-changed",self.shell_logo_10_filechanged)
 		self.Button_banner_text6.connect("changed",self.banner_text_6_changed)
-		self.Switch_user8.connect("notify::active",self.user_list_8_toggled)
-		self.Switch_restart.connect("notify::active",self.restart_toggled)
+		self.Switch_user8.connect("state-set",self.user_list_8_toggled)
+		self.Switch_restart.connect("state-set",self.restart_toggled)
 		self.Button_autologin.connect("changed",self.autologin_changed)
-		self.Switch_clock_date10.connect("notify::active",self.clock_date_10_toggled)
-		self.Switch_clock_seconds10.connect("notify::active",self.clock_seconds_10_toggled)
+		self.Switch_clock_date10.connect("state-set",self.clock_date_10_toggled)
+		self.Switch_clock_seconds10.connect("state-set",self.clock_seconds_10_toggled)
 		self.Action_allowed_failures.connect('activate', self.allowed_failures_10_changed)
 		self.Action_fingerprint_authentication.connect('activate', self.fingerprint_authentication_changed)
 		self.Action_password_authentication.connect('activate', self.password_authentication_changed)
@@ -780,6 +780,7 @@ class MainWindow(Gtk.ApplicationWindow) :
 				print ("User List Changed : " + str(self.USER_LIST))
 			else:
 				self.Switch_user8.set_active(self.USER_LIST)
+				return True
 
 	def restart_toggled(self,e,state):
 		restart = self.Switch_restart.get_active()
@@ -789,6 +790,7 @@ class MainWindow(Gtk.ApplicationWindow) :
 				print ("Restart Button Changed : " + str(self.RESTART))
 			else:
 				self.Switch_restart.set_active(self.RESTART)
+				return True
 
 	def autologin_changed(self,e) :
 		autologin_enabled = self.Button_autologin.get_autologin()
@@ -819,6 +821,7 @@ class MainWindow(Gtk.ApplicationWindow) :
 				print ("Clock Date toggled : " + str(self.CLOCK_DATE))
 			else:
 				self.Switch_clock_date10.set_active(self.CLOCK_DATE)
+				return True
 
 	def clock_seconds_10_toggled(self,e,state) :
 		clock_seconds = self.Switch_clock_seconds10.get_active()
@@ -828,6 +831,7 @@ class MainWindow(Gtk.ApplicationWindow) :
 				print ("Clock Seconds toggled : " + str(self.CLOCK_SECONDS))
 			else:
 				self.Switch_clock_seconds10.set_active(self.CLOCK_SECONDS)
+				return True
 
 	def allowed_failures_10_changed(self,action, value) :
 		allowed_failures = value.get_int32()
