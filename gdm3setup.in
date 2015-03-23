@@ -61,8 +61,6 @@ class ListPopover(GObject.Object):
         if self._row_count > 0 and self._row_count <= 5 :
             minimum_height,natural_height = self.listbox.get_children()[0].get_preferred_height()
             self.scrolledwindow.set_size_request(-1,natural_height * self._row_count)
-        self.popover.hide()
-        self.popover.show_all()
 
     def add_row(self, text) :
         row = Gtk.ListBoxRow.new()
