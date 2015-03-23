@@ -395,7 +395,7 @@
         <property name="selection_mode">none</property>
         <child>
           <object class="GtkListBoxRow" id="shell-row">
-            <property name="visible">True</property>
+            <property name="visible">False</property>
             <property name="can_focus">True</property>
             <child>
               <object class="GtkBox" id="box_shell">

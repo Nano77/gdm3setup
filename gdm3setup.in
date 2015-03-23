@@ -504,6 +504,7 @@ class MainWindow(Gtk.ApplicationWindow) :
 		self.titlebar.set_title(_("Login screen settings"))
 		self.titlebar.set_show_close_button(True)
 		self.set_titlebar(self.titlebar)
+		self.titlebar.show_all()
 
 		self.Builder = Gtk.Builder()
 		self.Builder.set_translation_domain("gdm3setup")
@@ -919,7 +920,7 @@ class Application(Gtk.Application):
 	def do_activate(self):
 		if not self._window:
 			self._window = MainWindow(self)
-			self._window.show_all()
+			self._window.show()
 		self._window.present()
 
 	def do_startup(self):
