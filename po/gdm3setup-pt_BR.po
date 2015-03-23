@@ -30,6 +30,14 @@ msgstr "_Aplicar"
 msgid "(None)"
 msgstr "(Nenhum)"
 
+#: gdm3setup.in.py:132
+msgid "_Remove"
+msgstr "_Remover"
+
+#: gdm3setup.in.py:133
+msgid "_Open"
+msgstr "_Abrir"
+
 #: gdm3setup.py:47
 msgid "Select a file"
 msgstr "Selecionar um arquivo"

@@ -56,8 +56,8 @@
       <object class="GtkBox" id="autologin-dialog-vbox">
         <property name="visible">True</property>
         <property name="can_focus">False</property>
-        <property name="margin_left">8</property>
-        <property name="margin_right">8</property>
+        <property name="margin_start">8</property>
+        <property name="margin_end">8</property>
         <property name="margin_top">8</property>
         <property name="margin_bottom">8</property>
         <property name="orientation">vertical</property>
@@ -65,8 +65,8 @@
           <object class="GtkBox" id="box1">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
-            <property name="margin_left">4</property>
-            <property name="margin_right">4</property>
+            <property name="margin_start">4</property>
+            <property name="margin_end">4</property>
             <property name="margin_top">4</property>
             <property name="margin_bottom">4</property>
             <property name="orientation">vertical</property>
@@ -313,8 +313,8 @@
           <object class="GtkBox" id="box2">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
-            <property name="margin_left">12</property>
-            <property name="margin_right">12</property>
+            <property name="margin_start">12</property>
+            <property name="margin_end">12</property>
             <property name="margin_top">12</property>
             <property name="margin_bottom">12</property>
             <property name="orientation">vertical</property>
@@ -401,8 +401,8 @@
               <object class="GtkBox" id="box_shell">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <property name="margin_left">16</property>
-                <property name="margin_right">16</property>
+                <property name="margin_start">16</property>
+                <property name="margin_end">16</property>
                 <child>
                   <object class="GtkLabel" id="shell-label">
                     <property name="visible">True</property>
@@ -445,8 +445,8 @@
               <object class="GtkBox" id="box_shell1">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <property name="margin_left">16</property>
-                <property name="margin_right">16</property>
+                <property name="margin_start">16</property>
+                <property name="margin_end">16</property>
                 <child>
                   <object class="GtkLabel" id="icon-label">
                     <property name="visible">True</property>
@@ -489,8 +489,8 @@
               <object class="GtkBox" id="box_shell2">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <property name="margin_left">16</property>
-                <property name="margin_right">16</property>
+                <property name="margin_start">16</property>
+                <property name="margin_end">16</property>
                 <child>
                   <object class="GtkLabel" id="cursor-label">
                     <property name="visible">True</property>
@@ -533,8 +533,8 @@
               <object class="GtkBox" id="box_shell3">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <property name="margin_left">16</property>
-                <property name="margin_right">16</property>
+                <property name="margin_start">16</property>
+                <property name="margin_end">16</property>
                 <child>
                   <object class="GtkLabel" id="logo-status">
                     <property name="visible">True</property>
@@ -556,8 +556,8 @@
                     <property name="no_show_all">True</property>
                     <property name="tooltip_text" translatable="yes">Bad path :
 File must be in /usr/share or /usr/local/share</property>
-                    <property name="margin_right">4</property>
-                    <property name="stock">gtk-dialog-warning</property>
+                    <property name="margin_end">4</property>
+                    <property name="icon-name">dialog-warning-symbolic</property>
                   </object>
                   <packing>
                     <property name="expand">False</property>
@@ -593,8 +593,8 @@ File must be in /usr/share or /usr/local/share</property>
               <object class="GtkBox" id="box_shell4">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <property name="margin_left">16</property>
-                <property name="margin_right">16</property>
+                <property name="margin_start">16</property>
+                <property name="margin_end">16</property>
                 <child>
                   <object class="GtkLabel" id="banner-label">
                     <property name="visible">True</property>
@@ -637,8 +637,8 @@ File must be in /usr/share or /usr/local/share</property>
               <object class="GtkBox" id="box_shell5">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <property name="margin_left">16</property>
-                <property name="margin_right">16</property>
+                <property name="margin_start">16</property>
+                <property name="margin_end">16</property>
                 <child>
                   <object class="GtkLabel" id="autologin-label">
                     <property name="visible">True</property>
@@ -681,8 +681,8 @@ File must be in /usr/share or /usr/local/share</property>
               <object class="GtkBox" id="box_shell6">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <property name="margin_left">16</property>
-                <property name="margin_right">16</property>
+                <property name="margin_start">16</property>
+                <property name="margin_end">16</property>
                 <child>
                   <object class="GtkLabel" id="authentication-label">
                     <property name="visible">True</property>
@@ -725,8 +725,8 @@ File must be in /usr/share or /usr/local/share</property>
               <object class="GtkBox" id="box_shell7">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <property name="margin_left">16</property>
-                <property name="margin_right">16</property>
+                <property name="margin_start">16</property>
+                <property name="margin_end">16</property>
                 <child>
                   <object class="GtkLabel" id="Label15">
                     <property name="visible">True</property>
@@ -749,8 +749,8 @@ File must be in /usr/share or /usr/local/share</property>
                   <object class="GtkLabel" id="allowed-failures-status">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
-                    <property name="margin_left">32</property>
-                    <property name="margin_right">32</property>
+                    <property name="margin_start">32</property>
+                    <property name="margin_end">32</property>
                     <property name="label" translatable="yes">0</property>
                   </object>
                   <packing>
@@ -772,8 +772,8 @@ File must be in /usr/share or /usr/local/share</property>
               <object class="GtkBox" id="box_shell8">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <property name="margin_left">16</property>
-                <property name="margin_right">16</property>
+                <property name="margin_start">16</property>
+                <property name="margin_end">16</property>
                 <child>
                   <object class="GtkLabel" id="label_userlist">
                     <property name="visible">True</property>
@@ -814,8 +814,8 @@ File must be in /usr/share or /usr/local/share</property>
               <object class="GtkBox" id="box_shell11">
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
-                <property name="margin_left">16</property>
-                <property name="margin_right">16</property>
+                <property name="margin_start">16</property>
+                <property name="margin_end">16</property>
                 <child>
                   <object class="GtkLabel" id="label_restart">
                     <property name="visible">True</property>
@@ -856,8 +856,8 @@ File must be in /usr/share or /usr/local/share</property>
               <object class="GtkBox" id="box_shell9">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <property name="margin_left">16</property>
-                <property name="margin_right">16</property>
+                <property name="margin_start">16</property>
+                <property name="margin_end">16</property>
                 <child>
                   <object class="GtkLabel" id="label_userlist1">
                     <property name="visible">True</property>
@@ -898,8 +898,8 @@ File must be in /usr/share or /usr/local/share</property>
               <object class="GtkBox" id="box_shell10">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <property name="margin_left">16</property>
-                <property name="margin_right">16</property>
+                <property name="margin_start">16</property>
+                <property name="margin_end">16</property>
                 <child>
                   <object class="GtkLabel" id="label_userlist2">
                     <property name="visible">True</property>

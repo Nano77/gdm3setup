@@ -30,6 +30,14 @@ msgstr "应用(_A)"
 msgid "(None)"
 msgstr "(无)"
 
+#: gdm3setup.in.py:132
+msgid "_Remove"
+msgstr "删除(_R)"
+
+#: gdm3setup.in.py:133
+msgid "_Open"
+msgstr "打开(_O)"
+
 #: gdm3setup.py:47
 msgid "Select a file"
 msgstr "选择文件"

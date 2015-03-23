@@ -36,6 +36,14 @@ msgstr "(Aucun)"
 msgid "Image"
 msgstr "Image"
 
+#: gdm3setup.in.py:132
+msgid "_Remove"
+msgstr "_Enlever"
+
+#: gdm3setup.in.py:133
+msgid "_Open"
+msgstr "_Ouvrir"
+
 #: gdm3setup.in:143
 msgid "Select a file"
 msgstr "Sélectionner le logo du Shell"

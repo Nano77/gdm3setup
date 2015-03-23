@@ -14,6 +14,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
+#: gdm3setup.in.py:131
 #: gdm3setup.ui:22
 #: gdm3setup.ui:272
 msgid "_Cancel"
@@ -32,6 +33,14 @@ msgstr ""
 
 #: gdm3setup.in.py:126
 msgid "Image"
+msgstr ""
+
+#: gdm3setup.in.py:132
+msgid "_Remove"
+msgstr ""
+
+#: gdm3setup.in.py:133
+msgid "_Open"
 msgstr ""
 
 #: gdm3setup.in.py:143

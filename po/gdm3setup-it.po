@@ -32,6 +32,14 @@ msgstr "A_pplica"
 msgid "(None)"
 msgstr "(Nessuno)"
 
+#: gdm3setup.in.py:132
+msgid "_Remove"
+msgstr "_Rimuovi"
+
+#: gdm3setup.in.py:133
+msgid "_Open"
+msgstr "_Apri"
+
 #: gdm3setup.py:47
 msgid "Select a file"
 msgstr "Seleziona un file"

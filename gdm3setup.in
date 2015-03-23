@@ -100,7 +100,7 @@ class ListPopover(GObject.Object):
                 self._row_select(row)
                 break
 
-GObject.signal_new("changed", ListPopover, GObject.SIGNAL_RUN_FIRST,GObject.TYPE_NONE, ())
+GObject.signal_new("changed", ListPopover, GObject.SignalFlags.RUN_FIRST,GObject.TYPE_NONE, ())
 
 class ImageChooserDialog(GObject.Object):
 	def __init__(self):
@@ -128,9 +128,9 @@ class ImageChooserDialog(GObject.Object):
 		if self.FileChooserDialog == None :
 
 			self.FileChooserDialog = Gtk.FileChooserDialog(title=_("Select a file"),action=Gtk.FileChooserAction.OPEN)
-			self.FileChooserDialog.add_button(Gtk.STOCK_CANCEL,Gtk.ResponseType.CANCEL)
-			self.FileChooserDialog.add_button(Gtk.STOCK_CLEAR,Gtk.ResponseType.NONE)
-			self.FileChooserDialog.add_button(Gtk.STOCK_OPEN,Gtk.ResponseType.ACCEPT)
+			self.FileChooserDialog.add_button(_("_Cancel"),Gtk.ResponseType.CANCEL)
+			self.FileChooserDialog.add_button(_("_Remove"),Gtk.ResponseType.NONE)
+			self.FileChooserDialog.add_button(_("_Open"),Gtk.ResponseType.ACCEPT)
 			self.FileChooserDialog.set_default_response(Gtk.ResponseType.ACCEPT)
 			self.FileChooserDialog.add_filter(self.filterImage)
 			self.FileChooserDialog.set_filename(self.Filename)
@@ -209,7 +209,7 @@ class ImageChooserDialog(GObject.Object):
 	def set_transient_for(self,parent):
 		self._parent = parent
 
-GObject.signal_new("file-changed", ImageChooserDialog, GObject.SIGNAL_RUN_FIRST,GObject.TYPE_NONE, ())
+GObject.signal_new("file-changed", ImageChooserDialog, GObject.SignalFlags.RUN_FIRST,GObject.TYPE_NONE, ())
 
 class AutologinDialog (GObject.Object) :
 	def __init__(self):
@@ -430,7 +430,7 @@ class AutologinDialog (GObject.Object) :
 	def set_transient_for(self,parent):
 		self.Dialog.set_transient_for(parent)
 
-GObject.signal_new("changed", AutologinDialog, GObject.SIGNAL_RUN_FIRST,GObject.TYPE_NONE, ())
+GObject.signal_new("changed", AutologinDialog, GObject.SignalFlags.RUN_FIRST,GObject.TYPE_NONE, ())
 
 class BannerDialog(GObject.Object) :
 	def __init__(self):
@@ -492,7 +492,7 @@ class BannerDialog(GObject.Object) :
 	def set_transient_for(self,parent):
 		self._parent = parent
 
-GObject.signal_new("changed", BannerDialog, GObject.SIGNAL_RUN_FIRST,GObject.TYPE_NONE, ())
+GObject.signal_new("changed", BannerDialog, GObject.SignalFlags.RUN_FIRST,GObject.TYPE_NONE, ())
 
 class MainWindow(Gtk.ApplicationWindow) :
 	def __init__(self,app) :
