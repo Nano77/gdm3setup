@@ -29,25 +29,33 @@ GDM3setup is in AUR, you can install with an AUR helper like yaourt : `yaourt -S
 
 Fedora
 ------
-- [20](https://github.com/Nano77/various/tree/master/rpm/gdm3setup/gnome-3.10/)
+- [22](https://github.com/Nano77/various/tree/master/rpm/gdm3setup/master/)
 
-- [18+](https://github.com/Nano77/various/tree/master/rpm/gdm3setup/compatibility-3.4/)
+- [21](https://github.com/Nano77/various/tree/master/rpm/gdm3setup/gnome-3.14/)
+
+- [20](https://github.com/Nano77/various/tree/master/rpm/gdm3setup/gnome-3.10/)
 
 
 OpenSUSE
 --------
+- [13.2](https://github.com/Nano77/various/tree/master/rpm/gdm3setup/gnome-3.14/)
+
 - [13.1](https://github.com/Nano77/various/tree/master/rpm/gdm3setup/gnome-3.10/)
 
-- [12.2+](https://github.com/Nano77/various/tree/master/rpm/gdm3setup/compatibility-3.4/)
 
-- [12.1+](https://github.com/Nano77/various/tree/master/rpm/gdm3setup/compatibility-3.0/)
+CentOS
+------
+- [7](https://github.com/Nano77/various/tree/master/rpm/gdm3setup/compatibility-3.4/)
 
 
 Ubuntu 
 ------
-- [14.04](https://github.com/Nano77/various/tree/master/deb/gdm3setup/gnome-3.10)
 
-- [12.10+](https://github.com/Nano77/various/tree/master/deb/gdm3setup/compatibility-3.4/)
+- [15.04](https://github.com/Nano77/various/tree/master/deb/gdm3setup/gnome-3.14)
+
+- [14.10](https://github.com/Nano77/various/tree/master/deb/gdm3setup/gnome-3.12)
+
+- [14.04](https://github.com/Nano77/various/tree/master/deb/gdm3setup/gnome-3.10)
 
 - [12.04+](https://github.com/Nano77/various/tree/master/deb/gdm3setup/compatibility-3.0/)
 
@@ -59,6 +67,12 @@ Debian
 
 Other RPM 
 ---------
+- [Gnome 3.16](https://github.com/Nano77/various/tree/master/rpm/gdm3setup/master/)
+
+- [Gnome 3.14](https://github.com/Nano77/various/tree/master/rpm/gdm3setup/gnome-3.14/)
+
+- [Gnome 3.12](https://github.com/Nano77/various/tree/master/rpm/gdm3setup/gnome-3.12/)
+
 - [Gnome 3.10](https://github.com/Nano77/various/tree/master/rpm/gdm3setup/gnome-3.10/)
 
 - [Gnome 3.4+](https://github.com/Nano77/various/tree/master/rpm/gdm3setup/compatibility-3.4/)
