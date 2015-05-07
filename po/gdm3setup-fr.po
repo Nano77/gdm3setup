@@ -215,6 +215,10 @@ msgstr "Afficher la date sur l'horloge"
 msgid "Show Seconds in Clock"
 msgstr "Afficher les secondes sur l'horloge"
 
+# gdm3setup.ui:951
+msgid "Enable Wayland"
+msgstr "Activer Wayland"
+
 #: app-menu.ui:6
 msgid "_About"
 msgstr "_À propos"

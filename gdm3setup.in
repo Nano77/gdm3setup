@@ -526,6 +526,7 @@ class MainWindow(Gtk.ApplicationWindow) :
 		self.Action_fingerprint_authentication = Gio.SimpleAction.new_stateful('authentication-fingerprint', None, GLib.Variant('b', False))
 		self.Action_password_authentication = Gio.SimpleAction.new_stateful('authentication-password', None, GLib.Variant('b', False))
 		self.Action_smartcard_authentication = Gio.SimpleAction.new_stateful('authentication-smartcard', None, GLib.Variant('b', False))
+		self.Switch_wayland = self.Builder.get_object("wayland-switch")
 
 		self.listbox = self.Builder.get_object("listbox1")
 
@@ -567,13 +568,13 @@ class MainWindow(Gtk.ApplicationWindow) :
 		self.Action_fingerprint_authentication.connect('activate', self.fingerprint_authentication_changed)
 		self.Action_password_authentication.connect('activate', self.password_authentication_changed)
 		self.Action_smartcard_authentication.connect('activate', self.smartcard_authentication_changed)
+		self.Switch_wayland.connect("state-set",self.wayland_toggled)
 		self.listbox.connect("row-activated",self.row_activated)
 
 		app.add_action(self.Action_allowed_failures)
 		app.add_action(self.Action_fingerprint_authentication)
 		app.add_action(self.Action_password_authentication)
 		app.add_action(self.Action_smartcard_authentication)
-
 
 	def load_shell_list(self):
 
@@ -615,6 +616,7 @@ class MainWindow(Gtk.ApplicationWindow) :
 		self.FINGERPRINT_AUTHENTICATION = GdmSetupClient.GetFingerprintAuthentication()
 		self.PASSWORD_AUTHENTICATION = GdmSetupClient.GetPasswordAuthentication()
 		self.SMARTCARD_AUTHENTICATION = GdmSetupClient.GetSmartcardAuthentication()
+		self.WAYLAND = GdmSetupClient.GetWaylandEnable()
 		self.ComboBox_shell10.set_value(self.SHELL_THEME)
 		self.ComboBox_icon.set_value(self.ICON_THEME)
 		self.ComboBox_cursor.set_value(self.CURSOR_THEME)
@@ -637,6 +639,7 @@ class MainWindow(Gtk.ApplicationWindow) :
 		self.icon_status.set_text(self.ComboBox_icon.get_value())
 		self.cursor_status.set_text(self.ComboBox_cursor.get_value())
 		self.allowed_failures_status.set_text(str(self.ALLOWED_FAILURES))
+		self.Switch_wayland.set_active(self.WAYLAND)
 
 	def set_autologin(self,autologin,username,timed,time):
 		if self.SetAutoLogin(autologin,username,timed,time)=="OK" :
@@ -842,6 +845,16 @@ class MainWindow(Gtk.ApplicationWindow) :
 			action.set_state(GLib.Variant('i',self.ALLOWED_FAILURES))
 		self.Popover_allowed_failure.hide()
 
+	def wayland_toggled(self,e,state):
+		wayland = self.Switch_wayland.get_active()
+		if self.WAYLAND != wayland :
+			if GdmSetupClient.SetWaylandEnable(wayland) :
+				self.WAYLAND = wayland
+				print ("Wayland Enable Changed : " + str(self.WAYLAND))
+			else:
+				self.Switch_wayland.set_active(self.WAYLAND)
+				return True
+
 	def row_activated(self,listbox,row):
 		row_name = Gtk.Buildable.get_name(row)
 
@@ -873,7 +886,9 @@ class MainWindow(Gtk.ApplicationWindow) :
 		elif row_name == "seconds-row":
 			active = self.Switch_clock_seconds10.get_active()
 			self.Switch_clock_seconds10.set_active( not active )
-
+		elif row_name == "wayland-row":
+			active = self.Switch_wayland.get_active()
+			self.Switch_wayland.set_active( not active )
 #-----------------------------------------------
 
 def get_setting(name,data):

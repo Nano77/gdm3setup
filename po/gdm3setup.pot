@@ -212,6 +212,10 @@ msgstr ""
 msgid "Show Seconds in Clock"
 msgstr ""
 
+# gdm3setup.ui:951
+msgid "Enable Wayland"
+msgstr ""
+
 #: app-menu.ui:6
 msgid "_About"
 msgstr ""
