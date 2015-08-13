@@ -23,18 +23,38 @@ class ListPopover(GObject.Object):
 		self.popover = Gtk.Popover()
 		self.popover.set_relative_to(relative_to)
 		self.popover.set_position(Gtk.PositionType(3))
+
+		frame = Gtk.Frame()
+		frame.set_margin_top(4)
+		frame.set_margin_bottom(4)
+		frame.set_margin_start(4)
+		frame.set_margin_end(4)
+		self.popover.add(frame)
+
 		self.scrolledwindow = Gtk.ScrolledWindow()
 		self.scrolledwindow.set_policy(Gtk.PolicyType.NEVER,Gtk.PolicyType.AUTOMATIC)
-		self.popover.add(self.scrolledwindow)
 		self.scrolledwindow.show()
+		frame.add(self.scrolledwindow)
+
 		self.listbox = Gtk.ListBox()
 		self.listbox.set_selection_mode(Gtk.SelectionMode.NONE)
-		self.listbox.get_style_context().remove_class("list")
+		self.listbox.set_header_func(self._update_header_func)
 		self.scrolledwindow.add(self.listbox)
-		self.listbox.show()
 		self.listbox.connect("row-activated",self._row_activated)
 		self.selectedrow  = None
 		self._row_count = 0
+		self._row_max = 3
+
+    def _update_header_func(self, row, before):
+        if before is None:
+            return
+
+        header = row.get_header()
+
+        if (header is None):
+            header = Gtk.HSeparator()
+            header.show()
+            row.set_header(header)
 
     def _row_activated(self,listbox,row):
         if row != self.selectedrow :
@@ -53,36 +73,43 @@ class ListPopover(GObject.Object):
         row.indicator.set_opacity(1.0);
 
     def run(self):
-        self.popover.show()
-
-        if self._row_count > 5 :
-            minimum_height,natural_height = self.listbox.get_children()[0].get_preferred_height()
-            self.scrolledwindow.set_size_request(-1,natural_height*5)
-        if self._row_count > 0 and self._row_count <= 5 :
-            minimum_height,natural_height = self.listbox.get_children()[0].get_preferred_height()
-            self.scrolledwindow.set_size_request(-1,natural_height * self._row_count)
-        self.popover.hide()
         self.popover.show_all()
+
+        if self._row_count == 0:
+            self.scrolledwindow.set_size_request(-1, -1)
+        if self._row_count == 1:
+            minimum_height, natural_height = self.listbox.get_children(
+            )[0].get_preferred_height()
+            self.scrolledwindow.set_size_request(
+                -1, natural_height * self._row_count)
+        if self._row_count > 1 and self._row_count <= self._row_max:
+            minimum_height, natural_height = self.listbox.get_children(
+            )[0].get_preferred_height()
+            self.scrolledwindow.set_size_request(
+                -1, natural_height * self._row_count + self._row_count - 1 )
+        if self._row_count > self._row_max:
+            minimum_height, natural_height = self.listbox.get_children(
+            )[0].get_preferred_height()
+            self.scrolledwindow.set_size_request(
+                -1, natural_height * self._row_max + self._row_max)
 
     def add_row(self, text) :
         row = Gtk.ListBoxRow.new()
-        row.get_style_context().add_class("background")
         self.listbox.add(row)
         box = Gtk.HBox()
-        box.set_margin_left(16)
-        box.set_margin_right(32)
         row.add(box)
         label = Gtk.Label.new(text)
-        label.set_margin_top(6)
-        label.set_margin_bottom(6)
-        indicator = Gtk.Image.new_from_icon_name("emblem-ok-symbolic",Gtk.IconSize.BUTTON)
-        indicator.set_margin_left(16)
-        indicator.set_margin_right(16)
-        indicator.set_opacity(0.0);
-        box.pack_end(label,True,True,2)
-        box.pack_start(indicator,False,False,2)
+        label.set_margin_top(8)
+        label.set_margin_bottom(8)
+        label.set_margin_start(32)
+        label.set_margin_end(32)
+        label.set_alignment(0, 0.5)
+        box.pack_start(label,True,True,2)
+        row.indicator = Gtk.Image.new_from_icon_name("emblem-ok-symbolic",Gtk.IconSize.BUTTON)
+        row.indicator.set_margin_end(32)
+        row.indicator.set_opacity(0.0);
+        box.pack_end(row.indicator,False,False,2)
         row.row_name = text
-        row.indicator = indicator
         row.show_all()
         self._row_count = self._row_count + 1
         return row
