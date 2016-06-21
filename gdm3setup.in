@@ -386,7 +386,7 @@ class AutologinDialog (GObject.Object) :
 		box = Gtk.HBox()
 		box.set_margin_left(32)
 		row.add(box)
-		label = Gtk.Label.new(RealName)
+		label = Gtk.Label.new(UserName)
 		label.set_margin_top(6)
 		label.set_margin_bottom(6)
 		indicator = Gtk.Image.new_from_icon_name("emblem-ok-symbolic",Gtk.IconSize.BUTTON)
