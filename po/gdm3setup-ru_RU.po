@@ -1,0 +1,210 @@
+# An interface to configure the login screen.
+# Copyright (C) 2011 NanoArch <nanoarch77@gmail.com>
+# This file is distributed under the same license as the GDM3setup package.
+# NanoArch <nanoarch77@gmail.com>, 2011, 2014.
+# Edward Minasyan <mrEDitor@mail.ru>, 2016.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: gdm3setup\n"
+"Report-Msgid-Bugs-To: https://github.com/Nano77/gdm3setup/issues\n"
+"POT-Creation-Date: 2014-02-08 20:06+0100\n"
+"Last-Translator: Edward Minasyan <mrEDitor@mail.ru>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language-Team: Russian <>\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
+"%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+"PO-Revision-Date: 2016-06-28 12:21+0300\n"
+"X-Generator: Gtranslator 2.91.7\n"
+
+#: gdm3setup.in.py:131 gdm3setup.ui:22 gdm3setup.ui:272
+msgid "_Cancel"
+msgstr "_Отмена"
+
+#: gdm3setup.ui:37 gdm3setup.ui:287
+msgid "_Apply"
+msgstr "_Принять"
+
+#: gdm3setup.in.py:121 gdm3setup.in.py:183 gdm3setup.ui:819
+msgid "(None)"
+msgstr "(Нет)"
+
+#: gdm3setup.in.py:126
+msgid "Image"
+msgstr "Изображение"
+
+#: gdm3setup.in.py:132
+msgid "_Remove"
+msgstr "_Убрать"
+
+#: gdm3setup.in.py:133
+msgid "_Open"
+msgstr "_Выбрать"
+
+#: gdm3setup.in.py:143
+msgid "Select a file"
+msgstr "Выберите файл"
+
+#: gdm3setup.in.py:234 gdm3setup.in.py:244 gdm3setup.in.py:346
+#: gdm3setup.in.py:365 gdm3setup.ui:894 gdm3setup.ui:938
+msgid "Disabled"
+msgstr "Отключен"
+
+#: gdm3setup.in.py:240
+msgid "after"
+msgstr "после"
+
+#: gdm3setup.in.py:240
+msgid "second(s)"
+msgstr "секунд"
+
+#: gdm3setup.in.py:315
+msgid "User Name can't be empty !"
+msgstr "Укажите имя пользователя!"
+
+#: gdm3setup.in.py:408 gdm3setup.in.py:432
+msgid "None"
+msgstr "Нет"
+
+#: gdm3setup.in.py:434 gdm3setup.in.py:438 gdm3setup.in.py:442 gdm3setup.ui:174
+msgid "Fingerprint"
+msgstr "Отпечаток пальца"
+
+#: gdm3setup.in.py:436 gdm3setup.in.py:438 gdm3setup.in.py:444 gdm3setup.ui:216
+msgid "Password"
+msgstr "Пароль"
+
+#: gdm3setup.in.py:440 gdm3setup.in.py:442 gdm3setup.in.py:444 gdm3setup.ui:258
+msgid "Smartcard"
+msgstr "Смарт-карта"
+
+#: gdm3setup.in.py:446 gdm3setup.ui:982
+msgid "All"
+msgstr "Любой"
+
+#: gdm3setup.in.py:502 gdm3setup.in.py:509
+msgid "Login screen settings"
+msgstr "Настройки экрана входа"
+
+#: gdm3setup.in.py:879
+msgid "About"
+msgstr "О программе"
+
+#: gdm3setup.in.py:881
+msgid "An interface to configure the login screen"
+msgstr "Интерфейс конфигурации экрана входа"
+
+#: gdm3setup.in.py:890
+msgid "translator-credits"
+msgstr "Edward Minasyan <mrEDitor@mail.ru>"
+
+#: gdm3setup.ui:7
+msgid "Authentication"
+msgstr "Аутентификация"
+
+#: gdm3setup.ui:82
+#, fuzzy
+msgid "Disabling Password Authentication is discouraged"
+msgstr "Отключение аутентификации по паролю отклонено"
+
+#: gdm3setup.ui:137
+msgid "You must enable at least one method"
+msgstr "Вы должны выбрать как минимум один способ"
+
+#: gdm3setup.ui:303 gdm3setup.ui:923
+msgid "Automatic login"
+msgstr "Автоматический вход"
+
+#: gdm3setup.ui:373
+msgid "Login mode"
+msgstr "Режим входа"
+
+#: gdm3setup.ui:387
+msgid "Manual"
+msgstr "Вручную"
+
+#: gdm3setup.ui:388
+msgid "Automatic"
+msgstr "Автоматически"
+
+#: gdm3setup.ui:389
+msgid "Automatic after a delay"
+msgstr "Автоматически после задержки"
+
+#: gdm3setup.ui:414
+msgid "Select an user"
+msgstr "Выберите пользователя"
+
+#: gdm3setup.ui:474
+msgid "Select the delay before automatic login"
+msgstr "Выберите задержку"
+
+#: gdm3setup.ui:474 gdm3setup.ui:879
+msgid "Banner"
+msgstr "Баннер"
+
+#: gdm3setup.ui:535
+msgid "Enable Banner"
+msgstr "Включить баннер"
+
+#: gdm3setup.ui:687
+msgid "Shell theme"
+msgstr "Тема Shell"
+
+#: gdm3setup.ui:731
+msgid "Icon theme"
+msgstr "Тема иконок"
+
+#: gdm3setup.ui:775
+msgid "Cursor theme"
+msgstr "Тема курсора"
+
+#: gdm3setup.ui:832
+msgid ""
+"Bad path :\n"
+"File must be in /usr/share or /usr/local/share"
+msgstr ""
+"Некорректный путь:\n"
+"Файл должен располагаться в /usr/share или /usr/local/share"
+
+#: gdm3setup.ui:850
+msgid "Shell Logo"
+msgstr "Логотип Shell"
+
+#: gdm3setup.ui:967
+msgid "Authentication methods"
+msgstr "Способы аутентификации"
+
+#: gdm3setup.ui:1011
+msgid "Allowed failures"
+msgstr "Позволено ошибок"
+
+#: gdm3setup.ui:1053
+msgid "Disable User List"
+msgstr "Скрыть список пользователей"
+
+#: gdm3setup.ui:1098
+msgid "Hide the Power Off button"
+msgstr "Скрыть кнопку выключения"
+
+#: gdm3setup.ui:1140
+msgid "Show Date in Clock"
+msgstr "Показывать дату в часах"
+
+#: gdm3setup.ui:1182
+msgid "Show Seconds in Clock"
+msgstr "Показывать секунды в часах"
+
+# gdm3setup.ui:951
+msgid "Enable Wayland"
+msgstr "Использовать Wayland"
+
+#: app-menu.ui:6
+msgid "_About"
+msgstr "_О программе"
+
+#: app-menu.ui:11
+msgid "_Quit"
+msgstr "_Выход"

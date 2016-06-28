@@ -1,5 +1,5 @@
 
-LOCALS := fr es_ES de_DE it pt_BR zh_CN zh_TW
+LOCALS := fr es_ES de_DE it pt_BR ru_RU zh_CN zh_TW
 all:
 	@for local in $(LOCALS); do \
         	mkdir -p locale/$$local/LC_MESSAGES/; \
@@ -10,6 +10,7 @@ all:
 	msgfmt gdm3setup-de_DE.po -o locale/de_DE/LC_MESSAGES/gdm3setup.mo
 	msgfmt gdm3setup-it.po -o locale/it/LC_MESSAGES/gdm3setup.mo
 	msgfmt gdm3setup-pt_BR.po -o locale/pt_BR/LC_MESSAGES/gdm3setup.mo
+	msgfmt gdm3setup-ru_RU.po -o locale/ru_RU/LC_MESSAGES/gdm3setup.mo
 	msgfmt gdm3setup-zh_CN.po -o locale/zh_CN/LC_MESSAGES/gdm3setup.mo
 	msgfmt gdm3setup-zh_TW.po -o locale/zh_TW/LC_MESSAGES/gdm3setup.mo
 
@@ -20,7 +21,7 @@ install:
 	cp -r locale $(DESTDIR)/usr/share/
 
 uninstall:
-	rm $(DESTDIR)/usr/share/locale/{de_DE,es_ES,fr,it,pt_BR,zh_CN,zh_TW}/LC_MESSAGES/gdm3setup.mo
+	rm $(DESTDIR)/usr/share/locale/{de_DE,es_ES,fr,it,pt_BR,ru_RU,zh_CN,zh_TW}/LC_MESSAGES/gdm3setup.mo
 
 
 
