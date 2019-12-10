@@ -2,7 +2,7 @@ all: mo
 	sed -e 's/%PYTHON%/python2/;s/%GDM_BIN%/\/usr\/sbin\/gdm/' gdm3setup.in > gdm3setup
 
 ubuntu: mo
-	sed -e 's/%PYTHON%/python/;s/%GDM_BIN%/\/usr\/sbin\/gdm/' gdm3setup.in > gdm3setup
+	sed -e 's/%PYTHON%/python/;s/%GDM_BIN%/\/usr\/sbin\/gdm3/' gdm3setup.in > gdm3setup
 
 debian: mo
 	sed -e 's/%PYTHON%/python/;s/%GDM_BIN%/\/usr\/sbin\/gdm3/' gdm3setup.in > gdm3setup
