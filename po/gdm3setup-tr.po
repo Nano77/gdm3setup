@@ -1,0 +1,208 @@
+# An interface to configure the login screen.
+# Copyright (C) 2011 NanoArch <nanoarch77@gmail.com>
+# This file is distributed under the same license as the GDM3setup package.
+# NanoArch <nanoarch77@gmail.com>, 2011, 2014.
+#
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: gdm3setup\n"
+"Report-Msgid-Bugs-To: https://github.com/Nano77/gdm3setup/issues\n"
+"POT-Creation-Date: 2020-07-08 20:06+0100\n"
+"Last-Translator: cihan alkan <cihanalk@gmail.com>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"PO-Revision-Date: \n"
+"Language-Team: \n"
+"Language: tr\n"
+"X-Generator: Poedit 2.3.1\n"
+
+#: gdm3setup.in.py:131 gdm3setup.ui:22 gdm3setup.ui:272
+msgid "_Cancel"
+msgstr "_İptal"
+
+#: gdm3setup.ui:37 gdm3setup.ui:287
+msgid "_Apply"
+msgstr "_Uygula"
+
+#: gdm3setup.in.py:121 gdm3setup.in.py:183 gdm3setup.ui:819
+msgid "(None)"
+msgstr "(yok)"
+
+#: gdm3setup.in.py:126
+msgid "Image"
+msgstr "Resim"
+
+#: gdm3setup.in.py:132
+msgid "_Remove"
+msgstr "_Çıkar"
+
+#: gdm3setup.in.py:133
+msgid "_Open"
+msgstr "_Aç"
+
+#: gdm3setup.in.py:143
+msgid "Select a file"
+msgstr "Bir dosya seç"
+
+#: gdm3setup.in.py:234 gdm3setup.in.py:244 gdm3setup.in.py:346
+#: gdm3setup.in.py:365 gdm3setup.ui:894 gdm3setup.ui:938
+msgid "Disabled"
+msgstr "Pasif"
+
+#: gdm3setup.in.py:240
+msgid "after"
+msgstr "sonra"
+
+#: gdm3setup.in.py:240
+msgid "second(s)"
+msgstr "saniye"
+
+#: gdm3setup.in.py:315
+msgid "User Name can't be empty !"
+msgstr "Kullanıcı adı boş olamaz"
+
+#: gdm3setup.in.py:408 gdm3setup.in.py:432
+msgid "None"
+msgstr "Yok"
+
+#: gdm3setup.in.py:434 gdm3setup.in.py:438 gdm3setup.in.py:442 gdm3setup.ui:174
+msgid "Fingerprint"
+msgstr "Parmak izi"
+
+#: gdm3setup.in.py:436 gdm3setup.in.py:438 gdm3setup.in.py:444 gdm3setup.ui:216
+msgid "Password"
+msgstr "Parola"
+
+#: gdm3setup.in.py:440 gdm3setup.in.py:442 gdm3setup.in.py:444 gdm3setup.ui:258
+msgid "Smartcard"
+msgstr "Akıllı kart"
+
+#: gdm3setup.in.py:446 gdm3setup.ui:982
+msgid "All"
+msgstr "Tümü"
+
+#: gdm3setup.in.py:502 gdm3setup.in.py:509
+msgid "Login screen settings"
+msgstr "Giriş ekranı ayarları"
+
+#: gdm3setup.in.py:879
+msgid "About"
+msgstr "Hakkında"
+
+#: gdm3setup.in.py:881
+msgid "An interface to configure the login screen"
+msgstr "Giriş ekranını yapılandırmak için bir arayüz"
+
+#: gdm3setup.in.py:890
+msgid "translator-credits"
+msgstr "çevirmen kredisi"
+
+#: gdm3setup.ui:7
+msgid "Authentication"
+msgstr "Kimlik Doğrulama"
+
+#: gdm3setup.ui:82
+msgid "Disabling Password Authentication is discouraged"
+msgstr "Parola Kimlik Doğrulamasını devre dışı bırakmak önerilmez"
+
+#: gdm3setup.ui:137
+msgid "You must enable at least one method"
+msgstr "En az bir yöntemi etkinleştirmelisiniz"
+
+#: gdm3setup.ui:303 gdm3setup.ui:923
+msgid "Automatic login"
+msgstr "Otomatik giriş"
+
+#: gdm3setup.ui:373
+msgid "Login mode"
+msgstr "Giriş modu"
+
+#: gdm3setup.ui:387
+msgid "Manual"
+msgstr "Elle"
+
+#: gdm3setup.ui:388
+msgid "Automatic"
+msgstr "Otomatik"
+
+#: gdm3setup.ui:389
+msgid "Automatic after a delay"
+msgstr "Gecikmeden sonra otomatik"
+
+#: gdm3setup.ui:414
+msgid "Select an user"
+msgstr "Bir kullanıcı seç"
+
+#: gdm3setup.ui:474
+msgid "Select the delay before automatic login"
+msgstr "Otomatik oturum açmadan önceki gecikmeyi seçin"
+
+#: gdm3setup.ui:474 gdm3setup.ui:879
+msgid "Banner"
+msgstr "Büyük Başlık"
+
+#: gdm3setup.ui:535
+msgid "Enable Banner"
+msgstr "Büyük Başlığı Etkinleştir"
+
+#: gdm3setup.ui:687
+msgid "Shell theme"
+msgstr "Shell Teması"
+
+#: gdm3setup.ui:731
+msgid "Icon theme"
+msgstr "Simge teması"
+
+#: gdm3setup.ui:775
+msgid "Cursor theme"
+msgstr "İmleç teması"
+
+#: gdm3setup.ui:832
+msgid ""
+"Bad path :\n"
+"File must be in /usr/share or /usr/local/share"
+msgstr ""
+"Bozuk yol:\n"
+"Dosya /usr/share veya /usr/local/share içinde olmalıdır"
+
+#: gdm3setup.ui:850
+msgid "Shell Logo"
+msgstr "Shell Logo"
+
+#: gdm3setup.ui:967
+msgid "Authentication methods"
+msgstr "Kimlik doğrulama yöntemleri"
+
+#: gdm3setup.ui:1011
+msgid "Allowed failures"
+msgstr "İzin verilen hatalar"
+
+#: gdm3setup.ui:1053
+msgid "Disable User List"
+msgstr "Kullanıcı Listesini Devre Dışı Bırak"
+
+#: gdm3setup.ui:1098
+msgid "Hide the Power Off button"
+msgstr "Güç Kapatma düğmesini gizle"
+
+#: gdm3setup.ui:1140
+msgid "Show Date in Clock"
+msgstr "Tarihi Saatte Göster"
+
+#: gdm3setup.ui:1182
+msgid "Show Seconds in Clock"
+msgstr "Saniyeyi Saatte Göster"
+
+# gdm3setup.ui:951
+msgid "Enable Wayland"
+msgstr ""
+
+#: app-menu.ui:6
+msgid "_About"
+msgstr "_Hakkında"
+
+#: app-menu.ui:11
+msgid "_Quit"
+msgstr "_Çıkış"
